@@ -4,9 +4,12 @@
     "license": "MIT",
     "main": "src/js/index.ts",
     "scripts": {
-        "release": "//TODO"
+        "test": "// TODO:",
+        "test:watch": "// TODO:",
+        "release": "// TODO:"
     },
     "dependencies": {
+        "@commercetools/types": "./types",
         "typescript": "^4.3.5"
     },
     "devDependencies": {
