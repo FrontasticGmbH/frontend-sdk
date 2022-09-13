@@ -1,4 +1,4 @@
-import { CartMethods, AccountMethods, WishlistMethods } from "@commercetools/types/src/js/Extension";
+import { CartMethods, AccountMethods, WishlistMethods } from "./types/Extension";
 
 const notYetImplemented: any = () => {
     throw new Error("CoreSDK must be initialised with commerce extension");
