@@ -87,24 +87,25 @@ export class SDK extends EnhancedEmitter<StandardEvents, {}> {
 		this.#hasBeenConfigured = true;
 	}
 
-	async callAction<T>(
-		actionName: StandardAction | DynamicAction,
-		payload: unknown,
-	): Promise<T> {
+	async callAction<T>(actionName: string, payload: unknown): Promise<T> {
 		this.#throwIfNotConfigured();
-		return await this.#actionQueue.add<T>(() =>
-			fetcher<T>(
+		return await this.#actionQueue.add<T>(() => {
+			let allowOriginHeader = {};
+
+			if (this.allowOrigin) {
+				allowOriginHeader = { "Access-Control-Allow-Origin": this.allowOrigin };
+			}
+
+			return fetcher<T>(
 				`${this.#endpoint}/frontastic/action/${actionName}`,
 				this.APILocale,
 				{
 					method: "POST",
-					...(this.#allowOrigin
-						? { "Access-Control-Allow-Origin": this.#allowOrigin }
-						: {}),
+					...allowOriginHeader,
 				},
 				payload,
-			),
-		);
+			);
+		});
 	}
 
 	getPage(pageName: string) {
