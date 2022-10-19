@@ -247,3 +247,5 @@ export type StandardAction =
 	| "project/getProjectSettings"
 	| "payment/createSession"
 	| "payment/notifications";
+
+export const REMEMBER_ME = "__rememberMe";

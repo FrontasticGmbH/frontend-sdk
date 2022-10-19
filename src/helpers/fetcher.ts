@@ -1,4 +1,5 @@
 import Cookies from "js-cookie";
+import { REMEMBER_ME } from "../library/types";
 
 const cookiesApi = Cookies.withAttributes({ path: "/" });
 
@@ -31,7 +32,7 @@ export const fetcher = async<T>(
     const apiHubResponse: Response = await fetch(endpointPath, requestInit);
 
     if (apiHubResponse.ok && apiHubResponse.headers.has("Frontastic-Session")) {
-        let rememberMe = window.localStorage.getItem("__rememberMe");
+        let rememberMe = window.localStorage.getItem(REMEMBER_ME);
         let expiryDate;
 
         if (rememberMe) {
