@@ -1,12 +1,7 @@
 import { fetcher } from "../helpers/fetcher";
 import EnhancedEmitter from "./EnhancedEmitter";
 import { Queue } from "./Queue";
-import {
-	Currency,
-	DynamicAction,
-	StandardAction,
-	StandardEvents,
-} from "./types";
+import { Currency, StandardEvents } from "./types";
 
 export class SDK extends EnhancedEmitter<StandardEvents, {}> {
 	#hasBeenConfigured;
@@ -14,6 +9,7 @@ export class SDK extends EnhancedEmitter<StandardEvents, {}> {
 	#endpoint!: string;
 	#locale!: Intl.Locale;
 	#currency!: Currency;
+	#useCurrencyInLocale!: boolean;
 	#allowOrigin!: string;
 	#actionQueue: Queue;
 
@@ -38,7 +34,15 @@ export class SDK extends EnhancedEmitter<StandardEvents, {}> {
 	}
 
 	get APILocale(): string {
-		return this.locale.baseName.slice(0, 5).replace("-", "_");
+		const apiFormattedLocale = this.locale.baseName
+			.slice(0, 5)
+			.replace("-", "_");
+
+		if (this.#useCurrencyInLocale) {
+			return `${apiFormattedLocale}@${this.currency}`;
+		} else {
+			return apiFormattedLocale;
+		}
 	}
 
 	set currency(currency: Currency) {
@@ -77,11 +81,13 @@ export class SDK extends EnhancedEmitter<StandardEvents, {}> {
 		locale: Intl.BCP47LanguageTag;
 		currency: Currency;
 		endpoint: string;
+		useCurrencyInLocale?: boolean;
 		allowOrigin?: string;
 	}) {
 		this.endpoint = config.endpoint;
 		this.locale = new Intl.Locale(config.locale);
 		this.currency = config.currency;
+		this.#useCurrencyInLocale = config.useCurrencyInLocale ?? false;
 		this.#allowOrigin = config.allowOrigin ?? "";
 
 		this.#hasBeenConfigured = true;
