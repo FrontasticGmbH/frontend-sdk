@@ -1,9 +1,9 @@
 import { fetcher } from "../helpers/fetcher";
-import EnhancedEmitter from "./EnhancedEmitter";
 import { Queue } from "./Queue";
+import SimpleEmitter from "./SimpleEmitter";
 import { Currency, StandardEvents } from "./types";
 
-export class SDK extends EnhancedEmitter<StandardEvents, {}> {
+export class SDK extends SimpleEmitter<StandardEvents> {
 	#hasBeenConfigured;
 
 	#endpoint!: string;
