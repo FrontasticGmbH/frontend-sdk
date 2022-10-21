@@ -114,7 +114,18 @@ export class SDK extends EnhancedEmitter<StandardEvents, {}> {
 		});
 	}
 
-	getPage(pageName: string) {
-		this.#throwIfNotConfigured();
+	async getPage<T>(path: string) {
+    const reqInit = {
+      headers: {
+        'Frontastic-Path': path,
+        'Frontastic-Locale': this.APILocale
+      }
+    }
+
+    return fetcher<T>(
+      `${this.#endpoint}/page`,
+      this.APILocale,
+      reqInit
+    )
 	}
 }
