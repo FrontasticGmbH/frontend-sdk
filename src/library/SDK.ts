@@ -10,7 +10,6 @@ export class SDK extends EnhancedEmitter<StandardEvents, {}> {
 	#locale!: Intl.Locale;
 	#currency!: Currency;
 	#useCurrencyInLocale!: boolean;
-	#allowOrigin!: string;
 	#actionQueue: Queue;
 
 	set endpoint(url: string) {
@@ -53,14 +52,6 @@ export class SDK extends EnhancedEmitter<StandardEvents, {}> {
 		return this.#currency;
 	}
 
-	set allowOrigin(allowOrigin: string) {
-		this.#allowOrigin = allowOrigin;
-	}
-
-	get allowOrigin() {
-		return this.#allowOrigin;
-	}
-
 	constructor() {
 		super();
 
@@ -88,7 +79,6 @@ export class SDK extends EnhancedEmitter<StandardEvents, {}> {
 		this.locale = new Intl.Locale(config.locale);
 		this.currency = config.currency;
 		this.#useCurrencyInLocale = config.useCurrencyInLocale ?? false;
-		this.#allowOrigin = config.allowOrigin ?? "";
 
 		this.#hasBeenConfigured = true;
 	}
@@ -96,18 +86,12 @@ export class SDK extends EnhancedEmitter<StandardEvents, {}> {
 	async callAction<T>(actionName: string, payload: unknown): Promise<T> {
 		this.#throwIfNotConfigured();
 		return await this.#actionQueue.add<T>(() => {
-			let allowOriginHeader = {};
-
-			if (this.allowOrigin) {
-				allowOriginHeader = { "Access-Control-Allow-Origin": this.allowOrigin };
-			}
 
 			return fetcher<T>(
 				`${this.#endpoint}/frontastic/action/${actionName}`,
 				{
 					method: "POST",
-					...allowOriginHeader,
-          body: JSON.stringify(payload)
+                    body: JSON.stringify(payload)
 				},
 			);
 		});
