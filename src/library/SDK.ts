@@ -118,8 +118,8 @@ export class SDK extends EnhancedEmitter<StandardEvents, {}> {
       headers: {
         'Frontastic-Path': path,
         'Frontastic-Locale': this.APILocale,
-        'Commerctools-Path': path,
-        'Commerctools-Locale': this.APILocale
+        'Commercetools-Path': path,
+        'Commercetools-Locale': this.APILocale
       }
     }
 
