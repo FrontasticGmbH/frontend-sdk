@@ -1,66 +1,56 @@
-import Cookies from "js-cookie";
-import { REMEMBER_ME } from "../library/types";
+import Cookies from 'js-cookie'
+import { REMEMBER_ME } from '../library/types'
 
-const cookiesApi = Cookies.withAttributes({ path: "/" });
+const cookiesApi = Cookies.withAttributes({ path: '/' })
 
-export const fetcher = async<T>(
-    endpointPath: string,
-    locale: Intl.BCP47LanguageTag,
-    requestInit: RequestInit = {},
-    payload?: unknown,
+export const fetcher = async <T>(
+    url: string,
+    // currently string to simplify. fetch
+    // also allows URLLike and Request:
+    // url: RequestInfo,
+    options: RequestInit = {}
 ): Promise<T> => {
-    // in case of incorrectly typed DynamicAction
-    endpointPath = endpointPath.replaceAll("//", "/");
+    url = url.replaceAll('//', '/')
 
-    const frontasticSessionCookie = cookiesApi.get("frontastic-session");
+    const sessionCookie = cookiesApi.get('frontastic-session')
 
-    requestInit.headers = {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        "X-Frontastic-Access-Token": "APIKEY",
-        "Frontastic-Locale": locale,
-        ...(requestInit.headers || {}),
-        ...(frontasticSessionCookie
-            ? { "Frontastic-Session": frontasticSessionCookie }
-            : {}),
-    };
-
-    if (payload) {
-        requestInit.body = JSON.stringify(payload);
+    // rewrite headers, adding our required default headers
+    options.headers = {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        'X-Commercetools-Access-Token': 'APIKEY',
+        ...(options.headers || {}),
+        ...(sessionCookie ? { 'Frontastic-Session': sessionCookie } : {}),
     }
 
-    const apiHubResponse: Response = await fetch(endpointPath, requestInit);
+    const response: Response = await fetch(url, options)
 
-    if (apiHubResponse.ok && apiHubResponse.headers.has("Frontastic-Session")) {
-        let rememberMe = window.localStorage.getItem(REMEMBER_ME);
-        let expiryDate;
+    if (response.ok && response.headers.has('Frontastic-Session')) {
+        let rememberMe = window.localStorage.getItem(REMEMBER_ME)
+        let expiryDate
 
         if (rememberMe) {
-            expiryDate = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30 * 3); // 3 months
+            expiryDate = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30 * 3) // 3 months
         }
 
-        cookiesApi.set(
-            "frontastic-session",
-            apiHubResponse.headers.get("Frontastic-Session")!,
-            { expires: expiryDate },
-        );
+        cookiesApi.set('frontastic-session', response.headers.get('Frontastic-Session')!, { expires: expiryDate })
     }
 
-    if (apiHubResponse.ok) {
-        return apiHubResponse.json();
+    if (response.ok) {
+        return response.json()
     }
 
-    let error: any | string;
+    let error: any | string
 
     try {
-        error = await apiHubResponse.clone().json();
+        error = await response.clone().json()
     } catch (e) {
-        error = await apiHubResponse.text();
+        error = await response.text()
     }
 
     if (error.error) {
-        throw new Error(error.errorCode);
+        throw new Error(error.errorCode)
     }
 
-    return error;
-};
+    return error
+}

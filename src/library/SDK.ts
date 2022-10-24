@@ -1,9 +1,9 @@
 import { fetcher } from "../helpers/fetcher";
+import EnhancedEmitter from "./EnhancedEmitter";
 import { Queue } from "./Queue";
-import SimpleEmitter from "./SimpleEmitter";
 import { Currency, StandardEvents } from "./types";
 
-export class SDK extends SimpleEmitter<StandardEvents> {
+export class SDK extends EnhancedEmitter<StandardEvents, {}> {
 	#hasBeenConfigured;
 
 	#endpoint!: string;
@@ -104,28 +104,28 @@ export class SDK extends SimpleEmitter<StandardEvents> {
 
 			return fetcher<T>(
 				`${this.#endpoint}/frontastic/action/${actionName}`,
-				this.APILocale,
 				{
 					method: "POST",
 					...allowOriginHeader,
+          body: JSON.stringify(payload)
 				},
-				payload,
 			);
 		});
 	}
 
 	async getPage<T>(path: string) {
-    const reqInit = {
+    const options = {
       headers: {
         'Frontastic-Path': path,
-        'Frontastic-Locale': this.APILocale
+        'Frontastic-Locale': this.APILocale,
+        'Commerctools-Path': path,
+        'Commerctools-Locale': this.APILocale
       }
     }
 
     return fetcher<T>(
       `${this.#endpoint}/page`,
-      this.APILocale,
-      reqInit
+      options
     )
 	}
 }
