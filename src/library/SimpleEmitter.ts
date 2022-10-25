@@ -11,7 +11,7 @@ export default class SimpleEmitter<Events> {
 	}
 
 	protected getEventHandlers<EventName extends keyof Events>(
-		eventName: EventName
+		eventName: EventName,
 	): Array<(event: Event<EventName, Events[EventName]>) => void> {
 		let eventHandlers = this.eventHandlers[eventName];
 
@@ -25,21 +25,21 @@ export default class SimpleEmitter<Events> {
 
 	public addHandler<EventName extends keyof Events>(
 		eventName: EventName,
-		handler: (event: Event<EventName, Events[EventName]>) => void
+		handler: (event: Event<EventName, Events[EventName]>) => void,
 	): void {
 		let eventHandlers = this.getEventHandlers(eventName);
 		eventHandlers.push(handler);
 	}
 
 	public removeHandlersForEvent<EventName extends keyof Events>(
-		eventName: EventName
+		eventName: EventName,
 	): void {
 		this.eventHandlers[eventName] = [];
 	}
 
 	public removeHandler<EventName extends keyof Events>(
 		eventName: EventName,
-		handler: (event: Event<EventName, Events[EventName]>) => void
+		handler: (event: Event<EventName, Events[EventName]>) => void,
 	) {
 		let eventHandlers = this.getEventHandlers(eventName);
 		eventHandlers.splice(eventHandlers.indexOf(handler), 1);
@@ -50,7 +50,7 @@ export default class SimpleEmitter<Events> {
 	}
 
 	public triggerHandlers<EventName extends keyof Events>(
-		event: Event<EventName, Events[EventName]>
+		event: Event<EventName, Events[EventName]>,
 	): void {
 		for (let handler of this.getEventHandlers(event.eventName)) {
 			handler(event);

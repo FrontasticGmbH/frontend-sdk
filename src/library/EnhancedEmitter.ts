@@ -28,7 +28,7 @@ export default class EnhancedEmitter<
 
 	public on<EventName extends keyof EventsAndHooks>(
 		eventName: EventName,
-		handler: (event: Event<EventName, EventsAndHooks[EventName]>) => void
+		handler: (event: Event<EventName, EventsAndHooks[EventName]>) => void,
 	): EnhancedEmitter<Events, Hooks, EventsAndHooks> {
 		this.eventHandle.addHandler(eventName, handler);
 
@@ -36,7 +36,7 @@ export default class EnhancedEmitter<
 	}
 
 	public off<EventName extends keyof EventsAndHooks>(
-		eventName: EventName
+		eventName: EventName,
 	): EnhancedEmitter<Events, Hooks, EventsAndHooks> {
 		this.eventHandle.removeHandlersForEvent(eventName);
 
@@ -45,7 +45,7 @@ export default class EnhancedEmitter<
 
 	public offHandler<EventName extends keyof EventsAndHooks>(
 		eventName: EventName,
-		handler: (event: Event<EventName, EventsAndHooks[EventName]>) => void
+		handler: (event: Event<EventName, EventsAndHooks[EventName]>) => void,
 	): EnhancedEmitter<Events, Hooks, EventsAndHooks> {
 		this.eventHandle.removeHandler(eventName, handler);
 		return this;
@@ -59,7 +59,7 @@ export default class EnhancedEmitter<
 
 	public before<HookName extends keyof Hooks>(
 		eventName: HookName,
-		handler: (event: Event<HookName, Hooks[HookName]>) => void
+		handler: (event: Event<HookName, Hooks[HookName]>) => void,
 	): EnhancedEmitter<Events, Hooks, EventsAndHooks> {
 		this.beforeHandle.addHandler(eventName, handler);
 
@@ -67,7 +67,7 @@ export default class EnhancedEmitter<
 	}
 
 	public offBefore<HookName extends keyof Hooks>(
-		eventName: HookName
+		eventName: HookName,
 	): EnhancedEmitter<Events, Hooks, EventsAndHooks> {
 		this.beforeHandle.removeHandlersForEvent(eventName);
 
@@ -76,7 +76,7 @@ export default class EnhancedEmitter<
 
 	public after<HookName extends keyof Hooks>(
 		eventName: HookName,
-		handler: (event: Event<HookName, Hooks[HookName]>) => void
+		handler: (event: Event<HookName, Hooks[HookName]>) => void,
 	): EnhancedEmitter<Events, Hooks, EventsAndHooks> {
 		this.afterHandle.addHandler(eventName, handler);
 
@@ -84,7 +84,7 @@ export default class EnhancedEmitter<
 	}
 
 	public offAfter<HookName extends keyof Hooks>(
-		eventName: HookName
+		eventName: HookName,
 	): EnhancedEmitter<Events, Hooks, EventsAndHooks> {
 		this.afterHandle.removeHandlersForEvent(eventName);
 
@@ -96,7 +96,7 @@ export default class EnhancedEmitter<
 			eventName: HookName;
 			data: EventsAndHooks[HookName];
 		},
-		defaultHandler: (event: Event<HookName, Hooks[HookName]>) => void
+		defaultHandler: (event: Event<HookName, Hooks[HookName]>) => void,
 	): EnhancedEmitter<Events, Hooks, EventsAndHooks> {
 		let event = new Event(eventOptions);
 
