@@ -63,7 +63,7 @@ export class SDK extends EnhancedEmitter<StandardEvents, {}> {
 		if (!this.#hasBeenConfigured) {
 			throw new Error(
 				"The SDK has not been configured.\n" +
-					"Please call .configure before you call any other methods.",
+				"Please call .configure before you call any other methods.",
 			);
 		}
 	}
@@ -73,7 +73,6 @@ export class SDK extends EnhancedEmitter<StandardEvents, {}> {
 		currency: Currency;
 		endpoint: string;
 		useCurrencyInLocale?: boolean;
-		allowOrigin?: string;
 	}) {
 		this.endpoint = config.endpoint;
 		this.locale = new Intl.Locale(config.locale);
@@ -86,30 +85,33 @@ export class SDK extends EnhancedEmitter<StandardEvents, {}> {
 	async callAction<T>(actionName: string, payload: unknown): Promise<T> {
 		this.#throwIfNotConfigured();
 		return await this.#actionQueue.add<T>(() => {
-
 			return fetcher<T>(
 				`${this.#endpoint}/frontastic/action/${actionName}`,
 				{
 					method: "POST",
-                    body: JSON.stringify(payload)
+					body: JSON.stringify(payload),
+					headers: {
+						'Frontastic-Locale': this.APILocale,
+						'Commercetools-Locale': this.APILocale
+					}
 				},
 			);
 		});
 	}
 
 	async getPage<T>(path: string) {
-    const options = {
-      headers: {
-        'Frontastic-Path': path,
-        'Frontastic-Locale': this.APILocale,
-        'Commercetools-Path': path,
-        'Commercetools-Locale': this.APILocale
-      }
-    }
+		const options = {
+			headers: {
+				'Frontastic-Path': path,
+				'Frontastic-Locale': this.APILocale,
+				'Commercetools-Path': path,
+				'Commercetools-Locale': this.APILocale
+			}
+		}
 
-    return fetcher<T>(
-      `${this.#endpoint}/page`,
-      options
-    )
+		return fetcher<T>(
+			`${this.#endpoint}/page`,
+			options
+		)
 	}
 }
