@@ -92,7 +92,7 @@ export class SDK extends EnhancedEmitter<StandardEvents, {}> {
 					body: JSON.stringify(payload),
 					headers: {
 						'Frontastic-Locale': this.APILocale,
-						'Commercetools-Locale': this.APILocale
+						//'Commercetools-Locale': this.APILocale // TODO: unsupported, needs backend work
 					}
 				},
 			);
@@ -104,8 +104,8 @@ export class SDK extends EnhancedEmitter<StandardEvents, {}> {
 			headers: {
 				'Frontastic-Path': path,
 				'Frontastic-Locale': this.APILocale,
-				'Commercetools-Path': path,
-				'Commercetools-Locale': this.APILocale
+				// 'Commercetools-Path': path, // TODO: unsupported, needs backend work
+				// 'Commercetools-Locale': this.APILocale // TODO: unsupported, needs backend work
 			}
 		}
 

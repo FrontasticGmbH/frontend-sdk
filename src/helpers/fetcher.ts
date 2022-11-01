@@ -18,7 +18,8 @@ export const fetcher = async <T>(
 	options.headers = {
 		"Content-Type": "application/json",
 		Accept: "application/json",
-		"X-Commercetools-Access-Token": "APIKEY",
+		// "X-Commercetools-Access-Token": "APIKEY", // TODO: unsupported, needs backend work
+		"X-Frontastic-Access-Token": "APIKEY",
 		...(options.headers || {}),
 		...(sessionCookie ? { "Frontastic-Session": sessionCookie } : {}),
 	};
