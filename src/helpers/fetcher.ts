@@ -26,7 +26,11 @@ export const fetcher = async <T>(
 
 	const response: Response = await fetch(url, options);
 
-	if (response.ok && response.headers.has("Frontastic-Session")) {
+	if (
+		typeof window !== "undefined" &&
+		response.ok &&
+		response.headers.has("Frontastic-Session")
+	) {
 		let rememberMe = window.localStorage.getItem(REMEMBER_ME);
 		let expiryDate;
 
