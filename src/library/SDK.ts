@@ -86,7 +86,7 @@ export class SDK extends EnhancedEmitter<StandardEvents, {}> {
 		actionName: string,
 		payload: unknown,
 		query?: {
-			[key: string | number]: string
+			[key: string]: string | number
 		}
 	): Promise<T> {
 		this.#throwIfNotConfigured();
