@@ -82,11 +82,23 @@ export class SDK extends EnhancedEmitter<StandardEvents, {}> {
 		this.#hasBeenConfigured = true;
 	}
 
-	async callAction<T>(actionName: string, payload: unknown): Promise<T> {
+	async callAction<T>(
+		actionName: string,
+		payload: unknown,
+		query?: {
+			[key: string | number]: string
+		}
+	): Promise<T> {
 		this.#throwIfNotConfigured();
+		let params = "";
+		if (query) {
+			params = Object.keys(query)
+				.reduce((prev, key) => prev + `${key}=${query[key]}&`, "?")
+				.slice(0, params.length - 1);
+		}
 		return await this.#actionQueue.add<T>(() => {
 			return fetcher<T>(
-				`${this.#endpoint}/frontastic/action/${actionName}`,
+				`${this.#endpoint}/frontastic/action/${actionName}${params}`,
 				{
 					method: "POST",
 					body: JSON.stringify(payload),
