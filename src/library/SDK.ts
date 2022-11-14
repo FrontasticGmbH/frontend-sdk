@@ -94,14 +94,19 @@ export class SDK extends EnhancedEmitter<StandardEvents, {}> {
 		actionName: string,
 		payload: unknown,
 		query?: {
-			[key: string]: string | number
+			[key: string]: string | number | boolean
 		}
 	): Promise<T> {
 		this.#throwIfNotConfigured();
 		let params = "";
 		if (query) {
 			params = Object.keys(query)
-				.reduce((prev, key) => prev + `${key}=${query[key]}&`, "?")
+				.reduce((prev, key) => {
+					if (query[key]) {
+						return prev + `${key}=${query[key]}&`
+					};
+					return prev;
+				}, "?")
 				.slice(0, params.length - 1);
 		}
 		return await this.#actionQueue.add<T>(() => {
