@@ -104,10 +104,9 @@ export class SDK extends EnhancedEmitter<StandardEvents, {}> {
 				.reduce((prev, key) => prev + `${key}=${query[key]}&`, "?")
 				.slice(0, params.length - 1);
 		}
-		const url = this.#normaliseUrl(`${this.#endpoint}/frontastic/action/${actionName}${params}`);
 		return await this.#actionQueue.add<T>(() => {
 			return fetcher<T>(
-				url,
+				this.#normaliseUrl(`${this.#endpoint}/frontastic/action/${actionName}${params}`),
 				{
 					method: "POST",
 					body: JSON.stringify(payload),
@@ -131,7 +130,7 @@ export class SDK extends EnhancedEmitter<StandardEvents, {}> {
 		}
 
 		return fetcher<T>(
-			`${this.#endpoint}/page`,
+			this.#normaliseUrl(`${this.#endpoint}/page`),
 			options
 		)
 	}
