@@ -68,6 +68,14 @@ export class SDK extends EnhancedEmitter<StandardEvents, {}> {
 		}
 	}
 
+	#normaliseUrl = (url: string): string => url.split("//")
+		.reduce((previous, current) => {
+			if (current === "http:" || current === "https:") {
+				return current += "/";
+			}
+			return `${previous}/${current}`;
+		}, "");
+
 	configure(config: {
 		locale: Intl.BCP47LanguageTag;
 		currency: Currency;
@@ -86,19 +94,24 @@ export class SDK extends EnhancedEmitter<StandardEvents, {}> {
 		actionName: string,
 		payload: unknown,
 		query?: {
-			[key: string]: string | number
+			[key: string]: string | number | boolean
 		}
 	): Promise<T> {
 		this.#throwIfNotConfigured();
 		let params = "";
 		if (query) {
 			params = Object.keys(query)
-				.reduce((prev, key) => prev + `${key}=${query[key]}&`, "?")
+				.reduce((prev, key) => {
+					if (query[key]) {
+						return prev + `${key}=${query[key]}&`
+					};
+					return prev;
+				}, "?")
 				.slice(0, params.length - 1);
 		}
 		return await this.#actionQueue.add<T>(() => {
 			return fetcher<T>(
-				`${this.#endpoint}/frontastic/action/${actionName}${params}`,
+				this.#normaliseUrl(`${this.#endpoint}/frontastic/action/${actionName}${params}`),
 				{
 					method: "POST",
 					body: JSON.stringify(payload),
@@ -122,7 +135,7 @@ export class SDK extends EnhancedEmitter<StandardEvents, {}> {
 		}
 
 		return fetcher<T>(
-			`${this.#endpoint}/page`,
+			this.#normaliseUrl(`${this.#endpoint}/page`),
 			options
 		)
 	}
