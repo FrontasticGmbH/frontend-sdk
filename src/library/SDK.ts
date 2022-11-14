@@ -68,6 +68,14 @@ export class SDK extends EnhancedEmitter<StandardEvents, {}> {
 		}
 	}
 
+	#normaliseUrl = (url: string): string => url.split("//")
+		.reduce((previous, current) => {
+			if (current === "http:" || current === "https:") {
+				return current += "/";
+			}
+			return `${previous}/${current}`;
+		}, "");
+
 	configure(config: {
 		locale: Intl.BCP47LanguageTag;
 		currency: Currency;
@@ -96,9 +104,10 @@ export class SDK extends EnhancedEmitter<StandardEvents, {}> {
 				.reduce((prev, key) => prev + `${key}=${query[key]}&`, "?")
 				.slice(0, params.length - 1);
 		}
+		const url = this.#normaliseUrl(`${this.#endpoint}/frontastic/action/${actionName}${params}`);
 		return await this.#actionQueue.add<T>(() => {
 			return fetcher<T>(
-				`${this.#endpoint}/frontastic/action/${actionName}${params}`,
+				url,
 				{
 					method: "POST",
 					body: JSON.stringify(payload),
