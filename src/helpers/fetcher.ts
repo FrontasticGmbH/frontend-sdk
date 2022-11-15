@@ -10,8 +10,6 @@ export const fetcher = async <T>(
 	// url: RequestInfo,
 	options: RequestInit = {},
 ): Promise<T> => {
-	url = url.replaceAll("//", "/");
-
 	const sessionCookie = cookiesApi.get("frontastic-session");
 
 	// rewrite headers, adding our required default headers
