@@ -2,15 +2,20 @@
 const REMEMBER_ME = "__rememberMe";
 
 export const rememberMeCookie = {
-    get: function () {
+    get: function (): boolean {
         if (typeof window !== "undefined") {
-            return window.localStorage.getItem(REMEMBER_ME);
+            if (window.localStorage.getItem(REMEMBER_ME)) {
+                return true;
+            }
         }
-        return null;
+        return false;
     },
-    set: function () {
+    set: function (rememberMe: boolean) {
         if (typeof window !== "undefined") {
-            window.localStorage.setItem(REMEMBER_ME, "1");
+            if (rememberMe) {
+                window.localStorage.setItem(REMEMBER_ME, "1");
+            }
+            this.remove();
         }
     },
     remove: function () {
