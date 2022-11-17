@@ -1,5 +1,5 @@
 import Cookies from "js-cookie";
-import { REMEMBER_ME } from "../library/types";
+import { rememberMeCookie } from "../helpers/cookieManagement";
 
 const cookiesApi = Cookies.withAttributes({ path: "/" });
 
@@ -29,7 +29,7 @@ export const fetcher = async <T>(
 		response.ok &&
 		response.headers.has("Frontastic-Session")
 	) {
-		let rememberMe = window.localStorage.getItem(REMEMBER_ME);
+		let rememberMe = rememberMeCookie.get()
 		let expiryDate;
 
 		if (rememberMe) {
