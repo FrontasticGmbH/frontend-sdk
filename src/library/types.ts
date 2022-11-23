@@ -205,6 +205,10 @@ export type StandardEvents = {
 	getWishlist: { wishlist: unknown };
 };
 
+export type DynamicEvent = {
+	[key: string]: unknown
+}
+
 export type StandardAction =
 	| "account/getAccount"
 	| "account/register"
