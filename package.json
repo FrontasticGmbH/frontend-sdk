@@ -1,7 +1,7 @@
 {
     "name": "@commercetools-frontend/sdk",
-    "version": "0.0.1",
-    "license": "MIT",
+    "version": "1.0.0-alpha.0",
+    "license": "UNLICENSED",
     "main": "lib/index.js",
     "scripts": {
         "build": "esbuild --outdir=lib --bundle --format=cjs src/index.ts && yarn build:types",
