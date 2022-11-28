@@ -1,5 +1,5 @@
 {
-    "name": "@commercetools-frontend/sdk",
+    "name": "@commercetools/frontend-sdk",
     "version": "1.0.0-alpha.0",
     "license": "UNLICENSED",
     "main": "lib/index.js",
