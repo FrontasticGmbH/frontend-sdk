@@ -23,7 +23,7 @@ export default class SimpleEmitter<Events> {
 		return eventHandlers;
 	}
 
-	public addHandler<EventName extends keyof Events>(
+	public on<EventName extends keyof Events>(
 		eventName: EventName,
 		handler: (event: Event<EventName, Events[EventName]>) => void,
 	): void {
@@ -31,13 +31,13 @@ export default class SimpleEmitter<Events> {
 		eventHandlers.push(handler);
 	}
 
-	public removeHandlersForEvent<EventName extends keyof Events>(
+	public offForEvent<EventName extends keyof Events>(
 		eventName: EventName,
 	): void {
 		this.eventHandlers[eventName] = [];
 	}
 
-	public removeHandler<EventName extends keyof Events>(
+	public off<EventName extends keyof Events>(
 		eventName: EventName,
 		handler: (event: Event<EventName, Events[EventName]>) => void,
 	) {
@@ -45,11 +45,11 @@ export default class SimpleEmitter<Events> {
 		eventHandlers.splice(eventHandlers.indexOf(handler), 1);
 	}
 
-	public removeAllHandlers() {
+	public clearAllHandlers() {
 		this.eventHandlers = {};
 	}
 
-	public triggerHandlers<EventName extends keyof Events>(
+	public trigger<EventName extends keyof Events>(
 		event: Event<EventName, Events[EventName]>,
 	): void {
 		for (let handler of this.getEventHandlers(event.eventName)) {
