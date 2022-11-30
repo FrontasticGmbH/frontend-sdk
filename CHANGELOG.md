@@ -1,4 +1,12 @@
 
+## Version 1.0.5-alpha.0 (2022-11-30)
+
+
+
+
+* Updated package version
+* Updated method name 
+
 ## Version 1.0.4-alpha.0 (2022-11-30)
 
 
