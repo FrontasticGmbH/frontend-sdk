@@ -96,7 +96,7 @@ export class SDK extends SimpleEmitter<StandardEvents & DynamicEvent> {
 		query?: {
 			[key: string]: string | number | boolean
 		}
-	): Promise<T> {
+	): Promise<T | Error> {
 		this.#throwIfNotConfigured();
 		let params = "";
 		if (query) {
@@ -109,19 +109,27 @@ export class SDK extends SimpleEmitter<StandardEvents & DynamicEvent> {
 				}, "?")
 				.slice(0, params.length - 1);
 		}
-		return await this.#actionQueue.add<T>(() => {
-			return fetcher<T>(
-				this.#normaliseUrl(`${this.#endpoint}/frontastic/action/${actionName}${params}`),
-				{
-					method: "POST",
-					body: JSON.stringify(payload),
-					headers: {
-						'Frontastic-Locale': this.APILocale,
-						//'Commercetools-Locale': this.APILocale // TODO: unsupported, needs backend work
-					}
-				},
-			);
-		});
+		try {
+			const result = await this.#actionQueue.add<T>(() => {
+				return fetcher<T>(
+					this.#normaliseUrl(`${this.#endpoint}/frontastic/action/${actionName}${params}`),
+					{
+						method: "POST",
+						body: JSON.stringify(payload),
+						headers: {
+							'Frontastic-Locale': this.APILocale,
+							//'Commercetools-Locale': this.APILocale // TODO: unsupported, needs backend work
+						}
+					},
+				);
+			});
+			return result;
+		} catch (error) {
+			if (typeof error === "string") {
+				return new Error(error);
+			}
+			return error as Error;
+		}
 	}
 
 	async getPage<T>(path: string) {
@@ -134,9 +142,17 @@ export class SDK extends SimpleEmitter<StandardEvents & DynamicEvent> {
 			}
 		}
 
-		return fetcher<T>(
-			this.#normaliseUrl(`${this.#endpoint}/page`),
-			options
-		)
+		try {
+			const result = fetcher<T>(
+				this.#normaliseUrl(`${this.#endpoint}/page`),
+				options
+			);
+			return result
+		} catch (error) {
+			if (typeof error === "string") {
+				return new Error(error);
+			}
+			return error as Error;
+		}
 	}
 }
