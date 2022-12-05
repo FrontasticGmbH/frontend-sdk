@@ -31,7 +31,7 @@ export default class SimpleEmitter<Events> {
 		eventHandlers.push(handler);
 	}
 
-	public offForEvent<EventName extends keyof Events>(
+	private offForEvent<EventName extends keyof Events>(
 		eventName: EventName,
 	): void {
 		this.eventHandlers[eventName] = [];
@@ -45,7 +45,7 @@ export default class SimpleEmitter<Events> {
 		eventHandlers.splice(eventHandlers.indexOf(handler), 1);
 	}
 
-	public clearAllHandlers() {
+	private clearAllHandlers() {
 		this.eventHandlers = {};
 	}
 
