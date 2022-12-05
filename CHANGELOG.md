@@ -1,4 +1,12 @@
 
+## Version 1.1.0-alpha.0 (2022-12-05)
+
+
+
+
+
+* Added error handling
+
 ## Version 1.0.7-alpha.0 (2022-12-05)
 
 
