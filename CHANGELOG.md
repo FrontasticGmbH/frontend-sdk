@@ -1,22 +1,13 @@
 
 ## Version 2.0.0-alpha.0 (2022-12-06)
 
-
-
 * Fixed major NPM deployment issue
 
 ## Version 1.1.3-alpha.0 (2022-12-06)
 
-
-
-* Updated script
-
-## Version 1.1.2-alpha.0 (2022-12-06)
+* Updated prepublishOnly script
 
 ## Version 1.1.1-alpha.0 (2022-12-06)
-
-
-
 
 * Updated name of emitter class and export type
 
