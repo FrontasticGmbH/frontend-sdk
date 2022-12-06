@@ -1,4 +1,11 @@
 
+## Version 1.1.1-alpha.0 (2022-12-06)
+
+
+
+
+* Updated name of emitter class and export type
+
 ## Version 1.1.0-alpha.0 (2022-12-05)
 
 * Added error handling
