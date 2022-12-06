@@ -1,6 +1,6 @@
 import Event from "./Event";
 
-export default class SimpleEmitter<Events> {
+export class EventManager<Events> {
 	protected eventHandlers: Record<
 		string,
 		Array<(event: Event<keyof Events, Events[keyof Events]>) => void>

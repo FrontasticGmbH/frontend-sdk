@@ -1,9 +1,9 @@
 import { fetcher } from "../helpers/fetcher";
 import { Queue } from "./Queue";
-import SimpleEmitter from "./SimpleEmitter";
+import { EventManager } from "./EventManager";
 import { Currency, DynamicEvent, StandardEvents } from "./types";
 
-export class SDK extends SimpleEmitter<StandardEvents & DynamicEvent> {
+export class SDK extends EventManager<StandardEvents & DynamicEvent> {
 	#hasBeenConfigured;
 
 	#endpoint!: string;
