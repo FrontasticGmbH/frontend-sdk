@@ -1,13 +1,13 @@
 {
     "name": "@commercetools/frontend-sdk",
-    "version": "1.1.3-alpha.0",
+    "version": "2.0.0-alpha.0",
     "license": "UNLICENSED",
     "main": "lib/index.js",
     "scripts": {
         "dev": "concurrently -n ESBUILD,TSC -c magenta,cyan \"esbuild --outdir=lib --bundle --format=cjs --watch src/index.ts\" \"yarn dev:types --watch\"",
         "build": "esbuild --outdir=lib --bundle --format=cjs src/index.ts && yarn build:types",
         "release": "esbuild --outdir=lib --bundle --format=cjs --minify src/index.ts && yarn release:types",
-        "prepublishOnly": "rm -rf lib && yarn release",
+        "prepublishOnly": "yarn install && rm -rf lib && yarn release",
         "dev:types": "tsc --emitDeclarationOnly --outDir lib",
         "build:types": "tsc --emitDeclarationOnly --outDir lib",
         "release:types": "tsc --emitDeclarationOnly --outDir lib"
