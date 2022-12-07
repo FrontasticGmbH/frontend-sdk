@@ -1,5 +1,6 @@
 import Cookies from "js-cookie";
 import { rememberMeCookie } from "../helpers/cookieManagement";
+import { FetchError } from "../library/FetchError";
 
 const cookiesApi = Cookies.withAttributes({ path: "/" });
 
@@ -9,7 +10,7 @@ export const fetcher = async <T>(
 	// also allows URLLike and Request:
 	// url: RequestInfo,
 	options: RequestInit = {},
-): Promise<T> => {
+): Promise<T | FetchError> => {
 	const sessionCookie = cookiesApi.get("frontastic-session");
 
 	// rewrite headers, adding our required default headers
@@ -47,7 +48,7 @@ export const fetcher = async <T>(
 		return response.json();
 	}
 
-	let error: any | string;
+	let error: Error | string;
 
 	try {
 		error = await response.clone().json();
@@ -55,9 +56,5 @@ export const fetcher = async <T>(
 		error = await response.text();
 	}
 
-	if (error.error) {
-		throw new Error(error.errorCode);
-	}
-
-	return error;
+	return new FetchError(error);
 };

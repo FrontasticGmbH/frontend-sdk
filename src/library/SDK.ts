@@ -2,6 +2,7 @@ import { fetcher } from "../helpers/fetcher";
 import { Queue } from "./Queue";
 import { EventManager } from "./EventManager";
 import { Currency, DynamicEvent, StandardEvents } from "./types";
+import { FetchError } from "./FetchError";
 
 export class SDK extends EventManager<StandardEvents & DynamicEvent> {
 	#hasBeenConfigured;
@@ -90,13 +91,17 @@ export class SDK extends EventManager<StandardEvents & DynamicEvent> {
 		this.#hasBeenConfigured = true;
 	}
 
+	#isVoid(option: void | {}): option is void {
+		return !!!option;
+	}
+
 	async callAction<T>(
 		actionName: string,
-		payload: unknown,
+		payload: unknown = {},
 		query?: {
 			[key: string]: string | number | boolean
 		}
-	): Promise<T | Error> {
+	): Promise<T & { isError?: boolean } | FetchError> {
 		this.#throwIfNotConfigured();
 		let params = "";
 		if (query) {
@@ -109,30 +114,30 @@ export class SDK extends EventManager<StandardEvents & DynamicEvent> {
 				}, "?")
 				.slice(0, params.length - 1);
 		}
-		try {
-			const result = await this.#actionQueue.add<T>(() => {
-				return fetcher<T>(
-					this.#normaliseUrl(`${this.#endpoint}/frontastic/action/${actionName}${params}`),
-					{
-						method: "POST",
-						body: JSON.stringify(payload),
-						headers: {
-							'Frontastic-Locale': this.APILocale,
-							//'Commercetools-Locale': this.APILocale // TODO: unsupported, needs backend work
-						}
-					},
-				);
-			});
-			return result;
-		} catch (error) {
-			if (typeof error === "string") {
-				return new Error(error);
-			}
-			return error as Error;
+		const result = await this.#actionQueue.add<T | FetchError>(() => {
+			return fetcher<T>(
+				this.#normaliseUrl(`${this.#endpoint}/frontastic/action/${actionName}${params}`),
+				{
+					method: "POST",
+					body: JSON.stringify(payload),
+					headers: {
+						'Frontastic-Locale': this.APILocale,
+						//'Commercetools-Locale': this.APILocale // TODO: unsupported, needs backend work
+					}
+				},
+			);
+		}).catch(error => {
+			return new FetchError(error as string | Error);
+		});
+
+		if (this.#isVoid(result as any)) {
+			return {} as T & { isError?: boolean };
 		}
+		return result as T & { isError?: boolean } | FetchError;
 	}
 
-	async getPage<T>(path: string) {
+
+	async getPage<T>(path: string): Promise<T & { isError?: boolean } | FetchError> {
 		const options = {
 			headers: {
 				'Frontastic-Path': path,
@@ -142,17 +147,16 @@ export class SDK extends EventManager<StandardEvents & DynamicEvent> {
 			}
 		}
 
-		try {
-			const result = fetcher<T>(
-				this.#normaliseUrl(`${this.#endpoint}/page`),
-				options
-			);
-			return result
-		} catch (error) {
-			if (typeof error === "string") {
-				return new Error(error);
-			}
-			return error as Error;
+		const result = await fetcher<T>(
+			this.#normaliseUrl(`${this.#endpoint}/page`),
+			options
+		).catch(error => {
+			return new FetchError(error as string | Error);
+		});
+
+		if (this.#isVoid(result as any)) {
+			return {} as T & { isError?: boolean };
 		}
+		return result as T & { isError?: boolean } | FetchError;
 	}
 }
