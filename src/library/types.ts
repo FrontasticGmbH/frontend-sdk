@@ -166,20 +166,20 @@ export type StandardEvents = {
 	productAddedToCart: { product: unknown; quantity: number };
 	productRemovedFromCart: { product: unknown; quantity: number };
 	productUpdatedInCart: { product: unknown; event?: unknown };
-	getCart: { cart: unknown };
+	cartFetched: { cart: unknown };
 	discountCodeRedeemed: { discountCode: string; cart?: unknown };
 	discountCodeRemoved: { discountCode: string; cart?: unknown };
-	getShippingMethods: { shippingMethods: unknown[] };
+	shippingMethodsFetched: { shippingMethods: unknown[] };
 	shippingMethodUpdated: { shippingMethod: unknown; event?: unknown };
 	cartCheckedOut: { cartId?: string };
-	getOrder: { order: unknown };
+	orderFetched: { order: unknown };
 	orderPlaced: { order: unknown };
-	getOrderHistory: { orders: unknown[] };
+	orderHistoryFetched: { orders: unknown[] };
 	orderHistoryUpdated: { order: unknown; event?: unknown };
 	userLoggedIn: { userInfo: unknown };
 	userLoggedOut: {};
 	userRegistered: { email: string };
-	getAccountInfo: { userInfo: unknown };
+	accountInfoFetched: { userInfo: unknown };
 	accountConfirmed?: { email: string };
 	accountConfirmationEmailRequested?: { email: string };
 	passwordChanged: {};
@@ -202,7 +202,7 @@ export type StandardEvents = {
 	};
 	productAddedToWishlist: { product: unknown };
 	productRemovedFromWishlist: { productId: string };
-	getWishlist: { wishlist: unknown };
+	wishlistFetched: { wishlist: unknown };
 };
 
 export type DynamicEvent = {
