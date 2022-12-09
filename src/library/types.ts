@@ -1,3 +1,4 @@
+import { ActionError } from "./ActionError";
 import { FetchError } from "./FetchError";
 
 export type Currency =
@@ -168,6 +169,8 @@ export type StandardEvents = {
 	productAddedToCart: { product: unknown; quantity: number }; //done
 	productRemovedFromCart: { product: unknown; quantity: number }; //done
 	productUpdatedInCart: { product: unknown; newQuantity: number }; //done
+	//TODO: products shown
+	// TODO: banner shown
 	cartFetched: { cart: unknown }; //done
 	cartUpdated: {
 		account?: {
@@ -212,7 +215,7 @@ export type StandardEvents = {
 	productAddedToWishlist: { product: unknown };
 	productRemovedFromWishlist: { productId: string };
 	wishlistFetched: { wishlist: unknown };
-	actionError: { error: FetchError }
+	actionError: { error: ActionError }
 };
 
 export type DynamicEvent = {
