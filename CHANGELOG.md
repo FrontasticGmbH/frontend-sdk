@@ -1,13 +1,9 @@
 
 ## Version 2.3.0-alpha.0 (2022-12-09)
 
-
-
 * Changed return type of callAction to better describe and handle errors
 
 ## Version 2.2.0-alpha.0 (2022-12-09)
-
-
 
 * Added actionError StandardEvent type
 
