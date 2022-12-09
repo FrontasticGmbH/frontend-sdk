@@ -1,4 +1,11 @@
 
+## Version 2.4.0-alpha.0 (2022-12-09)
+
+
+* Merge branch 'master' of https://github.com/FrontasticGmbH/frontastic
+
+* Updated data type of action error event
+
 ## Version 2.3.0-alpha.0 (2022-12-09)
 
 * Changed return type of callAction to better describe and handle errors
