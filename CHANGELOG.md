@@ -1,4 +1,12 @@
 
+## Version 2.4.1-alpha.0 (2022-12-09)
+
+
+
+
+
+* Exposed ActionError class
+
 ## Version 2.4.0-alpha.0 (2022-12-09)
 
 
