@@ -1,4 +1,10 @@
 
+## Version 2.2.0-alpha.0 (2022-12-09)
+
+
+
+* Added actionError StandardEvent type
+
 ## Version 2.1.0-alpha.0 (2022-12-09)
 
 * Updated callAction return type so cannot be void
