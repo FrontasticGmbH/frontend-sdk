@@ -1,12 +1,9 @@
 
 ## Version 2.1.0-alpha.0 (2022-12-09)
 
-
-
- Updated return type so cannot be void
+* Updated callAction return type so cannot be void
 * Event names modified
 * Updated fomatting of CHANGELOG.md
-
 * Fixed dependency issues
 
 ## Version 2.0.0-alpha.0 (2022-12-06)
