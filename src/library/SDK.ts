@@ -1,7 +1,7 @@
 import { fetcher } from "../helpers/fetcher";
 import { Queue } from "./Queue";
 import { EventManager } from "./EventManager";
-import { Currency, DynamicEvent, StandardEvents } from "./types";
+import { ActionResponse, Currency, DynamicEvent, StandardEvents } from "./types";
 import { FetchError } from "./FetchError";
 
 export class SDK extends EventManager<StandardEvents & DynamicEvent> {
@@ -101,7 +101,7 @@ export class SDK extends EventManager<StandardEvents & DynamicEvent> {
 		query?: {
 			[key: string]: string | number | boolean
 		}
-	): Promise<T & { isError?: boolean } | FetchError> {
+	): Promise<ActionResponse<T>> {
 		this.#throwIfNotConfigured();
 		let params = "";
 		if (query) {
@@ -127,13 +127,16 @@ export class SDK extends EventManager<StandardEvents & DynamicEvent> {
 				},
 			);
 		}).catch(error => {
-			return new FetchError(error as string | Error);
+			return {
+				isError: true,
+				error: new FetchError(<string | Error>error)
+			};
 		});
 
-		if (this.#isVoid(result as any)) {
-			return {} as T & { isError?: boolean };
+		if (result instanceof FetchError) {
+			return { isError: true, error: result }
 		}
-		return result as T & { isError?: boolean } | FetchError;
+		return { isError: false, data: <T>result }
 	}
 
 

@@ -261,3 +261,11 @@ export type StandardAction =
 	| "project/getProjectSettings"
 	| "payment/createSession"
 	| "payment/notifications";
+
+export type ActionResponse<T> = {
+	data: T;
+	isError: false;
+} | {
+	isError: true;
+	error: FetchError
+}
