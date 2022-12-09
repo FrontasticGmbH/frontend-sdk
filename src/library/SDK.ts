@@ -134,9 +134,9 @@ export class SDK extends EventManager<StandardEvents & DynamicEvent> {
 		});
 
 		if (result instanceof FetchError) {
-			return { isError: true, error: result }
+			return { isError: true, error: result };
 		}
-		return { isError: false, data: <T>result }
+		return { isError: false, data: <T>result };
 	}
 
 
