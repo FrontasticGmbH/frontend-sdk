@@ -1,3 +1,5 @@
+import { FetchError } from "./FetchError";
+
 export type Currency =
 	| "AED"
 	| "AFN"
@@ -210,6 +212,7 @@ export type StandardEvents = {
 	productAddedToWishlist: { product: unknown };
 	productRemovedFromWishlist: { productId: string };
 	wishlistFetched: { wishlist: unknown };
+	actionError: { error: FetchError }
 };
 
 export type DynamicEvent = {
