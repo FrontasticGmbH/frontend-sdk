@@ -219,7 +219,7 @@ export type StandardEvents = {
 };
 
 export type DynamicEvent = {
-	[key: string]: unknown
+	[key: string]: { [key: string]: unknown }
 }
 
 export type StandardAction =
