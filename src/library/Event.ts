@@ -1,7 +1,7 @@
-export default class Event<
+export class Event<
 	EventName extends string = string,
 	EventData extends any = void
-> {
+	> {
 	public eventName: EventName;
 	public data: EventData;
 	public isDefaultPrevented: boolean;

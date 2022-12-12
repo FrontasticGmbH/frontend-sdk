@@ -1,8 +1,11 @@
 import { fetcher } from "../helpers/fetcher";
 import { Queue } from "./Queue";
+import { Event } from "./Event";
 import { EventManager } from "./EventManager";
-import { ActionResponse, Currency, DynamicEvent, StandardEvents } from "./types";
+import { SDKResponse, Currency, DynamicEvent, StandardEvents } from "./types";
 import { FetchError } from "./FetchError";
+import { ActionError } from "./ActionError";
+import { PageError } from "./PageError";
 
 export class SDK extends EventManager<StandardEvents & DynamicEvent> {
 	#hasBeenConfigured;
@@ -91,8 +94,15 @@ export class SDK extends EventManager<StandardEvents & DynamicEvent> {
 		this.#hasBeenConfigured = true;
 	}
 
-	#isVoid(option: void | {}): option is void {
-		return !!!option;
+	#triggerError(error: ActionError | PageError) {
+		this.trigger<"errorCaught">(
+			new Event({
+				eventName: "errorCaught",
+				data: {
+					error: error
+				}
+			})
+		);
 	}
 
 	async callAction<T>(
@@ -101,7 +111,7 @@ export class SDK extends EventManager<StandardEvents & DynamicEvent> {
 		query?: {
 			[key: string]: string | number | boolean
 		}
-	): Promise<ActionResponse<T>> {
+	): Promise<SDKResponse<T>> {
 		this.#throwIfNotConfigured();
 		let params = "";
 		if (query) {
@@ -127,6 +137,7 @@ export class SDK extends EventManager<StandardEvents & DynamicEvent> {
 				},
 			);
 		}).catch(error => {
+			this.#triggerError(new ActionError(actionName, new FetchError(error)));
 			return {
 				isError: true,
 				error: new FetchError(<string | Error>error)
@@ -134,13 +145,14 @@ export class SDK extends EventManager<StandardEvents & DynamicEvent> {
 		});
 
 		if (result instanceof FetchError) {
+			this.#triggerError(new ActionError(actionName, result));
 			return { isError: true, error: result };
 		}
 		return { isError: false, data: <T>result };
 	}
 
 
-	async getPage<T>(path: string): Promise<T & { isError?: boolean } | FetchError> {
+	async getPage<T>(path: string): Promise<SDKResponse<T>> {
 		const options = {
 			headers: {
 				'Frontastic-Path': path,
@@ -154,12 +166,14 @@ export class SDK extends EventManager<StandardEvents & DynamicEvent> {
 			this.#normaliseUrl(`${this.#endpoint}/page`),
 			options
 		).catch(error => {
+			this.#triggerError(new PageError(path, new FetchError(error as string | Error)))
 			return new FetchError(error as string | Error);
 		});
 
-		if (this.#isVoid(result as any)) {
-			return {} as T & { isError?: boolean };
+		if (result instanceof FetchError) {
+			this.#triggerError(new PageError(path, result));
+			return { isError: true, error: result };
 		}
-		return result as T & { isError?: boolean } | FetchError;
+		return { isError: false, data: <T>result };
 	}
 }

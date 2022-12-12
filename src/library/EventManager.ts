@@ -1,4 +1,4 @@
-import Event from "./Event";
+import { Event } from "./Event";
 
 export class EventManager<Events> {
 	protected eventHandlers: Record<

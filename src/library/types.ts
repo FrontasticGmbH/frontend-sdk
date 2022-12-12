@@ -1,5 +1,6 @@
 import { ActionError } from "./ActionError";
 import { FetchError } from "./FetchError";
+import { PageError } from "./PageError";
 
 export type Currency =
 	| "AED"
@@ -215,7 +216,7 @@ export type StandardEvents = {
 	productAddedToWishlist: { product: unknown };
 	productRemovedFromWishlist: { productId: string };
 	wishlistFetched: { wishlist: unknown };
-	actionError: { error: ActionError }
+	errorCaught: { error: ActionError | PageError }
 };
 
 export type DynamicEvent = {
@@ -265,7 +266,7 @@ export type StandardAction =
 	| "payment/createSession"
 	| "payment/notifications";
 
-export type ActionResponse<T> = {
+export type SDKResponse<T> = {
 	data: T;
 	isError: false;
 } | {

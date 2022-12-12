@@ -1,10 +1,10 @@
 import { rememberMeCookie } from "./helpers/cookieManagement";
 import { Extension } from "./library/Extension";
 import { SDK } from "./library/SDK";
-import Event from "./library/Event";
+import { Event } from "./library/Event";
 import { FetchError } from "./library/FetchError";
-import { ActionResponse } from "./library/types";
 import { ActionError } from "./library/ActionError";
+import { PageError } from "./library/PageError";
 
 const sdk = new SDK();
 
@@ -15,6 +15,6 @@ export {
     Event,
     FetchError,
     ActionError,
-    ActionResponse,
+    PageError,
     rememberMeCookie
 };
