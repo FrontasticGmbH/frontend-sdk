@@ -170,8 +170,6 @@ export type StandardEvents = {
 	productAddedToCart: { product: unknown; quantity: number }; //done
 	productRemovedFromCart: { product: unknown; quantity: number }; //done
 	productUpdatedInCart: { product: unknown; newQuantity: number }; //done
-	//TODO: products shown
-	// TODO: banner shown
 	cartFetched: { cart: unknown }; //done
 	cartUpdated: {
 		account?: {
