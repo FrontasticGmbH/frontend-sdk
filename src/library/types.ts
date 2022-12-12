@@ -167,10 +167,10 @@ export type Currency =
 	| "ZWD";
 
 export type StandardEvents = {
-	productAddedToCart: { product: unknown; quantity: number }; //done
-	productRemovedFromCart: { product: unknown; quantity: number }; //done
-	productUpdatedInCart: { product: unknown; newQuantity: number }; //done
-	cartFetched: { cart: unknown }; //done
+	productAddedToCart: { product: unknown; quantity: number };
+	productRemovedFromCart: { product: unknown; quantity: number };
+	productUpdatedInCart: { product: unknown; newQuantity: number };
+	cartFetched: { cart: unknown };
 	cartUpdated: {
 		account?: {
 			email: string;
@@ -179,14 +179,12 @@ export type StandardEvents = {
 		billing?: unknown;
 	};
 	shippingMethodsFetched: { shippingMethods: unknown[] };
-	shippingMethodUpdated: { shippingMethod: unknown; event?: unknown };
+	availableShippingMethodsFetched: { shippingMethods: unknown[] };
+	shippingMethodUpdated: { shippingMethod: unknown; };
 	discountCodeRedeemed: { discountCode: string; cart?: unknown };
 	discountCodeRemoved: { discountCode: string; cart?: unknown };
-	cartCheckedOut: { cartId?: string };
-	orderFetched: { order: unknown };
-	orderPlaced: { order: unknown };
+	cartCheckedOut: {};
 	orderHistoryFetched: { orders: unknown[] };
-	orderHistoryUpdated: { order: unknown; event?: unknown };
 	userLoggedIn: { userInfo: unknown };
 	userLoggedOut: {};
 	userRegistered: { email: string };
