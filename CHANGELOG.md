@@ -1,4 +1,11 @@
 
+## Version 3.2.0-alpha.0 (2022-12-13)
+
+
+
+
+Updated and extended StandardEvents type
+
 ## Version 3.1.0-alpha.0 (2022-12-13)
 
 
