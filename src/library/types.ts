@@ -185,15 +185,16 @@ export type StandardEvents = {
 	discountCodeRemoved: { discountCode: string; cart?: unknown };
 	cartCheckedOut: {};
 	orderHistoryFetched: { orders: unknown[] };
-	userLoggedIn: { userInfo: unknown };
+	accountFetched: { account: unknown };
+	userLoggedIn: { account: unknown };
 	userLoggedOut: {};
 	userRegistered: { email: string };
-	accountInfoFetched: { userInfo: unknown };
+	accountInfoFetched: { account: unknown };
 	accountConfirmed?: { email: string };
 	accountConfirmationEmailRequested?: { email: string };
 	passwordChanged: {};
 	passwordResetRequested: {};
-	accountUpdated: { userInfo: unknown; event?: unknown };
+	accountUpdated: { account: unknown; event?: unknown };
 	accountAddressAdded: { address: unknown };
 	accountAddressUpdated: { address: unknown; event?: unknown };
 	accountAddressRemoved: { addressId: string };
@@ -216,7 +217,9 @@ export type StandardEvents = {
 };
 
 export type DynamicEvent = {
-	[key: string]: { [key: string]: unknown }
+	[key: string]: {
+		[key: string]: unknown
+	}
 }
 
 export type StandardAction =
