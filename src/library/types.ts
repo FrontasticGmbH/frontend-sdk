@@ -167,9 +167,14 @@ export type Currency =
 	| "ZWD";
 
 export type StandardEvents = {
-	productAddedToCart: { product: unknown; quantity: number };
-	productRemovedFromCart: { product: unknown; quantity: number };
-	productUpdatedInCart: { product: unknown; newQuantity: number };
+	productFetched: { product: unknown; }
+	productsQueried: { query: unknown; result: unknown; };
+	productCategoriesQueried: { query: unknown; result: unknown; }
+	searchableProductAttributesFetched: { filterFields: unknown[]; }
+	projectSettingsFetched: { projectSettings: unknown; }
+	productAddedToCart: { product: unknown; quantity: number; };
+	productRemovedFromCart: { product: unknown; quantity: number; };
+	productUpdatedInCart: { product: unknown; newQuantity: number; };
 	cartFetched: { cart: unknown };
 	cartUpdated: {
 		account?: {
@@ -184,36 +189,27 @@ export type StandardEvents = {
 	discountCodeRedeemed: { discountCode: string; cart?: unknown };
 	discountCodeRemoved: { discountCode: string; cart?: unknown };
 	cartCheckedOut: {};
-	orderHistoryFetched: { orders: unknown[] };
-	accountFetched: { account: unknown };
-	userLoggedIn: { account: unknown };
+	orderHistoryFetched: { orders: unknown[]; };
+	accountFetched: { account: unknown; };
+	userLoggedIn: { account: unknown; };
 	userLoggedOut: {};
-	userRegistered: { email: string };
-	accountInfoFetched: { account: unknown };
-	accountConfirmed?: { email: string };
-	accountConfirmationEmailRequested?: { email: string };
+	userRegistered: { account: unknown; };
+	accountConfirmed?: { account: unknown; };
+	accountConfirmationEmailRequested?: { email: string; };
 	passwordChanged: {};
 	passwordResetRequested: {};
-	accountUpdated: { account: unknown; event?: unknown };
+	passwordReset: {};
+	accountUpdated: { account: unknown; };
 	accountAddressAdded: { address: unknown };
-	accountAddressUpdated: { address: unknown; event?: unknown };
+	accountAddressUpdated: { address: unknown; };
 	accountAddressRemoved: { addressId: string };
-	billingAddressAdded: { address: unknown; isDefault: boolean };
-	billingAddressUpdated: {
-		address: unknown;
-		event?: unknown;
-		isDefault: boolean;
-	};
-	shippingAddressAdded: { address: unknown; isDefault: boolean };
-	shippingAddressUpdated: {
-		address: unknown;
-		event?: unknown;
-		isDefault: boolean;
-	};
-	productAddedToWishlist: { product: unknown };
-	productRemovedFromWishlist: { productId: string };
-	wishlistFetched: { wishlist: unknown };
-	errorCaught: { error: ActionError | PageError }
+	defaultBillingAddressSet: { address: unknown; };
+	defaultShippingAddressSet: { address: unknown; };
+	wishlistFetched: { wishlist: unknown; };
+	lineItemAddedToWishlist: { lineItem: unknown; };
+	lineItemRemovedFromWishlist: { lineItemId: string; };
+	wishlistLineItemUpdated: { lineItem: unknown; };
+	errorCaught: { error: ActionError | PageError; };
 };
 
 export type DynamicEvent = {
