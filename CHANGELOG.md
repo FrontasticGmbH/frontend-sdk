@@ -1,4 +1,12 @@
 
+## Version 3.1.0-alpha.0 (2022-12-13)
+
+
+
+
+
+* Updated StandardEvents
+
 ## Version 3.0.0-alpha.0 (2022-12-12)
 
 * Added more descriptive error types, error event triggering handled by SDK
