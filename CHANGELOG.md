@@ -1,22 +1,14 @@
 
 ## Version 3.0.0-alpha.0 (2022-12-12)
 
-
 * Added more descriptive error types, error event triggering handled by SDK
 * Updated type of dynamic event return to object with unknown keys and data
 
 ## Version 2.4.1-alpha.0 (2022-12-09)
 
-
-
-
-
 * Exposed ActionError class
 
 ## Version 2.4.0-alpha.0 (2022-12-09)
-
-
-* Merge branch 'master' of https://github.com/FrontasticGmbH/frontastic
 
 * Updated data type of action error event
 
