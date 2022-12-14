@@ -1,8 +1,6 @@
 
 ## Version 4.0.0-alpha.0 (2022-12-14)
 
-
-
 * Removed SDK class from public export
 * Changed format of params of callAction and getPage mathods
 
