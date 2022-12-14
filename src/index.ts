@@ -10,6 +10,7 @@ const sdk = new SDK();
 
 export {
     sdk,
+    SDK,
     Extension,
     Event,
     FetchError,
