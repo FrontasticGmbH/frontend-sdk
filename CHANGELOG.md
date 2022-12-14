@@ -1,4 +1,11 @@
 
+## Version 4.0.1-alpha.0 (2022-12-14)
+
+
+
+
+* fix: export SDK class type for extension
+
 ## Version 4.0.0-alpha.0 (2022-12-14)
 
 * Removed SDK class from public export
