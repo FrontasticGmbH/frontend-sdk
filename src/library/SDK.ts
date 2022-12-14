@@ -61,6 +61,11 @@ export class SDK extends EventManager<StandardEvents & DynamicEvent> {
 
 		this.#hasBeenConfigured = false;
 		this.#actionQueue = new Queue();
+
+
+		this.on("cartFetched", (event) => {
+			console.log("Cart fetched")
+		});
 	}
 
 	#throwIfNotConfigured() {
@@ -105,20 +110,21 @@ export class SDK extends EventManager<StandardEvents & DynamicEvent> {
 		);
 	}
 
-	async callAction<T>(
+	async callAction<T>(options: {
 		actionName: string,
-		payload: unknown = {},
+		payload?: unknown,
 		query?: {
 			[key: string]: string | number | boolean
 		}
-	): Promise<SDKResponse<T>> {
+	}): Promise<SDKResponse<T>> {
 		this.#throwIfNotConfigured();
+		options.payload = options.payload ?? {};
 		let params = "";
-		if (query) {
-			params = Object.keys(query)
+		if (options.query) {
+			params = Object.keys(options.query)
 				.reduce((prev, key) => {
-					if (query[key]) {
-						return prev + `${key}=${query[key]}&`
+					if (options.query![key]) {
+						return prev + `${key}=${options.query![key]}&`
 					};
 					return prev;
 				}, "?")
@@ -126,10 +132,10 @@ export class SDK extends EventManager<StandardEvents & DynamicEvent> {
 		}
 		const result = await this.#actionQueue.add<T | FetchError>(() => {
 			return fetcher<T>(
-				this.#normaliseUrl(`${this.#endpoint}/frontastic/action/${actionName}${params}`),
+				this.#normaliseUrl(`${this.#endpoint}/frontastic/action/${options.actionName}${params}`),
 				{
 					method: "POST",
-					body: JSON.stringify(payload),
+					body: JSON.stringify(options.payload),
 					headers: {
 						'Frontastic-Locale': this.APILocale,
 						//'Commercetools-Locale': this.APILocale // TODO: unsupported, needs backend work
@@ -137,7 +143,7 @@ export class SDK extends EventManager<StandardEvents & DynamicEvent> {
 				},
 			);
 		}).catch(error => {
-			this.#triggerError(new ActionError(actionName, new FetchError(error)));
+			this.#triggerError(new ActionError(options.actionName, new FetchError(error)));
 			return {
 				isError: true,
 				error: new FetchError(<string | Error>error)
@@ -145,33 +151,35 @@ export class SDK extends EventManager<StandardEvents & DynamicEvent> {
 		});
 
 		if (result instanceof FetchError) {
-			this.#triggerError(new ActionError(actionName, result));
+			this.#triggerError(new ActionError(options.actionName, result));
 			return { isError: true, error: result };
 		}
 		return { isError: false, data: <T>result };
 	}
 
 
-	async getPage<T>(path: string): Promise<SDKResponse<T>> {
-		const options = {
+	async getPage<T>(options: {
+		path: string
+	}): Promise<SDKResponse<T>> {
+		const fetcherOptions = {
 			headers: {
-				'Frontastic-Path': path,
+				'Frontastic-Path': options.path,
 				'Frontastic-Locale': this.APILocale,
-				// 'Commercetools-Path': path, // TODO: unsupported, needs backend work
+				// 'Commercetools-Path': options.path, // TODO: unsupported, needs backend work
 				// 'Commercetools-Locale': this.APILocale // TODO: unsupported, needs backend work
 			}
 		}
 
 		const result = await fetcher<T>(
 			this.#normaliseUrl(`${this.#endpoint}/page`),
-			options
+			fetcherOptions
 		).catch(error => {
-			this.#triggerError(new PageError(path, new FetchError(error as string | Error)))
+			this.#triggerError(new PageError(options.path, new FetchError(error as string | Error)))
 			return new FetchError(error as string | Error);
 		});
 
 		if (result instanceof FetchError) {
-			this.#triggerError(new PageError(path, result));
+			this.#triggerError(new PageError(options.path, result));
 			return { isError: true, error: result };
 		}
 		return { isError: false, data: <T>result };
