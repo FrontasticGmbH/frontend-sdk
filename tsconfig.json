@@ -5,7 +5,8 @@
         "keyofStringsOnly": true,
         "allowSyntheticDefaultImports": true,
         "types": [],
-        "declaration": true
+        "declaration": true,
+        "outDir": "lib"
     },
     "exclude": [
         "node_modules",
