@@ -1,4 +1,10 @@
 
+## Version 4.0.2-alpha.0 (2022-12-20)
+
+
+
+* Replaced webpack build with esbuild and tsc
+
 ## Version 4.0.1-alpha.0 (2022-12-14)
 
 * fix: export SDK class type for extension
