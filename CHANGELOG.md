@@ -1,4 +1,10 @@
 
+## Version 4.0.3-alpha.0 (2023-01-04)
+
+
+
+* Added .npmignore to optimise package size
+
 ## Version 4.0.2-alpha.0 (2022-12-20)
 
 
