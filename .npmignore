@@ -1,4 +1,4 @@
 src/
 .prettierrc
-.build.xml
+build.xml
 tsconfig.json
