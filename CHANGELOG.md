@@ -1,4 +1,11 @@
 
+## Version 4.0.4-alpha.0 (2023-01-04)
+
+
+
+
+* Fixed typo in .npmignore
+
 ## Version 4.0.3-alpha.0 (2023-01-04)
 
 
