@@ -168,18 +168,18 @@ export class SDK extends EventManager<StandardEvents & DynamicEvent> {
 			}
 		}
 
-		const result = await fetcher<T>(
-			this.#normaliseUrl(`${this.#endpoint}/page`),
-			fetcherOptions
-		).catch(error => {
-			this.#triggerError(new PageError(options.path, new FetchError(error as string | Error)))
-			return new FetchError(error as string | Error);
-		});
+		let result: FetchError | Awaited<T>;
+		try {
+			result = await fetcher<T>(
+				this.#normaliseUrl(`${this.#endpoint}/page`),
+				fetcherOptions
+			);
+		} catch (error) {
+			const pageError = new FetchError(<string | Error>error);
+			this.#triggerError(new PageError(options.path, pageError));
+			return { isError: true, error: pageError };
+		};
 
-		if (result instanceof FetchError) {
-			this.#triggerError(new PageError(options.path, result));
-			return { isError: true, error: result };
-		}
 		return { isError: false, data: <T>result };
 	}
 }
