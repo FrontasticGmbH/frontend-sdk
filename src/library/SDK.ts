@@ -130,30 +130,28 @@ export class SDK extends EventManager<StandardEvents & DynamicEvent> {
 				}, "?")
 				.slice(0, params.length - 1);
 		}
-		const result = await this.#actionQueue.add<T | FetchError>(() => {
-			return fetcher<T>(
-				this.#normaliseUrl(`${this.#endpoint}/frontastic/action/${options.actionName}${params}`),
-				{
-					method: "POST",
-					body: JSON.stringify(options.payload),
-					headers: {
-						'Frontastic-Locale': this.APILocale,
-						//'Commercetools-Locale': this.APILocale // TODO: unsupported, needs backend work
-					}
-				},
-			);
-		}).catch(error => {
-			this.#triggerError(new ActionError(options.actionName, new FetchError(error)));
-			return {
-				isError: true,
-				error: new FetchError(<string | Error>error)
-			};
-		});
 
-		if (result instanceof FetchError) {
-			this.#triggerError(new ActionError(options.actionName, result));
-			return { isError: true, error: result };
-		}
+		let result: FetchError | Awaited<T>;
+		try {
+			result = await this.#actionQueue.add<T | FetchError>(() => {
+				return fetcher<T>(
+					this.#normaliseUrl(`${this.#endpoint}/frontastic/action/${options.actionName}${params}`),
+					{
+						method: "POST",
+						body: JSON.stringify(options.payload),
+						headers: {
+							'Frontastic-Locale': this.APILocale,
+							//'Commercetools-Locale': this.APILocale // TODO: unsupported, needs backend work
+						}
+					},
+				);
+			});
+		} catch (error) {
+			const actionError = new FetchError(<string | Error>error);
+			this.#triggerError(new ActionError(options.actionName, actionError));
+			return { isError: true, error: actionError };
+		};
+
 		return { isError: false, data: <T>result };
 	}
 
