@@ -218,50 +218,6 @@ export type StandardEvents = {
 	errorCaught: { error: ActionError | PageError; };
 };
 
-export type StandardAction =
-	| "product/getProduct"
-	| "product/query"
-	| "product/queryCategories"
-	| "product/searchableAttributes"
-	| "project/getProjectSettings"
-	| "account/getAccount"
-	| "account/register"
-	| "account/requestConfirmationEmail"
-	| "account/confirm"
-	| "account/login"
-	| "account/logout"
-	| "account/password"
-	| "account/requestReset"
-	| "account/reset"
-	| "account/update"
-	| "account/addAddress"
-	| "account/updateAddress"
-	| "account/removeAddress"
-	| "account/setDefaultBillingAddress"
-	| "account/setDefaultShippingAddress"
-	| "cart/getCart"
-	| "cart/addToCart"
-	| "cart/updateLineItem"
-	| "cart/removeLineItem"
-	| "cart/updateCart"
-	| "cart/checkout"
-	| "cart/getOrders"
-	| "cart/getShippingMethods"
-	| "cart/getAvailableShippingMethods"
-	| "cart/setShippingMethod"
-	| "cart/addPaymentByInvoice"
-	| "cart/updatePayment"
-	| "cart/redeemDiscount"
-	| "cart/removeDiscount"
-	| "wishlist/getWishlist"
-	| "wishlist/createWishlist"
-	| "wishlist/addToWishlist"
-	| "wishlist/removeLineItem"
-	| "wishlist/updateLineItemCount"
-	| "project/getProjectSettings"
-	| "payment/createSession"
-	| "payment/notifications";
-
 export type SDKResponse<T> = {
 	data: T;
 	isError: false;
