@@ -2,12 +2,12 @@ import { fetcher } from "../helpers/fetcher";
 import { Queue } from "./Queue";
 import { Event } from "./Event";
 import { EventManager } from "./EventManager";
-import { SDKResponse, Currency, DynamicEvent, StandardEvents } from "./types";
+import { SDKResponse, Currency, StandardEvents, Events } from "./types";
 import { FetchError } from "./FetchError";
 import { ActionError } from "./ActionError";
 import { PageError } from "./PageError";
 
-export class SDK extends EventManager<StandardEvents & DynamicEvent> {
+export class SDK<ExtensionEvents extends Events> extends EventManager<StandardEvents & ExtensionEvents> {
 	#hasBeenConfigured;
 
 	#endpoint!: string;
@@ -61,11 +61,6 @@ export class SDK extends EventManager<StandardEvents & DynamicEvent> {
 
 		this.#hasBeenConfigured = false;
 		this.#actionQueue = new Queue();
-
-
-		this.on("cartFetched", (event) => {
-			console.log("Cart fetched")
-		});
 	}
 
 	#throwIfNotConfigured() {
@@ -100,23 +95,22 @@ export class SDK extends EventManager<StandardEvents & DynamicEvent> {
 	}
 
 	#triggerError(error: ActionError | PageError) {
-		this.trigger<"errorCaught">(
-			new Event({
-				eventName: "errorCaught",
-				data: {
-					error: error
-				}
-			})
-		);
+		// @ts-ignore
+		this.trigger(new Event({
+			eventName: "errorCaught",
+			data: {
+				error: error
+			}
+		}));
 	}
 
-	async callAction<T>(options: {
+	async callAction<ReturnData>(options: {
 		actionName: string,
 		payload?: unknown,
 		query?: {
 			[key: string]: string | number | boolean
 		}
-	}): Promise<SDKResponse<T>> {
+	}): Promise<SDKResponse<ReturnData>> {
 		this.#throwIfNotConfigured();
 		options.payload = options.payload ?? {};
 		let params = "";
@@ -131,10 +125,10 @@ export class SDK extends EventManager<StandardEvents & DynamicEvent> {
 				.slice(0, params.length - 1);
 		}
 
-		let result: FetchError | Awaited<T>;
+		let result: FetchError | Awaited<ReturnData>;
 		try {
-			result = await this.#actionQueue.add<T | FetchError>(() => {
-				return fetcher<T>(
+			result = await this.#actionQueue.add<ReturnData | FetchError>(() => {
+				return fetcher<ReturnData>(
 					this.#normaliseUrl(`${this.#endpoint}/frontastic/action/${options.actionName}${params}`),
 					{
 						method: "POST",
@@ -152,13 +146,13 @@ export class SDK extends EventManager<StandardEvents & DynamicEvent> {
 			return { isError: true, error: actionError };
 		};
 
-		return { isError: false, data: <T>result };
+		return { isError: false, data: <ReturnData>result };
 	}
 
 
-	async getPage<T>(options: {
+	async getPage<ReturnData>(options: {
 		path: string
-	}): Promise<SDKResponse<T>> {
+	}): Promise<SDKResponse<ReturnData>> {
 		const fetcherOptions = {
 			headers: {
 				'Frontastic-Path': options.path,
@@ -168,9 +162,9 @@ export class SDK extends EventManager<StandardEvents & DynamicEvent> {
 			}
 		}
 
-		let result: FetchError | Awaited<T>;
+		let result: FetchError | Awaited<ReturnData>;
 		try {
-			result = await fetcher<T>(
+			result = await fetcher<ReturnData>(
 				this.#normaliseUrl(`${this.#endpoint}/page`),
 				fetcherOptions
 			);
@@ -180,6 +174,6 @@ export class SDK extends EventManager<StandardEvents & DynamicEvent> {
 			return { isError: true, error: pageError };
 		};
 
-		return { isError: false, data: <T>result };
+		return { isError: false, data: <ReturnData>result };
 	}
 }
