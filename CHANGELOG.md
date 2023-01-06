@@ -1,4 +1,16 @@
 
+## Version 5.0.0-alpha.0 (2023-01-06)
+
+
+
+* Added better names for generic types, added generic type to SDK for custom extension events
+* Added generic type for CustomEvents to abstract extension class
+* Exported SDKResponse type from package index
+* Removed redundant StandardAction type
+* Added type for Events
+* Refactor getPage
+* (fix): bug in SDK error handling, wrapping error in {isError: false, data: error}
+
 ## Version 4.0.4-alpha.0 (2023-01-04)
 
 
