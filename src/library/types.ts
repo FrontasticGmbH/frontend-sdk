@@ -166,6 +166,12 @@ export type Currency =
 	| "ZMW"
 	| "ZWD";
 
+export type Events = {
+	[key: string]: {
+		[key: string]: unknown
+	}
+}
+
 export type StandardEvents = {
 	productFetched: { product: unknown; }
 	productsQueried: { query: unknown; result: unknown; };
@@ -212,13 +218,12 @@ export type StandardEvents = {
 	errorCaught: { error: ActionError | PageError; };
 };
 
-export type DynamicEvent = {
-	[key: string]: {
-		[key: string]: unknown
-	}
-}
-
 export type StandardAction =
+	| "product/getProduct"
+	| "product/query"
+	| "product/queryCategories"
+	| "product/searchableAttributes"
+	| "project/getProjectSettings"
 	| "account/getAccount"
 	| "account/register"
 	| "account/requestConfirmationEmail"
@@ -248,10 +253,6 @@ export type StandardAction =
 	| "cart/updatePayment"
 	| "cart/redeemDiscount"
 	| "cart/removeDiscount"
-	| "product/getProduct"
-	| "product/query"
-	| "product/queryCategories"
-	| "product/searchableAttributes"
 	| "wishlist/getWishlist"
 	| "wishlist/createWishlist"
 	| "wishlist/addToWishlist"
