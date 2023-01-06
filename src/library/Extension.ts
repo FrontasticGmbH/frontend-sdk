@@ -1,9 +1,10 @@
 import { SDK } from "./SDK";
+import { Events } from "./types";
 
-abstract class Extension {
-	protected sdk: SDK;
+abstract class Extension<CustomEvents extends Events> {
+	protected sdk: SDK<CustomEvents>;
 
-	constructor(sdk: SDK) {
+	constructor(sdk: SDK<CustomEvents>) {
 		this.sdk = sdk;
 	}
 
