@@ -1,32 +1,21 @@
 
 ## Version 5.0.0-alpha.0 (2023-01-06)
 
-
-
-* Added better names for generic types, added generic type to SDK for custom extension events
 * Added generic type for CustomEvents to abstract extension class
 * Exported SDKResponse type from package index
 * Removed redundant StandardAction type
-* Added type for Events
-* Refactor getPage
-* (fix): bug in SDK error handling, wrapping error in {isError: false, data: error}
+* Added generic type for Events
+* (fix): bug in SDK error handling, wrapping error in { isError: false, data: error }
 
 ## Version 4.0.4-alpha.0 (2023-01-04)
-
-
-
 
 * Fixed typo in .npmignore
 
 ## Version 4.0.3-alpha.0 (2023-01-04)
 
-
-
 * Added .npmignore to optimise package size
 
 ## Version 4.0.2-alpha.0 (2022-12-20)
-
-
 
 * Replaced webpack build with esbuild and tsc
 
