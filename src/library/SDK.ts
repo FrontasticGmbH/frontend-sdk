@@ -149,31 +149,31 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<StandardEv
 		return { isError: false, data: <ReturnData>result };
 	}
 
+    // // To be released with the rest of the page and tree api, return type also to be fixed.
+	// async getPage<ReturnData>(options: {
+	// 	path: string
+	// }): Promise<SDKResponse<ReturnData>> {
+	// 	const fetcherOptions = {
+	// 		headers: {
+	// 			'Frontastic-Path': options.path,
+	// 			'Frontastic-Locale': this.APILocale,
+	// 			// 'Commercetools-Path': options.path, // TODO: unsupported, needs backend work
+	// 			// 'Commercetools-Locale': this.APILocale // TODO: unsupported, needs backend work
+	// 		}
+	// 	}
 
-	async getPage<ReturnData>(options: {
-		path: string
-	}): Promise<SDKResponse<ReturnData>> {
-		const fetcherOptions = {
-			headers: {
-				'Frontastic-Path': options.path,
-				'Frontastic-Locale': this.APILocale,
-				// 'Commercetools-Path': options.path, // TODO: unsupported, needs backend work
-				// 'Commercetools-Locale': this.APILocale // TODO: unsupported, needs backend work
-			}
-		}
+	// 	let result: FetchError | Awaited<ReturnData>;
+	// 	try {
+	// 		result = await fetcher<ReturnData>(
+	// 			this.#normaliseUrl(`${this.#endpoint}/page`),
+	// 			fetcherOptions
+	// 		);
+	// 	} catch (error) {
+	// 		const pageError = new FetchError(<string | Error>error);
+	// 		this.#triggerError(new PageError(options.path, pageError));
+	// 		return { isError: true, error: pageError };
+	// 	};
 
-		let result: FetchError | Awaited<ReturnData>;
-		try {
-			result = await fetcher<ReturnData>(
-				this.#normaliseUrl(`${this.#endpoint}/page`),
-				fetcherOptions
-			);
-		} catch (error) {
-			const pageError = new FetchError(<string | Error>error);
-			this.#triggerError(new PageError(options.path, pageError));
-			return { isError: true, error: pageError };
-		};
-
-		return { isError: false, data: <ReturnData>result };
-	}
+	// 	return { isError: false, data: <ReturnData>result };
+	// }
 }
