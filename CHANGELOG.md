@@ -1,4 +1,10 @@
 
+## Version 1.0.0 (2023-01-16)
+
+
+* Full release out of alpha/beta
+* Removed getPage for later release
+
 ## Version 5.0.0-alpha.0 (2023-01-06)
 
 * Added generic type for CustomEvents to abstract extension class
