@@ -1,4 +1,10 @@
 
+## Version 1.0.1 (2023-01-18)
+
+
+
+* fix up prettier config to better suit the project
+
 ## Version 1.0.0 (2023-01-16)
 
 
