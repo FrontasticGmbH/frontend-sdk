@@ -30,7 +30,7 @@ export const fetcher = async <T>(
 		response.ok &&
 		response.headers.has("Frontastic-Session")
 	) {
-		let rememberMe = rememberMeCookie.get()
+		let rememberMe = rememberMeCookie.get();
 		let expiryDate;
 
 		if (rememberMe) {

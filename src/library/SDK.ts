@@ -7,7 +7,9 @@ import { FetchError } from "./FetchError";
 import { ActionError } from "./ActionError";
 import { PageError } from "./PageError";
 
-export class SDK<ExtensionEvents extends Events> extends EventManager<StandardEvents & ExtensionEvents> {
+export class SDK<ExtensionEvents extends Events> extends EventManager<
+	StandardEvents & ExtensionEvents
+> {
 	#hasBeenConfigured;
 
 	#endpoint!: string;
@@ -67,15 +69,15 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<StandardEv
 		if (!this.#hasBeenConfigured) {
 			throw new Error(
 				"The SDK has not been configured.\n" +
-				"Please call .configure before you call any other methods.",
+					"Please call .configure before you call any other methods.",
 			);
 		}
 	}
 
-	#normaliseUrl = (url: string): string => url.split("//")
-		.reduce((previous, current) => {
+	#normaliseUrl = (url: string): string =>
+		url.split("//").reduce((previous, current) => {
 			if (current === "http:" || current === "https:") {
-				return current += "/";
+				return (current += "/");
 			}
 			return `${previous}/${current}`;
 		}, "");
@@ -96,20 +98,22 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<StandardEv
 
 	#triggerError(error: ActionError | PageError) {
 		// @ts-ignore
-		this.trigger(new Event({
-			eventName: "errorCaught",
-			data: {
-				error: error
-			}
-		}));
+		this.trigger(
+			new Event({
+				eventName: "errorCaught",
+				data: {
+					error: error,
+				},
+			}),
+		);
 	}
 
 	async callAction<ReturnData>(options: {
-		actionName: string,
-		payload?: unknown,
+		actionName: string;
+		payload?: unknown;
 		query?: {
-			[key: string]: string | number | boolean
-		}
+			[key: string]: string | number | boolean;
+		};
 	}): Promise<SDKResponse<ReturnData>> {
 		this.#throwIfNotConfigured();
 		options.payload = options.payload ?? {};
@@ -118,8 +122,8 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<StandardEv
 			params = Object.keys(options.query)
 				.reduce((prev, key) => {
 					if (options.query![key]) {
-						return prev + `${key}=${options.query![key]}&`
-					};
+						return prev + `${key}=${options.query![key]}&`;
+					}
 					return prev;
 				}, "?")
 				.slice(0, params.length - 1);
@@ -127,29 +131,37 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<StandardEv
 
 		let result: FetchError | Awaited<ReturnData>;
 		try {
-			result = await this.#actionQueue.add<ReturnData | FetchError>(() => {
-				return fetcher<ReturnData>(
-					this.#normaliseUrl(`${this.#endpoint}/frontastic/action/${options.actionName}${params}`),
-					{
-						method: "POST",
-						body: JSON.stringify(options.payload),
-						headers: {
-							'Frontastic-Locale': this.APILocale,
-							//'Commercetools-Locale': this.APILocale // TODO: unsupported, needs backend work
-						}
-					},
-				);
-			});
+			result = await this.#actionQueue.add<ReturnData | FetchError>(
+				() => {
+					return fetcher<ReturnData>(
+						this.#normaliseUrl(
+							`${this.#endpoint}/frontastic/action/${
+								options.actionName
+							}${params}`,
+						),
+						{
+							method: "POST",
+							body: JSON.stringify(options.payload),
+							headers: {
+								"Frontastic-Locale": this.APILocale,
+								//'Commercetools-Locale': this.APILocale // TODO: unsupported, needs backend work
+							},
+						},
+					);
+				},
+			);
 		} catch (error) {
 			const actionError = new FetchError(<string | Error>error);
-			this.#triggerError(new ActionError(options.actionName, actionError));
+			this.#triggerError(
+				new ActionError(options.actionName, actionError),
+			);
 			return { isError: true, error: actionError };
-		};
+		}
 
 		return { isError: false, data: <ReturnData>result };
 	}
 
-    // // To be released with the rest of the page and tree api, return type also to be fixed.
+	// // To be released with the rest of the page and tree api, return type also to be fixed.
 	// async getPage<ReturnData>(options: {
 	// 	path: string
 	// }): Promise<SDKResponse<ReturnData>> {
