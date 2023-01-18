@@ -8,12 +8,12 @@ import { PageError } from "./library/PageError";
 import { SDKResponse } from "./library/types";
 
 export {
-    SDK,
-    Extension,
-    Event,
-    FetchError,
-    ActionError,
-    PageError,
-    SDKResponse,
-    rememberMeCookie,
+	SDK,
+	Extension,
+	Event,
+	FetchError,
+	ActionError,
+	PageError,
+	SDKResponse,
+	rememberMeCookie,
 };
