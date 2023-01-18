@@ -1,12 +1,12 @@
 {
-	"compilerOptions": {
-		"target": "ES2022",
-		"strict": true,
-		"keyofStringsOnly": true,
-		"allowSyntheticDefaultImports": true,
-		"types": [],
-		"declaration": true,
-		"outDir": "lib"
-	},
-	"exclude": ["node_modules", "lib"]
+    "compilerOptions": {
+        "target": "ES2022",
+        "strict": true,
+        "keyofStringsOnly": true,
+        "allowSyntheticDefaultImports": true,
+        "types": [],
+        "declaration": true,
+        "outDir": "lib"
+    },
+    "exclude": ["node_modules", "lib"]
 }
