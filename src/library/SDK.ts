@@ -97,8 +97,8 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	}
 
 	#triggerError(error: ActionError | PageError) {
-		// @ts-ignore
 		this.trigger(
+			// @ts-ignore
 			new Event({
 				eventName: "errorCaught",
 				data: {
