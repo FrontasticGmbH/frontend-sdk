@@ -1,6 +1,6 @@
 export class Event<
 	EventName extends string = string,
-	EventData extends any = void,
+	EventData extends any = void
 > {
 	public eventName: EventName;
 	public data: EventData;

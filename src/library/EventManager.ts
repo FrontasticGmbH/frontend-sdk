@@ -11,7 +11,7 @@ export class EventManager<Events> {
 	}
 
 	protected getEventHandlers<EventName extends keyof Events>(
-		eventName: EventName,
+		eventName: EventName
 	): Array<(event: Event<EventName, Events[EventName]>) => void> {
 		let eventHandlers = this.eventHandlers[eventName];
 
@@ -25,21 +25,21 @@ export class EventManager<Events> {
 
 	public on<EventName extends keyof Events>(
 		eventName: EventName,
-		handler: (event: Event<EventName, Events[EventName]>) => void,
+		handler: (event: Event<EventName, Events[EventName]>) => void
 	): void {
 		let eventHandlers = this.getEventHandlers(eventName);
 		eventHandlers.push(handler);
 	}
 
 	private offForEvent<EventName extends keyof Events>(
-		eventName: EventName,
+		eventName: EventName
 	): void {
 		this.eventHandlers[eventName] = [];
 	}
 
 	public off<EventName extends keyof Events>(
 		eventName: EventName,
-		handler: (event: Event<EventName, Events[EventName]>) => void,
+		handler: (event: Event<EventName, Events[EventName]>) => void
 	) {
 		let eventHandlers = this.getEventHandlers(eventName);
 		eventHandlers.splice(eventHandlers.indexOf(handler), 1);
@@ -50,7 +50,7 @@ export class EventManager<Events> {
 	}
 
 	public trigger<EventName extends keyof Events>(
-		event: Event<EventName, Events[EventName]>,
+		event: Event<EventName, Events[EventName]>
 	): void {
 		for (let handler of this.getEventHandlers(event.eventName)) {
 			handler(event);

@@ -69,7 +69,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		if (!this.#hasBeenConfigured) {
 			throw new Error(
 				"The SDK has not been configured.\n" +
-					"Please call .configure before you call any other methods.",
+					"Please call .configure before you call any other methods."
 			);
 		}
 	}
@@ -104,7 +104,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 				data: {
 					error: error,
 				},
-			}),
+			})
 		);
 	}
 
@@ -137,7 +137,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 						this.#normaliseUrl(
 							`${this.#endpoint}/frontastic/action/${
 								options.actionName
-							}${params}`,
+							}${params}`
 						),
 						{
 							method: "POST",
@@ -146,14 +146,14 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 								"Frontastic-Locale": this.APILocale,
 								//'Commercetools-Locale': this.APILocale // TODO: unsupported, needs backend work
 							},
-						},
+						}
 					);
-				},
+				}
 			);
 		} catch (error) {
 			const actionError = new FetchError(<string | Error>error);
 			this.#triggerError(
-				new ActionError(options.actionName, actionError),
+				new ActionError(options.actionName, actionError)
 			);
 			return { isError: true, error: actionError };
 		}

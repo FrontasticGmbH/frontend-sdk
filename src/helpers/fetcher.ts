@@ -9,7 +9,7 @@ export const fetcher = async <T>(
 	// currently string to simplify. fetch
 	// also allows URLLike and Request:
 	// url: RequestInfo,
-	options: RequestInit = {},
+	options: RequestInit = {}
 ): Promise<T | FetchError> => {
 	const sessionCookie = cookiesApi.get("frontastic-session");
 
@@ -40,7 +40,7 @@ export const fetcher = async <T>(
 		cookiesApi.set(
 			"frontastic-session",
 			response.headers.get("Frontastic-Session")!,
-			{ expires: expiryDate },
+			{ expires: expiryDate }
 		);
 	}
 
