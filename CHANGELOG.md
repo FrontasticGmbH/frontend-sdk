@@ -1,4 +1,11 @@
 
+## Version 1.1.1 (2023-02-22)
+
+
+
+
+* fix: updated @types/node
+
 ## Version 1.1.0 (2023-02-22)
 
 
