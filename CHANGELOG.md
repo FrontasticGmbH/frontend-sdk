@@ -1,35 +1,25 @@
 
 ## Version 1.1.2 (2023-02-22)
 
-
 * fix: issue with previous release process 
 
 ## Version 1.1.1 (2023-02-22)
-
-
-
 
 * fix: updated @types/node
 
 ## Version 1.1.0 (2023-02-22)
 
-
-
-* Added access token support for multitenancy projects
+* feat: Added access token support for multitenancy projects
 * Added node to types in tsconfig
 
 ## Version 1.0.4 (2023-01-19)
-
-
 
 * fix: error in error event trigger after reformatting
 
 ## Version 1.0.3 (2023-01-19)
 
-
 * Updated perttier config and ran fix
 * Removed trailingComma:all
-
 * Added editorconfig for github to render tabs properly
 
 ## Version 1.0.1 (2023-01-18)
