@@ -1,4 +1,11 @@
 
+## Version 1.1.0 (2023-02-22)
+
+
+
+* Added access token support for multitenancy projects
+* Added node to types in tsconfig
+
 ## Version 1.0.4 (2023-01-19)
 
 
