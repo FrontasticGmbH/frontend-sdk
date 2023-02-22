@@ -1,4 +1,9 @@
 
+## Version 1.1.3 (2023-02-22)
+
+
+* fix: added NEXT_PUBLIC prefix to BUILD_ID env variable
+
 ## Version 1.1.2 (2023-02-22)
 
 * fix: issue with previous release process 
