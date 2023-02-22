@@ -1,4 +1,9 @@
 
+## Version 1.1.2 (2023-02-22)
+
+
+* fix: issue with previous release process 
+
 ## Version 1.1.1 (2023-02-22)
 
 
