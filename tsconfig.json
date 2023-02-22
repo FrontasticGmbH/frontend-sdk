@@ -4,7 +4,7 @@
 		"strict": true,
 		"keyofStringsOnly": true,
 		"allowSyntheticDefaultImports": true,
-		"types": [],
+		"types": ["node"],
 		"declaration": true,
 		"outDir": "lib"
 	},
