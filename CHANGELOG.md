@@ -1,4 +1,10 @@
 
+## Version 1.1.4 (2023-02-24)
+
+
+
+* Changed BUILD_ID to EXT_BUILD_ID
+
 ## Version 1.1.3 (2023-02-22)
 
 * fix: added NEXT_PUBLIC prefix to BUILD_ID env variable
