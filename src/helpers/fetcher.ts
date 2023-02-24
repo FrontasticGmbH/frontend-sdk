@@ -18,7 +18,7 @@ export const fetcher = async <T>(
 		"Content-Type": "application/json",
 		Accept: "application/json",
 		// "X-Commercetools-Access-Token": "APIKEY", // TODO: unsupported, needs backend work
-		"X-Frontastic-Access-Token": process.env.BUILD_ID ?? process.env.NEXT_PUBLIC_BUILD_ID ?? "APIKEY",
+		"X-Frontastic-Access-Token": process.env.NEXT_PUBLIC_EXT_BUILD_ID ?? "APIKEY",
 		...(options.headers || {}),
 		...(sessionCookie ? { "Frontastic-Session": sessionCookie } : {}),
 	};
@@ -34,7 +34,7 @@ export const fetcher = async <T>(
 		let expiryDate;
 
 		if (rememberMe) {
-			expiryDate = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30 * 3); // 3 months
+			expiryDate = new Date(Date.now() + 7776000000); // 3 months
 		}
 
 		cookiesApi.set(
