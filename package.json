@@ -17,6 +17,7 @@
 		"js-cookie": "3.0.1"
 	},
 	"devDependencies": {
+		"@frontastic/extension-types": "^0.0.11",
 		"@types/core-js": "2.5.5",
 		"@types/js-cookie": "3.0.2",
 		"@types/node": "^18.14.0",

@@ -14,6 +14,11 @@
   resolved "https://registry.yarnpkg.com/@esbuild/linux-loong64/-/linux-loong64-0.15.8.tgz#d64575fc46bf4eb689352aa9f8a139271b6e1647"
   integrity sha512-pE5RQsOTSERCtfZdfCT25wzo7dfhOSlhAXcsZmuvRYhendOv7djcdvtINdnDp2DAjP17WXlBB4nBO6sHLczmsg==
 
+"@frontastic/extension-types@^0.0.11":
+  version "0.0.11"
+  resolved "https://registry.yarnpkg.com/@frontastic/extension-types/-/extension-types-0.0.11.tgz#2b4919cbe0a05e18d817424da454c65a84d7852c"
+  integrity sha512-Qme7FALn7JHZooiKmuqWdNsK4u+leLY4dzt+ctLWfRES5/zvpsZiErh7MuE+ftfbc/mXByNcULUeaOL5MsUEAw==
+
 "@types/core-js@2.5.5":
   version "2.5.5"
   resolved "https://registry.yarnpkg.com/@types/core-js/-/core-js-2.5.5.tgz#dc5a013ee0b23bd5ac126403854fadabb4f24f75"
