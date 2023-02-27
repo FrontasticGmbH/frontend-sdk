@@ -1,6 +1,7 @@
 {
 	"compilerOptions": {
 		"target": "ES2022",
+		"moduleResolution": "node",
 		"strict": true,
 		"keyofStringsOnly": true,
 		"allowSyntheticDefaultImports": true,
