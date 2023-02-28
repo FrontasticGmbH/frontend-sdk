@@ -2,10 +2,11 @@ import { fetcher } from "../helpers/fetcher";
 import { Queue } from "./Queue";
 import { Event } from "./Event";
 import { EventManager } from "./EventManager";
-import { SDKResponse, Currency, StandardEvents, Events, PageResponse } from "./types";
+import { SDKResponse, Currency, StandardEvents, Events } from "./types";
 import { FetchError } from "./FetchError";
 import { ActionError } from "./ActionError";
 import { PageError } from "./PageError";
+import { PageApi, PageResponse } from "../types/api/page";
 
 export class SDK<ExtensionEvents extends Events> extends EventManager<
 	StandardEvents & ExtensionEvents
@@ -161,31 +162,33 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		return { isError: false, data: <ReturnData>result };
 	}
 
-	async getPage(options: {
-		path: string
-	}): Promise<SDKResponse<PageResponse>> {
-		const fetcherOptions = {
-			method: 'POST',
-			headers: {
-				'Frontastic-Path': options.path,
-				'Frontastic-Locale': this.APILocale,
-				// 'Commercetools-Path': options.path, // TODO: unsupported, needs backend work
-				// 'Commercetools-Locale': this.APILocale // TODO: unsupported, needs backend work
+	page: PageApi = {
+		getPage: async(options: {
+			path: string
+		}) => {
+			const fetcherOptions = {
+				method: 'POST',
+				headers: {
+					'Frontastic-Path': options.path,
+					'Frontastic-Locale': this.APILocale,
+					// 'Commercetools-Path': options.path, // TODO: unsupported, needs backend work
+					// 'Commercetools-Locale': this.APILocale // TODO: unsupported, needs backend work
+				}
 			}
+
+			let result: FetchError | Awaited<PageResponse>;
+			try {
+				result = await fetcher<PageResponse>(
+					this.#normaliseUrl(`${this.#endpoint}/frontastic/page`),
+					fetcherOptions
+				);
+			} catch (error) {
+				const pageError = new FetchError(<string | Error>error);
+				this.#triggerError(new PageError(options.path, pageError));
+				return { isError: true, error: pageError };
+			};
+
+			return { isError: false, data: <PageResponse>result };
 		}
-
-		let result: FetchError | Awaited<PageResponse>;
-		try {
-			result = await fetcher<any>(
-				this.#normaliseUrl(`${this.#endpoint}/frontastic/page`),
-				fetcherOptions
-			);
-		} catch (error) {
-			const pageError = new FetchError(<string | Error>error);
-			this.#triggerError(new PageError(options.path, pageError));
-			return { isError: true, error: pageError };
-		};
-
-		return { isError: false, data: <any>result };
 	}
 }
