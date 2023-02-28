@@ -1,4 +1,12 @@
 
+## Version 1.2.2 (2023-02-28)
+
+
+
+
+
+* fix: included @frontastic/extension-types as dependency
+
 ## Version 1.2.1 (2023-02-28)
 
 
