@@ -8,6 +8,7 @@ import { ActionError } from "./ActionError";
 import { PageError } from "./PageError";
 import { PageApi, PageResponse } from "../types/api/page";
 import { generateQueryString } from "../helpers/queryStringHelpers";
+import { AcceptedQueryTypes } from "../types/Query";
 
 export class SDK<ExtensionEvents extends Events> extends EventManager<
 	StandardEvents & ExtensionEvents
@@ -113,9 +114,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	async callAction<ReturnData>(options: {
 		actionName: string;
 		payload?: unknown;
-		query?: {
-			[key: string]: string | number | boolean;
-		};
+		query?: AcceptedQueryTypes;
 	}): Promise<SDKResponse<ReturnData>> {
 		this.#throwIfNotConfigured();
 		options.payload = options.payload ?? {};

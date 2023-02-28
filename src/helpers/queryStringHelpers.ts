@@ -1,10 +1,6 @@
-type QueryTypes = string | number | boolean;
+import { AcceptedQueryTypes } from "../types/Query";
 
-type QueryInputObject = {
-	[key: string]: QueryTypes;
-}
-
-export const generateQueryString = function(query: QueryInputObject): string {
+export const generateQueryString = function(query: AcceptedQueryTypes): string {
 	const params = new URLSearchParams();
 	Object.keys(query).forEach(key => {
 		if (query[key] !== undefined) {
