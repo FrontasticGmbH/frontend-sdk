@@ -1,4 +1,3 @@
-import { Page, PageFolder } from "@frontastic/extension-types"
 import { ActionError } from "./ActionError";
 import { FetchError } from "./FetchError";
 import { PageError } from "./PageError";
@@ -229,12 +228,3 @@ export type SDKResponse<T> =
 			error: FetchError;
 	  };
 
-export type PageResponse = {
-	page: Page,
-	pageFolder: PageFolder,
-	data: {
-		dataSources: {
-			[id: string]: any
-		}
-	}
-}
