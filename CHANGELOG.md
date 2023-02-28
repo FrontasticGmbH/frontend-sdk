@@ -1,4 +1,13 @@
 
+## Version 1.2.0 (2023-02-28)
+
+
+
+
+
+
+* Added page API with getPage method
+
 ## Version 1.1.4 (2023-02-24)
 
 
