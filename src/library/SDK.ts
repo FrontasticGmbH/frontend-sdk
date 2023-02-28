@@ -7,6 +7,7 @@ import { FetchError } from "./FetchError";
 import { ActionError } from "./ActionError";
 import { PageError } from "./PageError";
 import { PageApi, PageResponse } from "../types/api/page";
+import { generateQueryString } from "../helpers/queryStringHelpers";
 
 export class SDK<ExtensionEvents extends Events> extends EventManager<
 	StandardEvents & ExtensionEvents
@@ -118,17 +119,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	}): Promise<SDKResponse<ReturnData>> {
 		this.#throwIfNotConfigured();
 		options.payload = options.payload ?? {};
-		let params = "";
-		if (options.query) {
-			params = Object.keys(options.query)
-				.reduce((prev, key) => {
-					if (options.query![key]) {
-						return prev + `${key}=${options.query![key]}&`;
-					}
-					return prev;
-				}, "?")
-				.slice(0, params.length - 1);
-		}
+		const params = options.query ? generateQueryString(options.query) : "";
 
 		let result: FetchError | Awaited<ReturnData>;
 		try {

@@ -1,11 +1,15 @@
-type BasicTypes = string | number | boolean;
-
-type SupportedQueryTypes = BasicTypes | { [key: string]: BasicTypes };
+type QueryTypes = string | number | boolean;
 
 type QueryInputObject = {
-	[key: string]: SupportedQueryTypes | Array<SupportedQueryTypes>;
+	[key: string]: QueryTypes;
 }
 
-export const generateQueryString = function(query: QueryInputObject) {
-
+export const generateQueryString = function(query: QueryInputObject): string {
+	const params = new URLSearchParams();
+	Object.keys(query).forEach(key => {
+		if (query[key] !== undefined) {
+			params.set(key, query[key].toString());
+		}
+	});
+	return `?${params.toString()}`;
 }
