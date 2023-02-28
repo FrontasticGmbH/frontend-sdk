@@ -1,4 +1,10 @@
 
+## Version 1.2.1 (2023-02-28)
+
+
+
+* Added support for arrays in action queries
+
 ## Version 1.2.0 (2023-02-28)
 
 
