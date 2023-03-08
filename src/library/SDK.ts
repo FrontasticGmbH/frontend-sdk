@@ -44,11 +44,6 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		return this.#locale.baseName;
 	}
 
-  get APILocale(): string {
-    console.warn(`WARNING! Getter APILocale has been deprecated, please use the new posixLocale getter instead!`) 
-    return this.posixLocale;
-  }
-
 	get posixLocale(): string {
 		const apiFormattedLocale = this.locale.slice(0, 5).replace("-", "_");
 
@@ -155,8 +150,8 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 							method: "POST",
 							body: JSON.stringify(options.payload),
 							headers: {
-								"Frontastic-Locale": this.posixLocale
-								//'Commercetools-Locale': this.APILocale // TODO: unsupported, needs backend work
+								"Frontastic-Locale": this.posixLocale,
+								//'Commercetools-Locale': this.posixLocale // TODO: unsupported, needs backend work
 							},
 						}
 					);
@@ -179,9 +174,9 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 				method: "POST",
 				headers: {
 					"Frontastic-Path": options.path,
-					"Frontastic-Locale": this.posixLocale
+					"Frontastic-Locale": this.posixLocale,
 					// 'Commercetools-Path': options.path, // TODO: unsupported, needs backend work
-					// 'Commercetools-Locale': this.APILocale // TODO: unsupported, needs backend work
+					// 'Commercetools-Locale': this.posixLocale // TODO: unsupported, needs backend work
 				},
 			};
 
