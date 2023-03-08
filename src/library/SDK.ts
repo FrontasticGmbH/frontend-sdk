@@ -12,7 +12,7 @@ import { AcceptedQueryTypes } from "../types/Query";
 
 type SDKConfig = {
 	locale: string;
-	currency?: Currency;
+	currency: Currency;
 	endpoint: string;
 	useCurrencyInLocale?: boolean;
 };
@@ -104,8 +104,6 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		if (config.currency) {
 			this.currency = config.currency as Currency;
 		}
-
-		if (!this.currency) throw new Error("currency missing");
 
 		this.locale = locale.replace(/_/g, "-");
 
