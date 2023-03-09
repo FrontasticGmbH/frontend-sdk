@@ -1,6 +1,6 @@
 {
 	"name": "@commercetools/frontend-sdk",
-	"version": "1.2.2",
+	"version": "1.2.3",
 	"license": "UNLICENSED",
 	"main": "lib/index.js",
 	"scripts": {
@@ -11,7 +11,8 @@
 		"dev:types": "tsc --emitDeclarationOnly --outDir lib",
 		"build:types": "tsc --emitDeclarationOnly --outDir lib",
 		"release:types": "tsc --emitDeclarationOnly --outDir lib",
-		"prettier:fix": "prettier --write ."
+		"prettier:fix": "prettier --write .",
+    "test": "vitest"
 	},
 	"dependencies": {
 		"@frontastic/extension-types": "^0.0.11",
@@ -24,6 +25,7 @@
 		"concurrently": "7.5.0",
 		"esbuild": "0.15.8",
 		"prettier": "2.7.1",
-		"typescript": "^4.9.3"
+		"typescript": "^4.9.3",
+		"vitest": "^0.29.2"
 	}
 }

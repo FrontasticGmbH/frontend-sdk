@@ -10,6 +10,13 @@ import { PageApi, PageResponse } from "../types/api/page";
 import { generateQueryString } from "../helpers/queryStringHelpers";
 import { AcceptedQueryTypes } from "../types/Query";
 
+type SDKConfig = {
+	locale: string;
+	currency: Currency;
+	endpoint: string;
+	useCurrencyInLocale?: boolean;
+};
+
 export class SDK<ExtensionEvents extends Events> extends EventManager<
 	StandardEvents & ExtensionEvents
 > {
@@ -29,22 +36,16 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		return this.#endpoint;
 	}
 
-	set locale(locale: string | Intl.Locale) {
-		if (typeof locale === "string") {
-			this.#locale = new Intl.Locale(locale);
-		} else {
-			this.#locale = locale;
-		}
+	set locale(locale: string) {
+		this.#locale = new Intl.Locale(locale);
 	}
 
-	get locale(): Intl.Locale {
-		return this.#locale;
+	get locale(): Intl.BCP47LanguageTag {
+		return this.#locale.baseName;
 	}
 
-	get APILocale(): string {
-		const apiFormattedLocale = this.locale.baseName
-			.slice(0, 5)
-			.replace("-", "_");
+	get posixLocale(): string {
+		const apiFormattedLocale = this.locale.slice(0, 5).replace("-", "_");
 
 		if (this.#useCurrencyInLocale) {
 			return `${apiFormattedLocale}@${this.currency}`;
@@ -85,18 +86,31 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 			return `${previous}/${current}`;
 		}, "");
 
-	configure(config: {
-		locale: Intl.BCP47LanguageTag;
-		currency: Currency;
-		endpoint: string;
-		useCurrencyInLocale?: boolean;
-	}) {
+	configure(config: SDKConfig) {
 		this.endpoint = config.endpoint;
-		this.locale = new Intl.Locale(config.locale);
-		this.currency = config.currency;
+		this.configureLocale(config);
 		this.#useCurrencyInLocale = config.useCurrencyInLocale ?? false;
 
 		this.#hasBeenConfigured = true;
+	}
+
+	configureLocale(config: Pick<SDKConfig, "locale" | "currency">) {
+		// currency present in locale (posix modifier)
+		const [locale, currency] = config.locale.split("@");
+		if (currency) {
+			this.currency = currency as Currency;
+		}
+		// explicitely defined currency overrides that
+		if (config.currency) {
+			this.currency = config.currency as Currency;
+		}
+
+		this.locale = locale.replace(/_/g, "-");
+
+		// set language, country
+		// const [language, country] = locale.split("-")
+		// this.country = country;
+		// this.language = language;
 	}
 
 	#triggerError(error: ActionError | PageError) {
@@ -134,8 +148,8 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 							method: "POST",
 							body: JSON.stringify(options.payload),
 							headers: {
-								"Frontastic-Locale": this.APILocale,
-								//'Commercetools-Locale': this.APILocale // TODO: unsupported, needs backend work
+								"Frontastic-Locale": this.posixLocale,
+								//'Commercetools-Locale': this.posixLocale // TODO: unsupported, needs backend work
 							},
 						}
 					);
@@ -153,18 +167,16 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	}
 
 	page: PageApi = {
-		getPage: async(options: {
-			path: string
-		}) => {
+		getPage: async (options: { path: string }) => {
 			const fetcherOptions = {
-				method: 'POST',
+				method: "POST",
 				headers: {
-					'Frontastic-Path': options.path,
-					'Frontastic-Locale': this.APILocale,
+					"Frontastic-Path": options.path,
+					"Frontastic-Locale": this.posixLocale,
 					// 'Commercetools-Path': options.path, // TODO: unsupported, needs backend work
-					// 'Commercetools-Locale': this.APILocale // TODO: unsupported, needs backend work
-				}
-			}
+					// 'Commercetools-Locale': this.posixLocale // TODO: unsupported, needs backend work
+				},
+			};
 
 			let result: FetchError | Awaited<PageResponse>;
 			try {
@@ -176,9 +188,9 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 				const pageError = new FetchError(<string | Error>error);
 				this.#triggerError(new PageError(options.path, pageError));
 				return { isError: true, error: pageError };
-			};
+			}
 
 			return { isError: false, data: <PageResponse>result };
-		}
-	}
+		},
+	};
 }

@@ -1,4 +1,12 @@
 
+## Version 1.2.3 (2023-03-08)
+
+* feat: SDK accepts posix and bcp47 language tags/locales
+
+## Version 1.2.3 (2023-03-08)
+
+* feat: SDK accepts posix and bcp47 language tags/locales
+
 ## Version 1.2.2 (2023-02-28)
 
 
