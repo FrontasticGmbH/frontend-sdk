@@ -14,7 +14,9 @@ export const rememberMeCookie = {
 			if (rememberMe) {
 				window.localStorage.setItem(REMEMBER_ME, "1");
 			}
-			this.remove();
+			else {
+				this.remove();
+			}
 		}
 	},
 	remove: function () {
