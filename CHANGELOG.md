@@ -1,4 +1,11 @@
-## Version 1.2.3 (2023-03-08)
+
+## Version 1.2.4 (2023-03-14)
+
+
+
+
+* fix: Use Commercetools-Frontend-Extension-Version header on SDK
+
 
 * feat: SDK accepts posix and bcp47 language tags/locales
 
