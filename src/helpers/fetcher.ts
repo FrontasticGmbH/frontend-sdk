@@ -19,7 +19,12 @@ export const fetcher = async <T>(
 		Accept: "application/json",
 		// "X-Commercetools-Access-Token": "APIKEY", // TODO: unsupported, needs backend work
 		"X-Frontastic-Access-Token": "APIKEY",
-		"Commercetools-Frontend-Extension-Version": process.env.NEXT_PUBLIC_EXT_BUILD_ID ?? "APIKEY",
+		...(process.env.NEXT_PUBLIC_EXT_BUILD_ID
+			? {
+					"Commercetools-Frontend-Extension-Version":
+						process.env.NEXT_PUBLIC_EXT_BUILD_ID,
+			  }
+			: {}),
 		...(options.headers || {}),
 		...(sessionCookie ? { "Frontastic-Session": sessionCookie } : {}),
 	};
