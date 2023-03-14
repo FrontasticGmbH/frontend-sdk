@@ -1,4 +1,10 @@
 
+## Version 1.2.5 (2023-03-14)
+
+
+
+* fix: updated node version
+
 ## Version 1.2.4 (2023-03-14)
 
 
