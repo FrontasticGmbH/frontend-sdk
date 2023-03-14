@@ -1,4 +1,10 @@
 
+## Version 1.2.6 (2023-03-14)
+
+
+
+* fix: type generation, exclude test folder from build
+
 ## Version 1.2.5 (2023-03-14)
 
 
