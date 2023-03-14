@@ -1,4 +1,10 @@
 
+## Version 1.2.7 (2023-03-14)
+
+
+
+* fix: only add Commercetools-Frontend-Extension-Version header if NEXT_PUBLIC_EXT_BUILD_ID provided
+
 ## Version 1.2.6 (2023-03-14)
 
 
