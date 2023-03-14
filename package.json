@@ -12,7 +12,7 @@
 		"build:types": "tsc --emitDeclarationOnly --outDir lib",
 		"release:types": "tsc --emitDeclarationOnly --outDir lib",
 		"prettier:fix": "prettier --write .",
-    "test": "vitest"
+    	"test": "vitest"
 	},
 	"dependencies": {
 		"@frontastic/extension-types": "^0.0.11",
