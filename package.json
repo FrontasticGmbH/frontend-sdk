@@ -1,6 +1,6 @@
 {
 	"name": "@commercetools/frontend-sdk",
-	"version": "1.2.6",
+	"version": "1.2.7",
 	"license": "UNLICENSED",
 	"main": "lib/index.js",
 	"scripts": {
