@@ -1,30 +1,19 @@
 
 ## Version 1.2.7 (2023-03-14)
 
-
-
 * fix: only add Commercetools-Frontend-Extension-Version header if NEXT_PUBLIC_EXT_BUILD_ID provided
 
 ## Version 1.2.6 (2023-03-14)
-
-
 
 * fix: type generation, exclude test folder from build
 
 ## Version 1.2.5 (2023-03-14)
 
-
-
 * fix: updated node version
 
 ## Version 1.2.4 (2023-03-14)
 
-
-
-
 * fix: Use Commercetools-Frontend-Extension-Version header on SDK
-
-
 * feat: SDK accepts posix and bcp47 language tags/locales
 
 ## Version 1.2.2 (2023-02-28)
