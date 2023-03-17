@@ -2,7 +2,6 @@ export class FetchError extends Error {
 	constructor(error: string | Error) {
 		super();
 
-		this.isError = true;
 		if (typeof error === "string") {
 			this.message = error;
 		} else {
@@ -13,6 +12,5 @@ export class FetchError extends Error {
 	}
 
 	[key: string]: any;
-	isError: boolean;
 	message!: string;
 }
