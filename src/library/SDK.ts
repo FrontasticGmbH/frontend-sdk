@@ -6,7 +6,7 @@ import { SDKResponse, Currency, StandardEvents, Events } from "./types";
 import { FetchError } from "./FetchError";
 import { ActionError } from "./ActionError";
 import { PageError } from "./PageError";
-import { PageApi, PageResponse } from "../types/api/page";
+import { PageApi, PagePreviewResponse, PageResponse } from "../types/api/page";
 import { generateQueryString } from "../helpers/queryStringHelpers";
 import { AcceptedQueryTypes } from "../types/Query";
 
@@ -125,6 +125,31 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		);
 	}
 
+	#handleError(
+		options:
+			| {
+					type: "ActionError";
+					error: string | Error;
+					actionName: string;
+			  }
+			| {
+					type: "PageError";
+					error: string | Error;
+					path: string;
+			  }
+	): {
+		isError: true;
+		error: FetchError;
+	} {
+		const error = new FetchError(<string | Error>options.error);
+		this.#triggerError(
+			options.type === "ActionError"
+				? new ActionError(options.actionName, error)
+				: new PageError(options.path, error)
+		);
+		return { isError: true, error: error };
+	}
+
 	async callAction<ReturnData>(options: {
 		actionName: string;
 		payload?: unknown;
@@ -149,18 +174,24 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 							body: JSON.stringify(options.payload),
 							headers: {
 								"Frontastic-Locale": this.posixLocale,
-								//'Commercetools-Locale': this.posixLocale // TODO: unsupported, needs backend work
 							},
 						}
 					);
 				}
 			);
 		} catch (error) {
-			const actionError = new FetchError(<string | Error>error);
-			this.#triggerError(
-				new ActionError(options.actionName, actionError)
-			);
-			return { isError: true, error: actionError };
+			return this.#handleError({
+				type: "ActionError",
+				error: <string | Error>error,
+				actionName: options.actionName,
+			});
+		}
+		if (result instanceof Error) {
+			return this.#handleError({
+				type: "ActionError",
+				error: <string | Error>result.toString(),
+				actionName: options.actionName,
+			});
 		}
 
 		return { isError: false, data: <ReturnData>result };
@@ -173,8 +204,6 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 				headers: {
 					"Frontastic-Path": options.path,
 					"Frontastic-Locale": this.posixLocale,
-					// 'Commercetools-Path': options.path, // TODO: unsupported, needs backend work
-					// 'Commercetools-Locale': this.posixLocale // TODO: unsupported, needs backend work
 				},
 			};
 
@@ -185,12 +214,55 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 					fetcherOptions
 				);
 			} catch (error) {
-				const pageError = new FetchError(<string | Error>error);
-				this.#triggerError(new PageError(options.path, pageError));
-				return { isError: true, error: pageError };
+				return this.#handleError({
+					type: "PageError",
+					error: <string | Error>error,
+					path: options.path,
+				});
+			}
+
+			if (result instanceof Error) {
+				return this.#handleError({
+					type: "PageError",
+					error: <string | Error>result.toString(),
+					path: options.path,
+				});
 			}
 
 			return { isError: false, data: <PageResponse>result };
+		},
+		getPreview: async (options: { previewId: string }) => {
+			const fetcherOptions = {
+				method: "POST",
+				headers: {
+					"Frontastic-Locale": this.posixLocale,
+				},
+			};
+			let result: FetchError | Awaited<PagePreviewResponse>;
+			const path = `/preview?previewId=${options.previewId}&locale=${this.posixLocale}`;
+
+			try {
+				result = await fetcher<PagePreviewResponse>(
+					this.#normaliseUrl(`${this.#endpoint}/frontastic${path}`),
+					fetcherOptions
+				);
+			} catch (error) {
+				return this.#handleError({
+					type: "PageError",
+					error: <string | Error>error,
+					path: path,
+				});
+			}
+
+			if (result instanceof Error) {
+				return this.#handleError({
+					type: "PageError",
+					error: <string | Error>result.toString(),
+					path: path,
+				});
+			}
+
+			return { isError: false, data: <PagePreviewResponse>result };
 		},
 	};
 }
