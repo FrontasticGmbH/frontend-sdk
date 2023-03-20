@@ -141,7 +141,12 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		isError: true;
 		error: FetchError;
 	} {
-		const error = new FetchError(<string | Error>options.error);
+		let error: FetchError;
+		if (options.error instanceof FetchError) {
+			error = options.error;
+		} else {
+			error = new FetchError(<string | Error>options.error);
+		}
 		this.#triggerError(
 			options.type === "ActionError"
 				? new ActionError(options.actionName, error)
