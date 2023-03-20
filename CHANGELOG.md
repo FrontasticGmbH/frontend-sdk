@@ -1,13 +1,8 @@
 
 ## Version 1.3.0 (2023-03-20)
 
-
-
-
-
-
-
-* Removed nested isError property from FetchError
+* Added getPreview page API method
+* fix: removed nested isError property from FetchError
 
 ## Version 1.2.7 (2023-03-14)
 
