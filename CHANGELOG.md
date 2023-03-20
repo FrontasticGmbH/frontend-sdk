@@ -1,4 +1,14 @@
 
+## Version 1.3.0 (2023-03-20)
+
+
+
+
+
+
+
+* Removed nested isError property from FetchError
+
 ## Version 1.2.7 (2023-03-14)
 
 * fix: only add Commercetools-Frontend-Extension-Version header if NEXT_PUBLIC_EXT_BUILD_ID provided
