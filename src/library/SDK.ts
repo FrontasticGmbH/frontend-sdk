@@ -6,7 +6,12 @@ import { SDKResponse, Currency, StandardEvents, Events } from "./types";
 import { FetchError } from "./FetchError";
 import { ActionError } from "./ActionError";
 import { PageError } from "./PageError";
-import { PageApi, PagePreviewResponse, PageResponse } from "../types/api/page";
+import {
+	PageApi,
+	PageFolderListResponse,
+	PagePreviewResponse,
+	PageResponse,
+} from "../types/api/page";
 import { generateQueryString } from "../helpers/queryStringHelpers";
 import { AcceptedQueryTypes } from "../types/Query";
 
@@ -268,6 +273,50 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 			}
 
 			return { isError: false, data: <PagePreviewResponse>result };
+		},
+		getPages: async (
+			options: {
+				path?: string;
+				depth?: number;
+				types?: "static";
+			} = {
+				depth: 16,
+				types: "static",
+			}
+		) => {
+			const fetcherOptions = {
+				method: "POST",
+				headers: {
+					"Frontastic-Locale": this.posixLocale,
+				},
+			};
+			let result: FetchError | Awaited<PageFolderListResponse>;
+			const path = `/structure?locale=${this.posixLocale}${
+				options.path ? `&path=${options.path}` : ""
+			}${options.depth !== undefined ? `&depth=${options.depth}` : ""}`;
+
+			try {
+				result = await fetcher<PageFolderListResponse>(
+					this.#normaliseUrl(`${this.#endpoint}/frontastic${path}`),
+					fetcherOptions
+				);
+			} catch (error) {
+				return this.#handleError({
+					type: "PageError",
+					error: <string | Error>error,
+					path: path,
+				});
+			}
+
+			if (result instanceof Error) {
+				return this.#handleError({
+					type: "PageError",
+					error: <string | Error>result.toString(),
+					path: path,
+				});
+			}
+
+			return { isError: false, data: <PageFolderListResponse>result };
 		},
 	};
 }
