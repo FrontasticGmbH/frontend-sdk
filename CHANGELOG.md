@@ -1,8 +1,6 @@
 
 ## Version 1.4.0 (2023-03-22)
 
-
-
 * Implemented getPages method
 
 ## Version 1.3.0 (2023-03-20)
