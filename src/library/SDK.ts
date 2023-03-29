@@ -208,7 +208,13 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	}
 
 	page: PageApi = {
-		getPage: async (options: { path: string }) => {
+		getPage: async (options: {
+			path: string;
+			query?: AcceptedQueryTypes;
+		}) => {
+			const params = options.query
+				? generateQueryString(options.query)
+				: "";
 			const fetcherOptions = {
 				method: "POST",
 				headers: {
@@ -220,7 +226,9 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 			let result: FetchError | Awaited<PageResponse>;
 			try {
 				result = await fetcher<PageResponse>(
-					this.#normaliseUrl(`${this.#endpoint}/frontastic/page`),
+					this.#normaliseUrl(
+						`${this.#endpoint}/frontastic/page${params}`
+					),
 					fetcherOptions
 				);
 			} catch (error) {

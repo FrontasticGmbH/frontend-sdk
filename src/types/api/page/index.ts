@@ -1,11 +1,15 @@
 import { SDKResponse } from "../../../library/types";
+import { AcceptedQueryTypes } from "../../Query";
 import { PageFolderListResponse } from "./PageFolderListResponse";
 import { PagePreviewResponse } from "./PagePreviewResponse";
 import { PageResponse } from "./PageResponse";
 import { PageViewData } from "./PageViewData";
 
 type PageApi = {
-	getPage: (options: { path: string }) => Promise<SDKResponse<PageResponse>>;
+	getPage: (options: {
+		path: string;
+		query?: AcceptedQueryTypes;
+	}) => Promise<SDKResponse<PageResponse>>;
 	getPreview: (options: {
 		previewId: string;
 	}) => Promise<SDKResponse<PagePreviewResponse>>;
