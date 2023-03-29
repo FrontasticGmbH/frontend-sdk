@@ -212,6 +212,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 			path: string;
 			query?: AcceptedQueryTypes;
 		}) => {
+			this.#throwIfNotConfigured();
 			const params = options.query
 				? generateQueryString(options.query)
 				: "";
@@ -250,6 +251,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 			return { isError: false, data: <PageResponse>result };
 		},
 		getPreview: async (options: { previewId: string }) => {
+			this.#throwIfNotConfigured();
 			const fetcherOptions = {
 				method: "POST",
 				headers: {
@@ -292,6 +294,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 				types: "static",
 			}
 		) => {
+			this.#throwIfNotConfigured();
 			const fetcherOptions = {
 				method: "POST",
 				headers: {
