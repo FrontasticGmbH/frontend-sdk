@@ -1,9 +1,9 @@
-<h2 align="center">composable commerce Extension for commercetools Frontend SDK</h2>
+<h2 align="center">commercetools Frontend SDK</h2>
 <p align="center">
   <i></i>
 </p>
 <p align="center">
-  <a href="https://github.com/FrontasticGmbH/frontend-composable-commerce/releases"><img src="https://badgen.net/github/release/FrontasticGmbH/frontend-composable-commerce" alt="Latest release" /></a> <a href="https://github.com/FrontasticGmbH/frontend-composable-commerce/blob/main/LICENSE"><img src="https://badgen.net/github/FrontasticGmbH/frontend-composable-commerce" alt="GitHub license" /></a>
+  <a href="https://github.com/FrontasticGmbH/frontend-sdk/releases"><img src="https://badgen.net/github/release/FrontasticGmbH/frontend-sdk" alt="Latest release" /></a> <a href="https://github.com/FrontasticGmbH/frontend-sdk/blob/main/LICENSE"><img src="https://badgen.net/github/FrontasticGmbH/frontend-sdk" alt="GitHub license" /></a>
 </p>
 
 The commercetools Frontend SDK is a TypeScript library that simplifies the process of creating custom components and integrations in your commercetools Frontend project. This SDK enables flexible and customizable frontend development, event handling, and support for extensions to expose commercetools Frontend API integrations.
