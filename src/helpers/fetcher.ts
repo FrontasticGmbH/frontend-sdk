@@ -6,9 +6,6 @@ const cookiesApi = Cookies.withAttributes({ path: "/" });
 
 export const fetcher = async <T>(
 	url: string,
-	// currently string to simplify. fetch
-	// also allows URLLike and Request:
-	// url: RequestInfo,
 	options: RequestInit = {}
 ): Promise<T | FetchError> => {
 	const sessionCookie = cookiesApi.get("frontastic-session");
@@ -17,7 +14,6 @@ export const fetcher = async <T>(
 	options.headers = {
 		"Content-Type": "application/json",
 		Accept: "application/json",
-		// "X-Commercetools-Access-Token": "APIKEY", // TODO: unsupported, needs backend work
 		"X-Frontastic-Access-Token": "APIKEY",
 		...(process.env.NEXT_PUBLIC_EXT_BUILD_ID
 			? {
