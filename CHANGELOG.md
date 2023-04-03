@@ -1,8 +1,6 @@
 
 ## Version 1.4.1 (2023-03-29)
 
-
-
 * Added throwIfNotConfigured method to Page API calls
 * Added optional query param to getPage
 
