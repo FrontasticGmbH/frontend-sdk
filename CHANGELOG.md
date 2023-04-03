@@ -1,4 +1,11 @@
 
+## Version 1.5.0 (2023-04-03)
+
+
+
+
+* Replaced automatic assigning of Commercetools-Frontend-Extension-Version header in fetcher with optional extensionVersion parameter in SDKConfig
+
 ## Version 1.4.1 (2023-03-29)
 
 * Added throwIfNotConfigured method to Page API calls
