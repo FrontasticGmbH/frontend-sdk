@@ -20,6 +20,7 @@ type SDKConfig = {
 	currency: Currency;
 	endpoint: string;
 	useCurrencyInLocale?: boolean;
+	extensionVersion?: string;
 };
 
 export class SDK<ExtensionEvents extends Events> extends EventManager<
@@ -31,6 +32,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	#locale!: Intl.Locale;
 	#currency!: Currency;
 	#useCurrencyInLocale!: boolean;
+	#extensionVersion!: string;
 	#actionQueue: Queue;
 
 	set endpoint(url: string) {
@@ -95,6 +97,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		this.endpoint = config.endpoint;
 		this.configureLocale(config);
 		this.#useCurrencyInLocale = config.useCurrencyInLocale ?? false;
+		this.#extensionVersion = config.extensionVersion ?? "";
 
 		this.#hasBeenConfigured = true;
 	}
@@ -168,6 +171,19 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		this.#throwIfNotConfigured();
 		options.payload = options.payload ?? {};
 		const params = options.query ? generateQueryString(options.query) : "";
+		const fetcherOptions = {
+			method: "POST",
+			body: JSON.stringify(options.payload),
+			headers: {
+				"Frontastic-Locale": this.posixLocale,
+				...(this.#extensionVersion
+					? {
+							"Commercetools-Frontend-Extension-Version":
+								this.#extensionVersion,
+					  }
+					: {}),
+			},
+		};
 
 		let result: FetchError | Awaited<ReturnData>;
 		try {
@@ -179,13 +195,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 								options.actionName
 							}${params}`
 						),
-						{
-							method: "POST",
-							body: JSON.stringify(options.payload),
-							headers: {
-								"Frontastic-Locale": this.posixLocale,
-							},
-						}
+						fetcherOptions
 					);
 				}
 			);
@@ -221,6 +231,12 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 				headers: {
 					"Frontastic-Path": options.path,
 					"Frontastic-Locale": this.posixLocale,
+					...(this.#extensionVersion
+						? {
+								"Commercetools-Frontend-Extension-Version":
+									this.#extensionVersion,
+						  }
+						: {}),
 				},
 			};
 
@@ -256,6 +272,12 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 				method: "POST",
 				headers: {
 					"Frontastic-Locale": this.posixLocale,
+					...(this.#extensionVersion
+						? {
+								"Commercetools-Frontend-Extension-Version":
+									this.#extensionVersion,
+						  }
+						: {}),
 				},
 			};
 			let result: FetchError | Awaited<PagePreviewResponse>;
@@ -299,6 +321,12 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 				method: "POST",
 				headers: {
 					"Frontastic-Locale": this.posixLocale,
+					...(this.#extensionVersion
+						? {
+								"Commercetools-Frontend-Extension-Version":
+									this.#extensionVersion,
+						  }
+						: {}),
 				},
 			};
 			let result: FetchError | Awaited<PageFolderListResponse>;
