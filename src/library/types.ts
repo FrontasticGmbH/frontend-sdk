@@ -227,4 +227,3 @@ export type SDKResponse<T> =
 			isError: true;
 			error: FetchError;
 	  };
-
