@@ -6,9 +6,12 @@ const cookiesApi = Cookies.withAttributes({ path: "/" });
 
 export const fetcher = async <T>(
 	url: string,
-	options: RequestInit = {}
+	options: RequestInit = {},
+	sessionCookies: string = ""
 ): Promise<T | FetchError> => {
-	const sessionCookie = cookiesApi.get("frontastic-session");
+	const sessionCookie = sessionCookies
+		? sessionCookies
+		: cookiesApi.get("frontastic-session");
 
 	// rewrite headers, adding our required default headers
 	options.headers = {

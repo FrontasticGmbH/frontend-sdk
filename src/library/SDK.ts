@@ -221,6 +221,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		getPage: async (options: {
 			path: string;
 			query?: AcceptedQueryTypes;
+			serverSession?: string;
 		}) => {
 			this.#throwIfNotConfigured();
 			const params = options.query
@@ -246,7 +247,8 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 					this.#normaliseUrl(
 						`${this.#endpoint}/frontastic/page${params}`
 					),
-					fetcherOptions
+					fetcherOptions,
+					options.serverSession
 				);
 			} catch (error) {
 				return this.#handleError({
