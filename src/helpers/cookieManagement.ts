@@ -1,3 +1,5 @@
+import { IncomingMessage, ServerResponse } from "http";
+import ServerCookies from "cookies";
 const REMEMBER_ME = "__rememberMe";
 
 export const rememberMeCookie = {
@@ -13,8 +15,7 @@ export const rememberMeCookie = {
 		if (typeof window !== "undefined") {
 			if (rememberMe) {
 				window.localStorage.setItem(REMEMBER_ME, "1");
-			}
-			else {
+			} else {
 				this.remove();
 			}
 		}
@@ -23,5 +24,12 @@ export const rememberMeCookie = {
 		if (typeof window !== "undefined") {
 			window.localStorage.removeItem(REMEMBER_ME);
 		}
+	},
+};
+
+export const serverSession = {
+	get: function (req: IncomingMessage, res: ServerResponse) {
+		const cookies = new ServerCookies(req, res);
+		return cookies.get("frontastic-session");
 	},
 };

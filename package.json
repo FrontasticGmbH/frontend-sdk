@@ -4,21 +4,23 @@
 	"license": "UNLICENSED",
 	"main": "lib/index.js",
 	"scripts": {
-		"dev": "concurrently -n ESBUILD,TSC -c magenta,cyan \"esbuild --outdir=lib --bundle --format=cjs --watch src/index.ts\" \"yarn dev:types --watch\"",
-		"build": "esbuild --outdir=lib --bundle --format=cjs src/index.ts && yarn build:types",
-		"release": "esbuild --outdir=lib --bundle --format=cjs --minify src/index.ts && yarn release:types",
+		"dev": "concurrently -n ESBUILD,TSC -c magenta,cyan \"esbuild --outdir=lib --bundle --platform=node --format=cjs --watch src/index.ts\" \"yarn dev:types --watch\"",
+		"build": "esbuild --outdir=lib --bundle --platform=node --format=cjs src/index.ts && yarn build:types",
+		"release": "esbuild --outdir=lib --bundle --platform=node --format=cjs --minify src/index.ts && yarn release:types",
 		"prepublishOnly": "rm -rf lib && yarn install && yarn release",
 		"dev:types": "tsc --emitDeclarationOnly --outDir lib",
 		"build:types": "tsc --emitDeclarationOnly --outDir lib",
 		"release:types": "tsc --emitDeclarationOnly --outDir lib",
 		"prettier:fix": "prettier --write .",
-    	"test": "vitest"
+		"test": "vitest"
 	},
 	"dependencies": {
 		"@frontastic/extension-types": "^0.0.11",
+		"cookies": "^0.8.0",
 		"js-cookie": "3.0.1"
 	},
 	"devDependencies": {
+		"@types/cookies": "^0.7.7",
 		"@types/core-js": "2.5.5",
 		"@types/js-cookie": "3.0.2",
 		"@types/node": "^18.14.0",
