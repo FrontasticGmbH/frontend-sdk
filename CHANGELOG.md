@@ -1,4 +1,11 @@
 
+## Version 1.6.0 (2023-04-06)
+
+
+
+* Added optional serverSession parameter to getPage to pass server session for SSR
+* Added serverSession helper to access server session cookie
+
 ## Version 1.5.0 (2023-04-03)
 
 
