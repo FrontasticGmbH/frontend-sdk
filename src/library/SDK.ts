@@ -167,6 +167,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		actionName: string;
 		payload?: unknown;
 		query?: AcceptedQueryTypes;
+		serverSession?: string;
 	}): Promise<SDKResponse<ReturnData>> {
 		this.#throwIfNotConfigured();
 		options.payload = options.payload ?? {};
@@ -195,7 +196,8 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 								options.actionName
 							}${params}`
 						),
-						fetcherOptions
+						fetcherOptions,
+						options.serverSession
 					);
 				}
 			);
