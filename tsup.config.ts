@@ -3,7 +3,7 @@ import { defineConfig } from "tsup";
 export default defineConfig((options) => {
 	const dev = options.env?.["NODE_ENV"] === "dev";
 	return {
-		entry: dev ? ["src/index.ts"] : ["src"],
+		entry: ["src"],
 		outDir: "lib",
 		sourcemap: true,
 		watch: dev,
