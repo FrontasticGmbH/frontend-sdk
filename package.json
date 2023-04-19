@@ -4,11 +4,9 @@
 	"license": "UNLICENSED",
 	"main": "lib/index.js",
 	"scripts": {
-		"dev": "tsup src/index.ts -d lib --dts --watch",
-		"build": "tsup src -d lib --format esm,cjs --dts",
-		"build-bak": "esbuild --outdir=lib --bundle --platform=node --format=cjs src/index.ts && yarn build:types",
-		"release": "tsup src -d lib --format esm,cjs --dts",
-		"release-bak": "esbuild --outdir=lib --bundle --platform=node --format=cjs --minify src/index.ts && yarn release:types",
+		"dev": "tsup --env.ENV dev",
+		"build": "tsup",
+		"release": "tsup",
 		"prepublishOnly": "rm -rf lib && yarn install && yarn release",
 		"prettier:fix": "prettier --write .",
 		"test": "vitest"
