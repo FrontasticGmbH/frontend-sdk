@@ -1,4 +1,10 @@
 
+## Version 1.7.0 (2023-04-19)
+
+
+
+* feat: added support to pass serverSession in callAction
+
 ## Version 1.6.2 (2023-04-19)
 
 * fix: compatibility with non-v8 browsers
