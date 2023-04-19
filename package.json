@@ -4,7 +4,7 @@
 	"license": "UNLICENSED",
 	"main": "lib/index.js",
 	"scripts": {
-		"dev": "tsup --env.ENV dev",
+		"dev": "tsup --env.NODE_ENV dev",
 		"build": "tsup",
 		"release": "tsup",
 		"prepublishOnly": "rm -rf lib && yarn install && yarn release",
