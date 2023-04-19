@@ -1,4 +1,129 @@
 
+## Version 1.6.1 (2023-04-19)
+
+
+* misc: Tagged release 1.6.0 for core
+
+## Version 1.6.1 (2023-04-19)
+
+
+* misc: Tagged release 1.6.0 for core
+* Updated version
+* Added optional serverSession parameter to getPage to pass server session for SSR
+* Added serverSession helper to access server session cookie
+* Claned obsolete SDK build files and added clean and reinstall scripts
+* misc: Tagged release 1.5.0 for core
+* Fixed formatting
+* Updated version
+* Replaced automatic assigning of Commercetools-Frontend-Extension-Version header in fetcher with optional extensionVersion parameter in SDKConfig
+* Comment cleanup
+* Merge branch 'master' of https://github.com/FrontasticGmbH/frontastic
+* Cleaned up formatting
+* misc: Tagged release 1.4.1 for core
+* Updated version
+* Added throwIfNotConfigured method to Page API calls
+* Added optional query param to getPage
+* misc: Tagged release 1.4.0 for core
+* Updated version
+* Implemented getPages method
+* Fixed formatting
+* misc: Tagged release 1.3.0 for core
+* Updated version
+* Refactor #handleError in SDK
+* Refaactored error handling, wip: getPreview page API method
+* Added getPreview page API method definition
+* Added PagePreviewResponse type for wip page.getPreview method
+* Removed nested isError property from FetchError
+* Fixed formatting of CHANGELOG.md
+* misc: Tagged release 1.2.7 for core
+* Updated version
+* fix: only add Commercetools-Frontend-Extension-Version header if NEXT_PUBLIC_EXT_BUILD_ID provided
+* misc: Tagged release 1.2.6 for core
+* Updated version
+* fix: type generation, exclude test folder from build
+* Fixed formatting
+* Merge branch 'master' of https://github.com/FrontasticGmbH/frontastic
+* Added test folder to .npmignore
+* misc: Tagged release 1.2.5 for core
+* Merge branch 'master' of https://github.com/FrontasticGmbH/frontastic
+* fix: updated node version
+* misc: Tagged release 1.2.4 for core
+* Tidied changelog
+* Updated version
+* feat(FP-3869): Use Commercetools-Frontend-Extension-Version header on SDK
+* Merge branch 'master' of https://github.com/FrontasticGmbH/frontastic
+* fix: rememberMe cookie not being applied
+* misc: Tagged release 1.2.3 for core
+* misc: Tagged release 1.2.3 for core
+* SDK version bump to 1.2.3
+* updated locale tests
+* makes currency mandatory
+* removes redundant APILocale getter
+* SDK accepts posix and bcp47 language tags/locales
+* adds a simple test runner
+* misc: Tagged release 1.2.2 for core
+* Merge branch 'master' of https://github.com/FrontasticGmbH/frontastic
+* Corrected formatting
+* Updated version
+* fix: included @frontastic/extension-types as dependency
+* misc: Tagged release 1.2.1 for core
+* Updated version
+* Added support for arrays in action queries
+* Merged on rebase
+* Added initial query string helpers
+* misc: Tagged release 1.2.0 for core
+* Added yarn install to prepublishOnly script
+* Updated version
+* Added Page API types
+* refactor: removed PageResponse type
+* Added page API with getPage method
+* wip: add back getPage method
+* Added intial PageResponse type
+* Added moduleResolution: node to tsconfig
+* Added @frontastic/extension-types dependency
+* misc: Tagged release 1.1.4 for core
+* Updated version
+* Changed BUILD_ID to EXT_BUILD_ID
+* Updated formatting of CHANGELOG.md
+* misc: Tagged release 1.1.3 for core
+* fix: added NEXT_PUBLIC prefix to BUILD_ID env variable
+* Updated version
+* Cleaned up formatting
+* misc: Tagged release 1.1.2 for core
+* Merge branch 'master' of https://github.com/FrontasticGmbH/frontastic
+* Updated version
+* misc: Tagged release 1.1.1 for core
+* Updated version
+* Merge branch 'master' of https://github.com/FrontasticGmbH/frontastic
+* fix: updated @types/node
+* misc: Tagged release 1.1.0 for core
+* Updated version
+* Added access token support for multitenancy projects
+* Added node to types in tsconfig
+* misc: Tagged release 1.0.4 for core
+* Updated version
+* fix: error in error event trigger after reformatting
+* misc: Tagged release 1.0.3 for core
+* Updated perttier config and ran fix
+* Removed trailingComma:all
+* Run linting
+* Added editorconfig for github to render tabs properly
+* Updated version
+* Run linting
+* Indent with spaces instead of tabs
+* Added prettierignore, fixed CHANGELOG.md
+* Formatted code with new prettier config
+* Fixed formatting
+* misc: Tagged release 1.0.1 for core
+* Updated version
+* fix up prettier config to better suit the project
+* Add tab width to .prettierrc
+* misc: Tagged release 1.0.0 for core
+* Full release out of alpha/beta
+* Removed getPage for later release
+* Updated formatting
+* Removed yarn install from prepublishOnly
+
 ## Version 1.6.0 (2023-04-06)
 
 
