@@ -1,5 +1,5 @@
 import { IncomingMessage, ServerResponse } from "http";
-import ServerCookies from "cookies";
+import { getCookie } from "../cookieHandling";
 const REMEMBER_ME = "__rememberMe";
 
 export const rememberMeCookie = {
@@ -28,8 +28,10 @@ export const rememberMeCookie = {
 };
 
 export const serverSession = {
-	get: function (req: IncomingMessage, res: ServerResponse) {
-		const cookies = new ServerCookies(req, res);
-		return cookies.get("frontastic-session");
+	get: function (
+		req: IncomingMessage,
+		res: ServerResponse
+	): string | undefined {
+		return getCookie("frontastic-session", { req, res })?.toString();
 	},
 };
