@@ -10,7 +10,7 @@ type PageApi = {
 	getPage: (options: {
 		path: string;
 		query?: AcceptedQueryTypes;
-		optionsType?: ServerOptions;
+		serverOptions?: ServerOptions;
 	}) => Promise<SDKResponse<PageResponse>>;
 	getPreview: (options: {
 		previewId: string;

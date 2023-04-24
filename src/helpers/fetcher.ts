@@ -6,10 +6,10 @@ import { FetchError } from "../library/FetchError";
 export const fetcher = async <T>(
 	url: string,
 	options: RequestInit,
-	optionsType?: ServerOptions
+	serverOptions?: ServerOptions
 ): Promise<T | FetchError> => {
 	const sessionCookie =
-		(getCookie("frontastic-session", optionsType) as string) ?? "";
+		(getCookie("frontastic-session", serverOptions) as string) ?? "";
 
 	// rewrite headers, adding our required default headers
 	options.headers = {
@@ -33,7 +33,7 @@ export const fetcher = async <T>(
 		setCookie(
 			"frontastic-session",
 			response.headers.get("Frontastic-Session")!,
-			{ expires: expiryDate, ...(optionsType ?? {}) }
+			{ expires: expiryDate, ...(serverOptions ?? {}) }
 		);
 	}
 

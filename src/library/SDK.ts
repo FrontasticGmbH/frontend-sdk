@@ -168,7 +168,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		actionName: string;
 		payload?: unknown;
 		query?: AcceptedQueryTypes;
-		optionsType?: ServerOptions;
+		serverOptions?: ServerOptions;
 	}): Promise<SDKResponse<ReturnData>> {
 		this.#throwIfNotConfigured();
 		options.payload = options.payload ?? {};
@@ -198,7 +198,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 							}${params}`
 						),
 						fetcherOptions,
-						options.optionsType
+						options.serverOptions
 					);
 				}
 			);
@@ -224,7 +224,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		getPage: async (options: {
 			path: string;
 			query?: AcceptedQueryTypes;
-			optionsType?: ServerOptions;
+			serverOptions?: ServerOptions;
 		}) => {
 			this.#throwIfNotConfigured();
 			const params = options.query
@@ -251,7 +251,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 						`${this.#endpoint}/frontastic/page${params}`
 					),
 					fetcherOptions,
-					options.optionsType
+					options.serverOptions
 				);
 			} catch (error) {
 				return this.#handleError({
