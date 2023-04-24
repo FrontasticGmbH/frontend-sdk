@@ -1,4 +1,20 @@
 
+## Version 1.7.1 (2023-04-24)
+
+
+* Fixed formatting
+* Updated version
+* Refactor OptionsType -> ServerOptions
+* Refactor OptionsType -> ServerOptions
+* Added server cookie support for session handling
+* Changed serverSession handling to take IncomingMessage
+* Refactoring
+* fix: formatting
+* Removed use of js-cookie package
+* Removed js-cookie package
+* Removed js-cookie package
+* Rework of cookie handling for better SSR support
+
 ## Version 1.7.0 (2023-04-19)
 
 * feat: added support to pass serverSession in callAction
