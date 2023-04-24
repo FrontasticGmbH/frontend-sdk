@@ -14,6 +14,7 @@ import {
 } from "../types/api/page";
 import { generateQueryString } from "../helpers/queryStringHelpers";
 import { AcceptedQueryTypes } from "../types/Query";
+import { OptionsType } from "../cookieHandling/types";
 
 type SDKConfig = {
 	locale: string;
@@ -167,7 +168,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		actionName: string;
 		payload?: unknown;
 		query?: AcceptedQueryTypes;
-		serverSession?: string;
+		optionsType?: OptionsType;
 	}): Promise<SDKResponse<ReturnData>> {
 		this.#throwIfNotConfigured();
 		options.payload = options.payload ?? {};
@@ -197,7 +198,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 							}${params}`
 						),
 						fetcherOptions,
-						options.serverSession
+						options.optionsType
 					);
 				}
 			);
@@ -223,7 +224,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		getPage: async (options: {
 			path: string;
 			query?: AcceptedQueryTypes;
-			serverSession?: string;
+			optionsType?: OptionsType;
 		}) => {
 			this.#throwIfNotConfigured();
 			const params = options.query
@@ -250,7 +251,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 						`${this.#endpoint}/frontastic/page${params}`
 					),
 					fetcherOptions,
-					options.serverSession
+					options.optionsType
 				);
 			} catch (error) {
 				return this.#handleError({
