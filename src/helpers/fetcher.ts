@@ -22,11 +22,7 @@ export const fetcher = async <T>(
 
 	const response: Response = await fetch(url, options);
 
-	if (
-		typeof window !== "undefined" &&
-		response.ok &&
-		response.headers.has("Frontastic-Session")
-	) {
+	if (response.ok && response.headers.has("Frontastic-Session")) {
 		let rememberMe = rememberMeCookie.get();
 		let expiryDate;
 
