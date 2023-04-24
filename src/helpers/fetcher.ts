@@ -1,17 +1,15 @@
-import Cookies from "js-cookie";
+import { getCookie, setCookie } from "../cookieHandling";
+import { OptionsType } from "../cookieHandling/types";
 import { rememberMeCookie } from "../helpers/cookieManagement";
 import { FetchError } from "../library/FetchError";
 
-const cookiesApi = Cookies.withAttributes({ path: "/" });
-
 export const fetcher = async <T>(
 	url: string,
-	options: RequestInit = {},
-	sessionCookies: string = ""
+	options: RequestInit,
+	optionsType?: OptionsType
 ): Promise<T | FetchError> => {
-	const sessionCookie = sessionCookies
-		? sessionCookies
-		: cookiesApi.get("frontastic-session");
+	const sessionCookie =
+		(getCookie("frontastic-session", optionsType) as string) ?? "";
 
 	// rewrite headers, adding our required default headers
 	options.headers = {
@@ -36,10 +34,10 @@ export const fetcher = async <T>(
 			expiryDate = new Date(Date.now() + 7776000000); // 3 months
 		}
 
-		cookiesApi.set(
+		setCookie(
 			"frontastic-session",
 			response.headers.get("Frontastic-Session")!,
-			{ expires: expiryDate }
+			{ expires: expiryDate, ...(optionsType ?? {}) }
 		);
 	}
 
