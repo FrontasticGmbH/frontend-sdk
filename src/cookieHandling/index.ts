@@ -42,7 +42,7 @@ export const getCookies = (options?: OptionsType): TmpCookiesObj => {
 		if (req?.cookies) {
 			return req.cookies;
 		}
-		if (req && req.headers && req.headers.cookie) {
+		if (req?.headers?.cookie) {
 			return parse(req.headers.cookie);
 		}
 		return {};
