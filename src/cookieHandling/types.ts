@@ -13,4 +13,5 @@ export interface OptionsType extends CookieSerializeOptions {
 export type TmpCookiesObj =
 	| { [key: string]: string }
 	| Partial<{ [key: string]: string }>;
+
 export type CookieValueTypes = string | boolean | undefined | null;
