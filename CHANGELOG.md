@@ -1,12 +1,10 @@
 
 ## Version 1.7.4 (2023-04-24)
 
-
 * Merge branch 'master' of https://github.com/FrontasticGmbH/frontastic
 * Added ServerOptions type to index export
 
 ## Version 1.7.3 (2023-04-24)
-
 
 * Updated version
 
