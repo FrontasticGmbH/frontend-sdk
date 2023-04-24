@@ -1,5 +1,5 @@
 import { serialize, parse } from "cookie";
-import { OptionsType, TmpCookiesObj, CookieValueTypes } from "./types";
+import { ServerOptions, TmpCookiesObj, CookieValueTypes } from "./types";
 export { CookieValueTypes } from "./types";
 
 const isClientSide = (): boolean => typeof window !== "undefined";
@@ -31,7 +31,7 @@ const stringify = (value: string = "") => {
 const decode = (str: string): string =>
 	str ? str.replace(/(%[0-9A-Z]{2})+/g, decodeURIComponent) : str;
 
-export const getCookies = (options?: OptionsType): TmpCookiesObj => {
+export const getCookies = (options?: ServerOptions): TmpCookiesObj => {
 	let req;
 	if (options) {
 		req = options.req;
@@ -65,7 +65,7 @@ export const getCookies = (options?: OptionsType): TmpCookiesObj => {
 
 export const getCookie = (
 	key: string,
-	options?: OptionsType
+	options?: ServerOptions
 ): CookieValueTypes => {
 	const _cookies = getCookies(options);
 	const value = _cookies[key];
@@ -79,7 +79,7 @@ export const getCookie = (
 export const setCookie = (
 	key: string,
 	data: any,
-	options?: OptionsType
+	options?: ServerOptions
 ): void => {
 	let _cookieOptions: any;
 	let _req;
@@ -133,10 +133,10 @@ export const setCookie = (
 	}
 };
 
-export const deleteCookie = (key: string, options?: OptionsType): void =>
+export const deleteCookie = (key: string, options?: ServerOptions): void =>
 	setCookie(key, "", { ...options, maxAge: -1 });
 
-export const hasCookie = (key: string, options?: OptionsType): boolean => {
+export const hasCookie = (key: string, options?: ServerOptions): boolean => {
 	if (!key) {
 		return false;
 	}

@@ -1,7 +1,7 @@
 import { CookieSerializeOptions } from "cookie";
 import { IncomingMessage, ServerResponse } from "http";
 
-export interface OptionsType extends CookieSerializeOptions {
+export interface ServerOptions extends CookieSerializeOptions {
 	res?: ServerResponse;
 	req?: IncomingMessage & {
 		cookies?:

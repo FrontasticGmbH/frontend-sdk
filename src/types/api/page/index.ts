@@ -1,4 +1,4 @@
-import { OptionsType } from "../../../cookieHandling/types";
+import { ServerOptions } from "../../../cookieHandling/types";
 import { SDKResponse } from "../../../library/types";
 import { AcceptedQueryTypes } from "../../Query";
 import { PageFolderListResponse } from "./PageFolderListResponse";
@@ -10,7 +10,7 @@ type PageApi = {
 	getPage: (options: {
 		path: string;
 		query?: AcceptedQueryTypes;
-		optionsType?: OptionsType;
+		optionsType?: ServerOptions;
 	}) => Promise<SDKResponse<PageResponse>>;
 	getPreview: (options: {
 		previewId: string;

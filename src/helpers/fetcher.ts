@@ -1,12 +1,12 @@
 import { getCookie, setCookie } from "../cookieHandling";
-import { OptionsType } from "../cookieHandling/types";
+import { ServerOptions } from "../cookieHandling/types";
 import { rememberMeCookie } from "../helpers/cookieManagement";
 import { FetchError } from "../library/FetchError";
 
 export const fetcher = async <T>(
 	url: string,
 	options: RequestInit,
-	optionsType?: OptionsType
+	optionsType?: ServerOptions
 ): Promise<T | FetchError> => {
 	const sessionCookie =
 		(getCookie("frontastic-session", optionsType) as string) ?? "";
