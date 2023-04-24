@@ -6,6 +6,7 @@ import { FetchError } from "./library/FetchError";
 import { ActionError } from "./library/ActionError";
 import { PageError } from "./library/PageError";
 import { SDKResponse } from "./library/types";
+import { ServerOptions } from "./cookieHandling/types";
 
 export {
 	SDK,
@@ -17,4 +18,5 @@ export {
 	SDKResponse,
 	rememberMeCookie,
 	serverSession,
+	ServerOptions,
 };
