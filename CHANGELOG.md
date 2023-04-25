@@ -1,4 +1,10 @@
 
+## Version 1.7.5 (2023-04-25)
+
+
+* Updated version
+* Added ServerOption support for getPreview and getPages methods
+
 ## Version 1.7.4 (2023-04-24)
 
 * Added ServerOptions type to index export
