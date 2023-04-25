@@ -14,11 +14,13 @@ type PageApi = {
 	}) => Promise<SDKResponse<PageResponse>>;
 	getPreview: (options: {
 		previewId: string;
+		serverOptions?: ServerOptions;
 	}) => Promise<SDKResponse<PagePreviewResponse>>;
 	getPages: (options?: {
 		path?: string;
 		depth?: number;
 		types?: "static";
+		serverOptions?: ServerOptions;
 	}) => Promise<SDKResponse<PageFolderListResponse>>;
 };
 
