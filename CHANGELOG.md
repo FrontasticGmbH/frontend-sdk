@@ -1,7 +1,6 @@
 
 ## Version 1.7.6 (2023-04-26)
 
-
 * fix: include headers from IncomingMessage on SSR fetch
 
 ## Version 1.7.5 (2023-04-25)
