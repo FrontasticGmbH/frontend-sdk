@@ -37,6 +37,12 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	#actionQueue: Queue;
 
 	set endpoint(url: string) {
+		if (url.indexOf("http") === -1) {
+			url = `https://${url}`;
+			console.warn(
+				`Protocol not supplied to endpoint, defaulting to https: ${url}`
+			);
+		}
 		this.#endpoint = url;
 	}
 
