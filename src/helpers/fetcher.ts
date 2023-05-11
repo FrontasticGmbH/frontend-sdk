@@ -11,13 +11,19 @@ export const fetcher = async <T>(
 	const sessionCookie =
 		(getCookie("frontastic-session", serverOptions) as string) ?? "";
 
-	// rewrite headers, adding our required default headers
+	const incomingHeaders: { [key: string]: any } = serverOptions?.req
+		? { ...serverOptions.req.headers }
+		: {};
+	delete incomingHeaders["host"];
+	delete incomingHeaders["cookie"];
+
 	options.headers = {
 		"Content-Type": "application/json",
 		Accept: "application/json",
 		"X-Frontastic-Access-Token": "APIKEY",
 		...(options.headers || {}),
 		...(sessionCookie ? { "Frontastic-Session": sessionCookie } : {}),
+		...incomingHeaders,
 	};
 
 	const response: Response = await fetch(url, options);

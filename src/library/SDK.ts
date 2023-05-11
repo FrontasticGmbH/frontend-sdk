@@ -37,6 +37,14 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	#actionQueue: Queue;
 
 	set endpoint(url: string) {
+		if (url.indexOf("http") === -1) {
+			url = `https://${url}`;
+			// Note the below doesn't support websocket connections but much more work would
+			// be rquired for this anyway
+			console.warn(
+				`Protocol not supplied to endpoint, defaulting to https: ${url}`
+			);
+		}
 		this.#endpoint = url;
 	}
 
@@ -271,7 +279,10 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 
 			return { isError: false, data: <PageResponse>result };
 		},
-		getPreview: async (options: { previewId: string }) => {
+		getPreview: async (options: {
+			previewId: string;
+			serverOptions?: ServerOptions;
+		}) => {
 			this.#throwIfNotConfigured();
 			const fetcherOptions = {
 				method: "POST",
@@ -291,7 +302,8 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 			try {
 				result = await fetcher<PagePreviewResponse>(
 					this.#normaliseUrl(`${this.#endpoint}/frontastic${path}`),
-					fetcherOptions
+					fetcherOptions,
+					options.serverOptions
 				);
 			} catch (error) {
 				return this.#handleError({
@@ -316,6 +328,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 				path?: string;
 				depth?: number;
 				types?: "static";
+				serverOptions?: ServerOptions;
 			} = {
 				depth: 16,
 				types: "static",
@@ -342,7 +355,8 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 			try {
 				result = await fetcher<PageFolderListResponse>(
 					this.#normaliseUrl(`${this.#endpoint}/frontastic${path}`),
-					fetcherOptions
+					fetcherOptions,
+					options.serverOptions
 				);
 			} catch (error) {
 				return this.#handleError({
