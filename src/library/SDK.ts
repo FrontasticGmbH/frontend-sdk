@@ -245,7 +245,10 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 				: "";
 			const fetcherOptions = {
 				method: "POST",
-				headers: this.#getDefaultAPIHeaders(),
+				headers: {
+					"Frontastic-Path": options.path,
+					...this.#getDefaultAPIHeaders(),
+				},
 			};
 
 			let result: FetchError | Awaited<PageResponse>;
