@@ -45,7 +45,8 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 				`Protocol not supplied to endpoint, defaulting to https: ${url}`
 			);
 		}
-		this.#endpoint = url;
+		// remove "/frontastic" if applied
+		this.#endpoint = url.split("/frontastic")[0];
 	}
 
 	get endpoint() {
@@ -102,6 +103,17 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 			return `${previous}/${current}`;
 		}, "");
 
+	/**
+	 * The method that must be called prior to any other methods to configure the connection to the backend. Causes other methods to throw an error if not called prior.
+	 *
+	 * @param {string} config.locale - A string representing the combination of the ISO 639-1 language and ISO 3166-1 country code. For example "en-DE" or "en_DE".
+	 * @param {string} config.currency - A string representing the ISO 3-Letter Currency Code, for example EUR.
+	 * @param {string} config.endpoint - A string representing the full URL of the endpoint to be called.
+	 * @param {boolean} [config.useCurrencyInLocale=false] - An optional boolean, default false. To be set to true if currency is required in config.locale, for example en-DE@EUR.
+	 * @param {string} [config.extensionVersion=""] - An optional string required for multitenancy projects, the env variable process.env.NEXT_PUBLIC_EXT_BUILD_ID to specify the extension version in which to connect.
+	 *
+	 * @returns {void} Void.
+	 */
 	configure(config: SDKConfig) {
 		this.endpoint = config.endpoint;
 		this.configureLocale(config);
@@ -111,13 +123,21 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		this.#hasBeenConfigured = true;
 	}
 
+	/**
+	 * The method called to standardise the locale and currency inputs.
+	 *
+	 * @param {string} config.locale - A string representing the combination of the ISO 639-1 language and ISO 3166-1 country code. For example en-DE or en_DE.
+	 * @param {string} config.currency - A string representing the ISO 3-Letter Currency Code, for example EUR.
+	 *
+	 * @returns {void} Void.
+	 */
 	configureLocale(config: Pick<SDKConfig, "locale" | "currency">) {
 		// currency present in locale (posix modifier)
 		const [locale, currency] = config.locale.split("@");
 		if (currency) {
 			this.currency = currency as Currency;
 		}
-		// explicitely defined currency overrides that
+		// explicitly defined currency overrides that
 		if (config.currency) {
 			this.currency = config.currency as Currency;
 		}
@@ -172,6 +192,16 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		return { isError: true, error: error };
 	}
 
+	/**
+	 * The method used to call extension actions.
+	 *
+	 * @param {string} options.actionName - The name of the action corresponding to the location of the extension, for example "product/getProduct".
+	 * @param {unknown} [options.payload] - An optional key, value pair object payload to be serialised into the body of the request.
+	 * @param {Object.<string, number, boolean, string[], number[], boolean[]>} [options.query] - An optional key, value pair object to be serialised into the url query.
+	 * @param {Object} [options.serverOptions] - An optional object containing the res and req objects for ServerResponse and IncomingMessage with cookies respectively. Required for server-side rendering session management.
+	 *
+	 * @returns {PromiseLike<Object>} An object with a boolean isError property, and either an error or data property for true and false respectively. Type of data will match generic argument supplied to method.
+	 */
 	async callAction<ReturnData>(options: {
 		actionName: string;
 		payload?: unknown;
