@@ -172,6 +172,19 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		return { isError: true, error: error };
 	}
 
+	#getDefaultAPIHeaders() {
+		return {
+			"Frontastic-Locale": this.posixLocale,
+			"Frontastic-Currency": this.currency,
+			...(this.#extensionVersion
+				? {
+						"Commercetools-Frontend-Extension-Version":
+							this.#extensionVersion,
+				  }
+				: {}),
+		};
+	}
+
 	async callAction<ReturnData>(options: {
 		actionName: string;
 		payload?: unknown;
@@ -184,15 +197,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		const fetcherOptions = {
 			method: "POST",
 			body: JSON.stringify(options.payload),
-			headers: {
-				"Frontastic-Locale": this.posixLocale,
-				...(this.#extensionVersion
-					? {
-							"Commercetools-Frontend-Extension-Version":
-								this.#extensionVersion,
-					  }
-					: {}),
-			},
+			headers: this.#getDefaultAPIHeaders(),
 		};
 
 		let result: FetchError | Awaited<ReturnData>;
@@ -240,16 +245,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 				: "";
 			const fetcherOptions = {
 				method: "POST",
-				headers: {
-					"Frontastic-Path": options.path,
-					"Frontastic-Locale": this.posixLocale,
-					...(this.#extensionVersion
-						? {
-								"Commercetools-Frontend-Extension-Version":
-									this.#extensionVersion,
-						  }
-						: {}),
-				},
+				headers: this.#getDefaultAPIHeaders(),
 			};
 
 			let result: FetchError | Awaited<PageResponse>;
@@ -286,15 +282,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 			this.#throwIfNotConfigured();
 			const fetcherOptions = {
 				method: "POST",
-				headers: {
-					"Frontastic-Locale": this.posixLocale,
-					...(this.#extensionVersion
-						? {
-								"Commercetools-Frontend-Extension-Version":
-									this.#extensionVersion,
-						  }
-						: {}),
-				},
+				headers: this.#getDefaultAPIHeaders(),
 			};
 			let result: FetchError | Awaited<PagePreviewResponse>;
 			const path = `/preview?previewId=${options.previewId}&locale=${this.posixLocale}`;
@@ -337,15 +325,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 			this.#throwIfNotConfigured();
 			const fetcherOptions = {
 				method: "POST",
-				headers: {
-					"Frontastic-Locale": this.posixLocale,
-					...(this.#extensionVersion
-						? {
-								"Commercetools-Frontend-Extension-Version":
-									this.#extensionVersion,
-						  }
-						: {}),
-				},
+				headers: this.#getDefaultAPIHeaders(),
 			};
 			let result: FetchError | Awaited<PageFolderListResponse>;
 			const path = `/structure?locale=${this.posixLocale}${
