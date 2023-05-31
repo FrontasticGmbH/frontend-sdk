@@ -192,7 +192,6 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		return { isError: true, error: error };
 	}
 
-<<<<<<< HEAD
 	#getDefaultAPIHeaders() {
 		return {
 			"Frontastic-Locale": this.posixLocale,
@@ -206,7 +205,6 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		};
 	}
 
-=======
 	/**
 	 * The method used to call extension actions.
 	 *
@@ -217,7 +215,6 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	 *
 	 * @returns {PromiseLike<Object>} An object with a boolean isError property, and either an error or data property for true and false respectively. Type of data will match generic argument supplied to method.
 	 */
->>>>>>> baf6ca0a61 (Added basic JSDocs for method intellisense)
 	async callAction<ReturnData>(options: {
 		actionName: string;
 		payload?: unknown;
