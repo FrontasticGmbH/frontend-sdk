@@ -14,7 +14,7 @@ type PageApi = {
 	 * @param {Object.<string, number, boolean, string[], number[], boolean[]>} [options.query] - An optional key, value pair object to be serialised into the url query.
 	 * @param {Object} [options.serverOptions] - An optional object containing the res and req objects for ServerResponse and IncomingMessage with cookies respectively.  Required for server-side rendering session management.
 	 *
-	 * @returns {PromiseLike<Object>} An object with a boolean isError property, and either an error or data property for true and false respectively. Data contains Page data, PageFolder data and PageView data.
+	 * @returns {PromiseLike<Object>} An object with a boolean isError property, and either an error or data property for true and false respectively. Data contains Page, PageFolder and PageView data.
 	 */
 	getPage: (options: {
 		path: string;
@@ -27,7 +27,7 @@ type PageApi = {
 	 * @param {string} options.previewId - A string representing the ID of the preview to be fetched, likely to be acquired from a query in the visited URL.
 	 * @param {Object} [options.serverOptions] - An optional object containing the res and req objects for ServerResponse and IncomingMessage with cookies respectively.  Required for server-side rendering session management.
 	 *
-	 * @returns {PromiseLike<Object>} An object with a boolean isError property, and either an error or data property for true and false respectively. Data contains Page data, PageFolder data and PageView data.
+	 * @returns {PromiseLike<Object>} An object with a boolean isError property, and either an error or data property for true and false respectively. Data contains Page, PageFolder and PageView data.
 	 */
 	getPreview: (options: {
 		previewId: string;
