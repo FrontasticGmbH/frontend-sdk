@@ -104,13 +104,13 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		}, "");
 
 	/**
-	 * The method that must be called prior to any other methods to configure the connection to the backend. Causes other methods to throw an error if not called prior.
+	 * The method that must be called prior to any other methods to configure the connection to the backend. An error is throw if not called prior.
 	 *
 	 * @param {string} config.locale - A string representing the combination of the ISO 639-1 language and ISO 3166-1 country code. For example "en-DE" or "en_DE".
 	 * @param {string} config.currency - A string representing the ISO 3-Letter Currency Code, for example EUR.
 	 * @param {string} config.endpoint - A string representing the full URL of the endpoint to be called.
-	 * @param {boolean} [config.useCurrencyInLocale=false] - An optional boolean, default false. To be set to true if currency is required in config.locale, for example en-DE@EUR.
-	 * @param {string} [config.extensionVersion=""] - An optional string required for multitenancy projects, the env variable process.env.NEXT_PUBLIC_EXT_BUILD_ID to specify the extension version in which to connect.
+	 * @param {boolean} [config.useCurrencyInLocale=false] - An optional boolean, default false. To be set to true if currency is required in config.locale, for example en-GB@EUR.
+	 * @param {string} [config.extensionVersion=""] - An optional string required for multitenancy projects, stored in the environment variable process.env.NEXT_PUBLIC_EXT_BUILD_ID to specify the extension version in which to connect.
 	 *
 	 * @returns {void} Void.
 	 */
@@ -126,7 +126,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	/**
 	 * The method called to standardise the locale and currency inputs.
 	 *
-	 * @param {string} config.locale - A string representing the combination of the ISO 639-1 language and ISO 3166-1 country code. For example en-DE or en_DE.
+	 * @param {string} config.locale - A string representing the combination of the ISO 639-1 language and ISO 3166-1 country code. For example en-GB or en_GB.
 	 * @param {string} config.currency - A string representing the ISO 3-Letter Currency Code, for example EUR.
 	 *
 	 * @returns {void} Void.
