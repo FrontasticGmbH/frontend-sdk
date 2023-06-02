@@ -31,22 +31,12 @@ export class EventManager<Events> {
 		eventHandlers.push(handler);
 	}
 
-	private offForEvent<EventName extends keyof Events>(
-		eventName: EventName
-	): void {
-		this.eventHandlers[eventName] = [];
-	}
-
 	public off<EventName extends keyof Events>(
 		eventName: EventName,
 		handler: (event: Event<EventName, Events[EventName]>) => void
 	) {
 		let eventHandlers = this.getEventHandlers(eventName);
 		eventHandlers.splice(eventHandlers.indexOf(handler), 1);
-	}
-
-	private clearAllHandlers() {
-		this.eventHandlers = {};
 	}
 
 	public trigger<EventName extends keyof Events>(
