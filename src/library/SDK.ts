@@ -22,6 +22,7 @@ type SDKConfig = {
 	endpoint: string;
 	useCurrencyInLocale?: boolean;
 	extensionVersion?: string;
+	sessionLifeTime?: number;
 };
 
 export class SDK<ExtensionEvents extends Events> extends EventManager<
@@ -35,6 +36,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	#useCurrencyInLocale!: boolean;
 	#extensionVersion!: string;
 	#actionQueue: Queue;
+	#sessionLifeTime?: number;
 
 	set endpoint(url: string) {
 		if (url.indexOf("http") === -1) {
@@ -211,7 +213,8 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 							}${params}`
 						),
 						fetcherOptions,
-						options.serverOptions
+						options.serverOptions,
+						this.#sessionLifeTime
 					);
 				}
 			);
@@ -258,7 +261,8 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 						`${this.#endpoint}/frontastic/page${params}`
 					),
 					fetcherOptions,
-					options.serverOptions
+					options.serverOptions,
+					this.#sessionLifeTime
 				);
 			} catch (error) {
 				return this.#handleError({
@@ -294,7 +298,8 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 				result = await fetcher<PagePreviewResponse>(
 					this.#normaliseUrl(`${this.#endpoint}/frontastic${path}`),
 					fetcherOptions,
-					options.serverOptions
+					options.serverOptions,
+					this.#sessionLifeTime
 				);
 			} catch (error) {
 				return this.#handleError({
@@ -339,7 +344,8 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 				result = await fetcher<PageFolderListResponse>(
 					this.#normaliseUrl(`${this.#endpoint}/frontastic${path}`),
 					fetcherOptions,
-					options.serverOptions
+					options.serverOptions,
+					this.#sessionLifeTime
 				);
 			} catch (error) {
 				return this.#handleError({
