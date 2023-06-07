@@ -109,7 +109,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		this.configureLocale(config);
 		this.#useCurrencyInLocale = config.useCurrencyInLocale ?? false;
 		this.#extensionVersion = config.extensionVersion ?? "";
-
+		this.#sessionLifeTime=config.sessionLifeTime
 		this.#hasBeenConfigured = true;
 	}
 
