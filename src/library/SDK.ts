@@ -2,7 +2,10 @@ import { fetcher } from "../helpers/fetcher";
 import { Queue } from "./Queue";
 import { Event } from "./Event";
 import { EventManager } from "./EventManager";
-import { SDKResponse, Currency, StandardEvents, Events } from "./types";
+import { StandardEvents } from "../types/events/StandardEvents";
+import { Events } from "../types/events/Events";
+import { Currency } from "../types/Currency";
+import { SDKResponse } from "../types/SDKResponse";
 import { FetchError } from "./FetchError";
 import { ActionError } from "./ActionError";
 import { PageError } from "./PageError";
@@ -37,18 +40,22 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	#actionQueue: Queue;
 
 	set endpoint(url: string) {
+		url = this.#normaliseUrl(url);
 		if (url.indexOf("http") === -1) {
 			url = `https://${url}`;
 			// Note the below doesn't support websocket connections but much more work would
 			// be rquired for this anyway
 			console.warn(
-				`Protocol not supplied to endpoint, defaulting to https: ${url}`
+				`Protocol not supplied to endpoint, defaulting to https - ${url}`
 			);
 		}
 		// remove "/frontastic" if applied
 		this.#endpoint = url.split("/frontastic")[0];
 	}
 
+	/**
+	 * The full url endpoint to be called, to be set within the {@link configure} method.
+	 */
 	get endpoint() {
 		return this.#endpoint;
 	}
@@ -57,10 +64,16 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		this.#locale = new Intl.Locale(locale);
 	}
 
+	/**
+	 * The string representing the combination of the ISO 639-1 language and ISO 3166-1 country code, to be set within the {@link configure} method.
+	 */
 	get locale(): Intl.BCP47LanguageTag {
 		return this.#locale.baseName;
 	}
 
+	/**
+	 * The string representing the combination of the ISO 639-1 language and ISO 3166-1 country code in the posix format to be used internally.
+	 */
 	get posixLocale(): string {
 		const apiFormattedLocale = this.locale.slice(0, 5).replace("-", "_");
 
@@ -75,6 +88,9 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		this.#currency = currency;
 	}
 
+	/**
+	 * The string representing the ISO 3-Letter Currency Code, to be set within the {@link configure} method.
+	 */
 	get currency() {
 		return this.#currency;
 	}
@@ -263,6 +279,9 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		return { isError: false, data: <ReturnData>result };
 	}
 
+	/**
+	 * The domain to call page methods on the API hub.
+	 */
 	page: PageApi = {
 		getPage: async (options: {
 			path: string;
@@ -356,6 +375,8 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 			}
 		) => {
 			this.#throwIfNotConfigured();
+			options.depth = options.depth ?? 16;
+			options.types = options.types ?? "static";
 			const fetcherOptions = {
 				method: "POST",
 				headers: this.#getDefaultAPIHeaders(),
@@ -363,7 +384,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 			let result: FetchError | Awaited<PageFolderListResponse>;
 			const path = `/structure?locale=${this.posixLocale}${
 				options.path ? `&path=${options.path}` : ""
-			}${options.depth !== undefined ? `&depth=${options.depth}` : ""}`;
+			}&depth=${options.depth}`;
 
 			try {
 				result = await fetcher<PageFolderListResponse>(

@@ -23,6 +23,12 @@ export class EventManager<Events> {
 		return eventHandlers;
 	}
 
+	/**
+	 * Adds an event handler for a pre-defined event.
+	 *
+	 * @param {EventName} eventName - The name of the event, will match the key of the specific event.
+	 * @param {(event: Event<EventName, Events[EventName]>) => void} handler - The handler function to be called when the event is triggered.
+	 */
 	public on<EventName extends keyof Events>(
 		eventName: EventName,
 		handler: (event: Event<EventName, Events[EventName]>) => void
@@ -31,6 +37,12 @@ export class EventManager<Events> {
 		eventHandlers.push(handler);
 	}
 
+	/**
+	 * Removes an event handler for a pre-defined event.
+	 *
+	 * @param {EventName} eventName - The name of the event, will match the key of the specific event.
+	 * @param {(event: Event<EventName, Events[EventName]>) => void} handler - The handler function instance to be removed.
+	 */
 	public off<EventName extends keyof Events>(
 		eventName: EventName,
 		handler: (event: Event<EventName, Events[EventName]>) => void
@@ -39,6 +51,11 @@ export class EventManager<Events> {
 		eventHandlers.splice(eventHandlers.indexOf(handler), 1);
 	}
 
+	/**
+	 * Triggers a pre-defined event.
+	 *
+	 * @param {Event<EventName, Events[EventName]>} event - The event to be triggered.
+	 */
 	public trigger<EventName extends keyof Events>(
 		event: Event<EventName, Events[EventName]>
 	): void {

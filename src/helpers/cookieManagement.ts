@@ -2,7 +2,15 @@ import { IncomingMessage, ServerResponse } from "http";
 import { getCookie } from "../cookieHandling";
 const REMEMBER_ME = "__rememberMe";
 
+/**
+ * An object containing helper methods for interacting with the remember me cookie.
+ */
 export const rememberMeCookie = {
+	/**
+	 * Gets the remember me cookie on client-side rendered pages and components.
+	 *
+	 * @returns {boolean} A boolean indicating whether or not the user is to be remembered.
+	 */
 	get: function (): boolean {
 		if (typeof window !== "undefined") {
 			if (window.localStorage.getItem(REMEMBER_ME)) {
@@ -11,6 +19,13 @@ export const rememberMeCookie = {
 		}
 		return false;
 	},
+	/**
+	 * Sets the remember me cookie on client-side rendered pages and components.
+	 *
+	 * @param {boolean} rememberMe - The value in which to set the remember me cookie.
+	 *
+	 * @returns {void} Void.
+	 */
 	set: function (rememberMe: boolean) {
 		if (typeof window !== "undefined") {
 			if (rememberMe) {
@@ -20,6 +35,11 @@ export const rememberMeCookie = {
 			}
 		}
 	},
+	/**
+	 * Removes the remember me cookie on client-side rendered pages and components.
+	 *
+	 * @returns {void} Void.
+	 */
 	remove: function () {
 		if (typeof window !== "undefined") {
 			window.localStorage.removeItem(REMEMBER_ME);
@@ -27,7 +47,16 @@ export const rememberMeCookie = {
 	},
 };
 
+/**
+ * @deprecated An object containing helper methods for interacting with the server session.
+ */
 export const serverSession = {
+	/**
+	 * @deprecated Used to retieve the session string.
+	 *
+	 * @param {IncomingMessage} req - The incoming message created by the server.
+	 * @param {ServerResponse} res - The server response object created by the server.
+	 */
 	get: function (
 		req: IncomingMessage,
 		res: ServerResponse

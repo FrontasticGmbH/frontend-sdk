@@ -1,10 +1,10 @@
 import { SDK } from "./SDK";
-import { Events } from "./types";
+import { Events } from "../types/events/Events";
 
 /**
  * The abstract base class signature to extend SDK integration classes.
  *
- * @param {Extension<CustomEvents>} CustomEvents - blah blah blah.
+ * @param {Extension<CustomEvents>} CustomEvents - The generic argument defining any custom events on the integration.
  */
 abstract class Extension<CustomEvents extends Events> {
 	/**
