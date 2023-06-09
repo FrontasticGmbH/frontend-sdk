@@ -35,7 +35,7 @@ export const fetcher = async <T>(
 
 		if (rememberMe) {
 			const duration = sessionLifetime ?? 7776000000;
-			expiryDate = new Date(Date.now() + duration); // 3 months
+			expiryDate = new Date(Date.now() + duration);
 		}
 
 		setCookie(
