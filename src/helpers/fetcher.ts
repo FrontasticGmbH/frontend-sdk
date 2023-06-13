@@ -34,7 +34,7 @@ export const fetcher = async <T>(
 		let expiryDate;
 
 		if (rememberMe) {
-			const duration = sessionLifetime ?? 7776000000;
+			const duration = sessionLifetime ?? 7776000000; // 3 months
 			expiryDate = new Date(Date.now() + duration);
 		}
 
