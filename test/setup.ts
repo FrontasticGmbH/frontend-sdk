@@ -5,10 +5,11 @@ global.fetch = fetch;
 beforeAll(() => {
 
 	vi.mock("cross-fetch", async () => {
-		const actual = await vi.importActual("cross-fetch")
+		const actual = (await vi.importActual(
+			"cross-fetch"
+		)) as unknown as Object;
 
 		return {
-			// @ts-ignore
 			...actual,
 			fetch: vi.fn((url) => {
 

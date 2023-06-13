@@ -2,7 +2,7 @@ import { fetcher } from "../helpers/fetcher";
 import { Queue } from "./Queue";
 import { Event } from "./Event";
 import { EventManager } from "./EventManager";
-import { SDKResponse, Currency, StandardEvents, Events } from "./types";
+import { Currency, Events, SDKResponse, StandardEvents } from "./types";
 import { FetchError } from "./FetchError";
 import { ActionError } from "./ActionError";
 import { PageError } from "./PageError";
@@ -22,7 +22,7 @@ type SDKConfig = {
 	endpoint: string;
 	useCurrencyInLocale?: boolean;
 	extensionVersion?: string;
-	sessionLifeTime?: number;
+	sessionLifetime?: number;
 };
 
 export class SDK<ExtensionEvents extends Events> extends EventManager<
@@ -36,7 +36,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	#useCurrencyInLocale!: boolean;
 	#extensionVersion!: string;
 	#actionQueue: Queue;
-	#sessionLifeTime?: number;
+	#sessionLifetime?: number;
 
 	set endpoint(url: string) {
 		if (url.indexOf("http") === -1) {
@@ -103,15 +103,136 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 			}
 			return `${previous}/${current}`;
 		}, "");
+	page: PageApi = {
+		getPage: async (options: {
+			path: string;
+			query?: AcceptedQueryTypes;
+			serverOptions?: ServerOptions;
+		}) => {
+			this.#throwIfNotConfigured();
+			const params = options.query
+				? generateQueryString(options.query)
+				: "";
+			const fetcherOptions = {
+				method: "POST",
+				headers: {
+					"Frontastic-Path": options.path,
+					...this.#getDefaultAPIHeaders(),
+				},
+			};
 
-	configure(config: SDKConfig) {
-		this.endpoint = config.endpoint;
-		this.configureLocale(config);
-		this.#useCurrencyInLocale = config.useCurrencyInLocale ?? false;
-		this.#extensionVersion = config.extensionVersion ?? "";
-		this.#sessionLifeTime=config.sessionLifeTime
-		this.#hasBeenConfigured = true;
-	}
+			let result: FetchError | Awaited<PageResponse>;
+			try {
+				result = await fetcher<PageResponse>(
+					this.#normaliseUrl(
+						`${this.#endpoint}/frontastic/page${params}`
+					),
+					fetcherOptions,
+					options.serverOptions,
+					this.#sessionLifetime
+				);
+			} catch (error) {
+				return this.#handleError({
+					type: "PageError",
+					error: <string | Error>error,
+					path: options.path,
+				});
+			}
+
+			if (result instanceof Error) {
+				return this.#handleError({
+					type: "PageError",
+					error: <string | Error>result.toString(),
+					path: options.path,
+				});
+			}
+
+			return { isError: false, data: <PageResponse>result };
+		},
+		getPreview: async (options: {
+			previewId: string;
+			serverOptions?: ServerOptions;
+		}) => {
+			this.#throwIfNotConfigured();
+			const fetcherOptions = {
+				method: "POST",
+				headers: this.#getDefaultAPIHeaders(),
+			};
+			let result: FetchError | Awaited<PagePreviewResponse>;
+			const path = `/preview?previewId=${options.previewId}&locale=${this.posixLocale}`;
+
+			try {
+				result = await fetcher<PagePreviewResponse>(
+					this.#normaliseUrl(`${this.#endpoint}/frontastic${path}`),
+					fetcherOptions,
+					options.serverOptions,
+					this.#sessionLifetime
+				);
+			} catch (error) {
+				return this.#handleError({
+					type: "PageError",
+					error: <string | Error>error,
+					path: path,
+				});
+			}
+
+			if (result instanceof Error) {
+				return this.#handleError({
+					type: "PageError",
+					error: <string | Error>result.toString(),
+					path: path,
+				});
+			}
+
+			return { isError: false, data: <PagePreviewResponse>result };
+		},
+		getPages: async (
+			options: {
+				path?: string;
+				depth?: number;
+				types?: "static";
+				serverOptions?: ServerOptions;
+			} = {
+				depth: 16,
+				types: "static",
+			}
+		) => {
+			this.#throwIfNotConfigured();
+			const fetcherOptions = {
+				method: "POST",
+				headers: this.#getDefaultAPIHeaders(),
+			};
+			let result: FetchError | Awaited<PageFolderListResponse>;
+			const path = `/structure?locale=${this.posixLocale}${
+				options.path ? `&path=${options.path}` : ""
+			}${options.depth !== undefined ? `&depth=${options.depth}` : ""}`;
+
+			try {
+				result = await fetcher<PageFolderListResponse>(
+					this.#normaliseUrl(`${this.#endpoint}/frontastic${path}`),
+					fetcherOptions,
+					options.serverOptions,
+					this.#sessionLifetime
+				);
+			} catch (error) {
+				return this.#handleError({
+					type: "PageError",
+					error: <string | Error>error,
+					path: path,
+				});
+			}
+
+			if (result instanceof Error) {
+				return this.#handleError({
+					type: "PageError",
+					error: <string | Error>result.toString(),
+					path: path,
+				});
+			}
+
+			return { isError: false, data: <PageFolderListResponse>result };
+		},
+	};
 
 	configureLocale(config: Pick<SDKConfig, "locale" | "currency">) {
 		// currency present in locale (posix modifier)
@@ -187,6 +308,15 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		};
 	}
 
+	configure(config: SDKConfig) {
+		this.endpoint = config.endpoint;
+		this.configureLocale(config);
+		this.#useCurrencyInLocale = config.useCurrencyInLocale ?? false;
+		this.#extensionVersion = config.extensionVersion ?? "";
+		this.#sessionLifetime = config.sessionLifetime;
+		this.#hasBeenConfigured = true;
+	}
+
 	async callAction<ReturnData>(options: {
 		actionName: string;
 		payload?: unknown;
@@ -214,7 +344,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 						),
 						fetcherOptions,
 						options.serverOptions,
-						this.#sessionLifeTime
+						this.#sessionLifetime
 					);
 				}
 			);
@@ -235,135 +365,4 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 
 		return { isError: false, data: <ReturnData>result };
 	}
-
-	page: PageApi = {
-		getPage: async (options: {
-			path: string;
-			query?: AcceptedQueryTypes;
-			serverOptions?: ServerOptions;
-		}) => {
-			this.#throwIfNotConfigured();
-			const params = options.query
-				? generateQueryString(options.query)
-				: "";
-			const fetcherOptions = {
-				method: "POST",
-				headers: {
-					"Frontastic-Path": options.path,
-					...this.#getDefaultAPIHeaders(),
-				},
-			};
-
-			let result: FetchError | Awaited<PageResponse>;
-			try {
-				result = await fetcher<PageResponse>(
-					this.#normaliseUrl(
-						`${this.#endpoint}/frontastic/page${params}`
-					),
-					fetcherOptions,
-					options.serverOptions,
-					this.#sessionLifeTime
-				);
-			} catch (error) {
-				return this.#handleError({
-					type: "PageError",
-					error: <string | Error>error,
-					path: options.path,
-				});
-			}
-
-			if (result instanceof Error) {
-				return this.#handleError({
-					type: "PageError",
-					error: <string | Error>result.toString(),
-					path: options.path,
-				});
-			}
-
-			return { isError: false, data: <PageResponse>result };
-		},
-		getPreview: async (options: {
-			previewId: string;
-			serverOptions?: ServerOptions;
-		}) => {
-			this.#throwIfNotConfigured();
-			const fetcherOptions = {
-				method: "POST",
-				headers: this.#getDefaultAPIHeaders(),
-			};
-			let result: FetchError | Awaited<PagePreviewResponse>;
-			const path = `/preview?previewId=${options.previewId}&locale=${this.posixLocale}`;
-
-			try {
-				result = await fetcher<PagePreviewResponse>(
-					this.#normaliseUrl(`${this.#endpoint}/frontastic${path}`),
-					fetcherOptions,
-					options.serverOptions,
-					this.#sessionLifeTime
-				);
-			} catch (error) {
-				return this.#handleError({
-					type: "PageError",
-					error: <string | Error>error,
-					path: path,
-				});
-			}
-
-			if (result instanceof Error) {
-				return this.#handleError({
-					type: "PageError",
-					error: <string | Error>result.toString(),
-					path: path,
-				});
-			}
-
-			return { isError: false, data: <PagePreviewResponse>result };
-		},
-		getPages: async (
-			options: {
-				path?: string;
-				depth?: number;
-				types?: "static";
-				serverOptions?: ServerOptions;
-			} = {
-				depth: 16,
-				types: "static",
-			}
-		) => {
-			this.#throwIfNotConfigured();
-			const fetcherOptions = {
-				method: "POST",
-				headers: this.#getDefaultAPIHeaders(),
-			};
-			let result: FetchError | Awaited<PageFolderListResponse>;
-			const path = `/structure?locale=${this.posixLocale}${
-				options.path ? `&path=${options.path}` : ""
-			}${options.depth !== undefined ? `&depth=${options.depth}` : ""}`;
-
-			try {
-				result = await fetcher<PageFolderListResponse>(
-					this.#normaliseUrl(`${this.#endpoint}/frontastic${path}`),
-					fetcherOptions,
-					options.serverOptions,
-					this.#sessionLifeTime
-				);
-			} catch (error) {
-				return this.#handleError({
-					type: "PageError",
-					error: <string | Error>error,
-					path: path,
-				});
-			}
-
-			if (result instanceof Error) {
-				return this.#handleError({
-					type: "PageError",
-					error: <string | Error>result.toString(),
-					path: path,
-				});
-			}
-
-			return { isError: false, data: <PageFolderListResponse>result };
-		},
-	};
 }

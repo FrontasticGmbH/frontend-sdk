@@ -3,7 +3,7 @@ import { fetcher } from "../../../src/helpers/fetcher";
 import * as cookieHandling from "../../../src/cookieHandling";
 
 describe("Fetcher Tests", () => {
-	test("should testFetch with sessionLifeTime", async () => {
+	test("should test fetcher with provided sessionLifetime", async () => {
 		const cookieManagement = await import(
 			"../../../src/helpers/cookieManagement"
 		);
