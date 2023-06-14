@@ -8,6 +8,10 @@ describe("Fetcher Tests", () => {
 			"../../../src/helpers/cookieManagement"
 		);
 
+		const mockedTimestamp = 1623684800000;
+
+		vi.spyOn(Date, "now").mockImplementation(() => mockedTimestamp);
+
 		cookieManagement.rememberMeCookie.get = vi.fn(() => true);
 
 		vi.spyOn(cookieHandling, "setCookie");
