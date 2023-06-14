@@ -1,16 +1,21 @@
-import { describe, expect, test, vi } from "vitest";
+import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
 import { fetcher } from "../../../src/helpers/fetcher";
 import * as cookieHandling from "../../../src/cookieHandling";
 
 describe("Fetcher Tests", () => {
+	let mockedTimestamp;
+	beforeAll(() => {
+		mockedTimestamp = 1673673600000;
+		vi.spyOn(Date, "now").mockImplementation(() => mockedTimestamp);
+	});
+
+	afterAll(() => {
+		vi.resetAllMocks();
+	});
 	test("should test fetcher with provided sessionLifetime", async () => {
 		const cookieManagement = await import(
 			"../../../src/helpers/cookieManagement"
 		);
-
-		const mockedTimestamp = 1623684800000;
-
-		vi.spyOn(Date, "now").mockImplementation(() => mockedTimestamp);
 
 		cookieManagement.rememberMeCookie.get = vi.fn(() => true);
 
