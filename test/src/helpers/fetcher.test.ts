@@ -23,19 +23,17 @@ describe("Fetcher Tests", () => {
 			sessionLifetime
 		);
 		expect(cookieHandling.setCookie).toHaveBeenCalled();
-
-		// FIX: We cannot get this test to work as the sessionTime gets updated to the latest datetime
-		// const newSessionLife = new Date(Date.now() + sessionLifetime);
-		// expect(cookieHandling.setCookie).toHaveBeenCalledWithVariables(
-		// 	"frontastic-session",
-		// 	"SESSION",
-		// 	{
-		// 		"expires": newSessionLife,
-		// 	}
-		// );
+		const newSessionLife = new Date(Date.now() + sessionLifetime);
+		expect(cookieHandling.setCookie).toHaveBeenCalledWith(
+			"frontastic-session",
+			"SESSION",
+			{
+				expires: newSessionLife,
+			}
+		);
 	});
 
-	test("should test fetcher with default expiry date from headers", async () => {
+	test("should test fetcher when rememberMe is set to false", async () => {
 		const cookieManagement = await import(
 			"../../../src/helpers/cookieManagement"
 		);
