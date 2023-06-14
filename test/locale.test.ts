@@ -3,7 +3,12 @@ import { SDK } from "../src";
 
 test("accepts POSIX locales with currency", () => {
 	const sdk = new SDK();
-	sdk.configure({ locale: "ne_NP@NPR", currency: "EUR", useCurrencyInLocale: true, endpoint: "url" });
+	sdk.configure({
+		locale: "ne_NP@NPR",
+		currency: "EUR",
+		useCurrencyInLocale: true,
+		endpoint: "url",
+	});
 
 	expect(sdk.locale).toBe("ne-NP");
 	expect(sdk.currency).toBe("EUR");
@@ -12,7 +17,12 @@ test("accepts POSIX locales with currency", () => {
 
 test("accepts POSIX locales without currency", () => {
 	const sdk = new SDK();
-	sdk.configure({ locale: "ne_NP", currency: "NPR", useCurrencyInLocale: true, endpoint: "url" });
+	sdk.configure({
+		locale: "ne_NP",
+		currency: "NPR",
+		useCurrencyInLocale: true,
+		endpoint: "url",
+	});
 
 	expect(sdk.locale).toBe("ne-NP");
 	expect(sdk.currency).toBe("NPR");
@@ -25,7 +35,5 @@ test("accepts BCP-47 locales", () => {
 	sdk.configure({ locale: "ar-EG", currency: "EUR", endpoint: "url" });
 	expect(sdk.locale).toBe("ar-EG");
 	expect(sdk.currency).toBe("EUR");
-  expect(sdk.posixLocale).toBe("ar_EG")
-
+	expect(sdk.posixLocale).toBe("ar_EG");
 });
-
