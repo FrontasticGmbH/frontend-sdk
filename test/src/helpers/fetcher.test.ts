@@ -4,6 +4,7 @@ import * as cookieHandling from "../../../src/cookieHandling";
 
 describe("Fetcher Tests", () => {
 	let mockedTimestamp;
+
 	beforeAll(() => {
 		mockedTimestamp = 1673673600000;
 		vi.spyOn(Date, "now").mockImplementation(() => mockedTimestamp);
@@ -12,6 +13,7 @@ describe("Fetcher Tests", () => {
 	afterAll(() => {
 		vi.resetAllMocks();
 	});
+
 	test("should test fetcher with provided sessionLifetime", async () => {
 		const cookieManagement = await import(
 			"../../../src/helpers/cookieManagement"
@@ -28,8 +30,8 @@ describe("Fetcher Tests", () => {
 			{
 				method: "GET",
 			},
-			{},
-			sessionLifetime
+			sessionLifetime,
+			{}
 		);
 		expect(cookieHandling.setCookie).toHaveBeenCalled();
 		const newSessionLife = new Date(Date.now() + sessionLifetime);
@@ -55,6 +57,7 @@ describe("Fetcher Tests", () => {
 			{
 				method: "GET",
 			},
+			890000000,
 			{}
 		);
 		expect(cookieHandling.setCookie).toHaveBeenCalled();

@@ -22,7 +22,7 @@ type SDKConfig = {
 	endpoint: string;
 	useCurrencyInLocale?: boolean;
 	extensionVersion?: string;
-	sessionLifetime?: number;
+	sessionLifetime: number;
 };
 
 export class SDK<ExtensionEvents extends Events> extends EventManager<
@@ -36,7 +36,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	#useCurrencyInLocale!: boolean;
 	#extensionVersion!: string;
 	#actionQueue: Queue;
-	#sessionLifetime?: number;
+	#sessionLifetime!: number;
 
 	set endpoint(url: string) {
 		if (url.indexOf("http") === -1) {
@@ -128,8 +128,8 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 						`${this.#endpoint}/frontastic/page${params}`
 					),
 					fetcherOptions,
-					options.serverOptions,
-					this.#sessionLifetime
+					this.#sessionLifetime,
+					options.serverOptions
 				);
 			} catch (error) {
 				return this.#handleError({
@@ -165,8 +165,8 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 				result = await fetcher<PagePreviewResponse>(
 					this.#normaliseUrl(`${this.#endpoint}/frontastic${path}`),
 					fetcherOptions,
-					options.serverOptions,
-					this.#sessionLifetime
+					this.#sessionLifetime,
+					options.serverOptions
 				);
 			} catch (error) {
 				return this.#handleError({
@@ -211,8 +211,8 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 				result = await fetcher<PageFolderListResponse>(
 					this.#normaliseUrl(`${this.#endpoint}/frontastic${path}`),
 					fetcherOptions,
-					options.serverOptions,
-					this.#sessionLifetime
+					this.#sessionLifetime,
+					options.serverOptions
 				);
 			} catch (error) {
 				return this.#handleError({
@@ -313,7 +313,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		this.configureLocale(config);
 		this.#useCurrencyInLocale = config.useCurrencyInLocale ?? false;
 		this.#extensionVersion = config.extensionVersion ?? "";
-		this.#sessionLifetime = config.sessionLifetime;
+		this.#sessionLifetime = config.sessionLifetime ?? 7776000000;
 		this.#hasBeenConfigured = true;
 	}
 
@@ -343,8 +343,8 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 							}${params}`
 						),
 						fetcherOptions,
-						options.serverOptions,
-						this.#sessionLifetime
+						this.#sessionLifetime,
+						options.serverOptions
 					);
 				}
 			);

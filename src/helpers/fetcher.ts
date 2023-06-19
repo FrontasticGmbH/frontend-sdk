@@ -6,8 +6,8 @@ import { FetchError } from "../library/FetchError";
 export const fetcher = async <T>(
 	url: string,
 	options: RequestInit,
-	serverOptions?: ServerOptions,
-	sessionLifetime?: number
+	sessionLifetime: number,
+	serverOptions?: ServerOptions
 ): Promise<T | FetchError> => {
 	const sessionCookie =
 		(getCookie("frontastic-session", serverOptions) as string) ?? "";
@@ -34,8 +34,7 @@ export const fetcher = async <T>(
 		let expiryDate;
 
 		if (rememberMe) {
-			const duration = sessionLifetime ?? 7776000000; // 3 months
-			expiryDate = new Date(Date.now() + duration);
+			expiryDate = new Date(Date.now() + sessionLifetime);
 		}
 
 		setCookie(

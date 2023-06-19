@@ -2,6 +2,7 @@ import { fetch, Headers } from "cross-fetch";
 import { beforeAll, vi } from "vitest";
 
 global.fetch = fetch;
+
 beforeAll(() => {
 	vi.mock("cross-fetch", async () => {
 		const actual = (await vi.importActual(
