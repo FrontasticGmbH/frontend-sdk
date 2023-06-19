@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
 import { fetcher } from "../../../src/helpers/fetcher";
 import * as cookieHandling from "../../../src/cookieHandling";
 
-describe("Fetcher Tests", () => {
+describe("Testing Fetch Functionality for rememberMe cooking handling", () => {
 	let mockedTimestamp;
 
 	beforeAll(() => {
@@ -14,7 +14,7 @@ describe("Fetcher Tests", () => {
 		vi.resetAllMocks();
 	});
 
-	test("should test fetcher with provided sessionLifetime", async () => {
+	test("fetcher should set sessionLifetime when rememberMe is set to true with given param[sessionLifetime]", async () => {
 		const cookieManagement = await import(
 			"../../../src/helpers/cookieManagement"
 		);
@@ -44,7 +44,7 @@ describe("Fetcher Tests", () => {
 		);
 	});
 
-	test("should test fetcher when rememberMe is set to false", async () => {
+	test("fetcher not should set sessionLifetime when rememberMe is set to true even with given param[sessionLifetime]", async () => {
 		const cookieManagement = await import(
 			"../../../src/helpers/cookieManagement"
 		);
