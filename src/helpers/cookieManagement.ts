@@ -1,29 +1,24 @@
 import { IncomingMessage, ServerResponse } from "http";
-import { getCookie } from "../cookieHandling";
+import { deleteCookie, getCookie, setCookie } from "../cookieHandling";
+
 const REMEMBER_ME = "__rememberMe";
 
 export const rememberMeCookie = {
 	get: function (): boolean {
-		if (typeof window !== "undefined") {
-			if (window.localStorage.getItem(REMEMBER_ME)) {
-				return true;
-			}
+		if (getCookie(REMEMBER_ME)) {
+			return true;
 		}
 		return false;
 	},
 	set: function (rememberMe: boolean) {
-		if (typeof window !== "undefined") {
-			if (rememberMe) {
-				window.localStorage.setItem(REMEMBER_ME, "1");
-			} else {
-				this.remove();
-			}
+		if (rememberMe) {
+			return setCookie(REMEMBER_ME, "1");
+		} else {
+			this.remove();
 		}
 	},
 	remove: function () {
-		if (typeof window !== "undefined") {
-			window.localStorage.removeItem(REMEMBER_ME);
-		}
+		return deleteCookie(REMEMBER_ME);
 	},
 };
 
