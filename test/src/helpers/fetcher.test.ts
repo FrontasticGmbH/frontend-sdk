@@ -44,7 +44,7 @@ describe("Testing Fetch Functionality for rememberMe cooking handling", () => {
 		);
 	});
 
-	test("fetcher not should set sessionLifetime when rememberMe is set to true even with given param[sessionLifetime]", async () => {
+	test("fetcher should not set sessionLifetime when rememberMe is set to false", async () => {
 		const cookieManagement = await import(
 			"../../../src/helpers/cookieManagement"
 		);
