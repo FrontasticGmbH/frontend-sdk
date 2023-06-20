@@ -1,6 +1,9 @@
 import { ActionError } from "../../library/ActionError";
 import { PageError } from "../../library/PageError";
 
+/**
+ * The types of standard events and commerce events the base SDK ships with.
+ */
 export type StandardEvents = {
 	productFetched: { product: unknown };
 	productsQueried: { query: unknown; result: unknown };

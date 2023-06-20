@@ -1,3 +1,6 @@
+/**
+ * A string representing the ISO 3-Letter Currency Code.
+ */
 export type Currency =
 	| "AED"
 	| "AFN"
