@@ -6,6 +6,7 @@ import { FetchError } from "../library/FetchError";
 export const fetcher = async <T>(
 	url: string,
 	options: RequestInit,
+	sessionLifetime: number,
 	serverOptions?: ServerOptions
 ): Promise<T | FetchError> => {
 	const sessionCookie =
@@ -33,7 +34,7 @@ export const fetcher = async <T>(
 		let expiryDate;
 
 		if (rememberMe) {
-			expiryDate = new Date(Date.now() + 7776000000); // 3 months
+			expiryDate = new Date(Date.now() + sessionLifetime);
 		}
 
 		setCookie(
