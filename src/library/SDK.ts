@@ -26,7 +26,7 @@ type SDKConfig = {
 	endpoint: string;
 	useCurrencyInLocale?: boolean;
 	extensionVersion?: string;
-	sessionLifetime: number;
+	sessionLifetime?: number;
 };
 
 export class SDK<ExtensionEvents extends Events> extends EventManager<
