@@ -18,6 +18,7 @@ import {
 import { generateQueryString } from "../helpers/queryStringHelpers";
 import { AcceptedQueryTypes } from "../types/Query";
 import { ServerOptions } from "../cookieHandling/types";
+import { DEFAULT_SESSION_LIFETIME } from "../constants/defaultSessionLifetime";
 
 type SDKConfig = {
 	locale: string;
@@ -25,6 +26,7 @@ type SDKConfig = {
 	endpoint: string;
 	useCurrencyInLocale?: boolean;
 	extensionVersion?: string;
+	sessionLifetime: number;
 };
 
 export class SDK<ExtensionEvents extends Events> extends EventManager<
@@ -38,6 +40,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	#useCurrencyInLocale!: boolean;
 	#extensionVersion!: string;
 	#actionQueue: Queue;
+	#sessionLifetime!: number;
 
 	set endpoint(url: string) {
 		url = this.#normaliseUrl(url);
@@ -127,6 +130,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	 * @param {string} config.endpoint - A string representing the full URL of the endpoint to be called.
 	 * @param {boolean} [config.useCurrencyInLocale=false] - An optional boolean, default false. To be set to true if currency is required in config.locale, for example en-GB@EUR.
 	 * @param {string} [config.extensionVersion=""] - An optional string required for multitenancy projects, stored in the environment variable process.env.NEXT_PUBLIC_EXT_BUILD_ID to specify the extension version in which to connect.
+	 * @param {string} [config.sessionLifetime=7776000000] - An optional number of milliseconds in which to persist the session lifeTime, to override the {@link DEFAULT_SESSION_LIFETIME} of 3 months.
 	 *
 	 * @returns {void} Void.
 	 */
@@ -135,6 +139,8 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		this.configureLocale(config);
 		this.#useCurrencyInLocale = config.useCurrencyInLocale ?? false;
 		this.#extensionVersion = config.extensionVersion ?? "";
+		this.#sessionLifetime =
+			config.sessionLifetime ?? DEFAULT_SESSION_LIFETIME;
 
 		this.#hasBeenConfigured = true;
 	}
@@ -257,7 +263,8 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 							}${params}`
 						),
 						fetcherOptions,
-						options.serverOptions
+						options.serverOptions,
+						this.#sessionLifetime
 					);
 				}
 			);
@@ -307,7 +314,8 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 						`${this.#endpoint}/frontastic/page${params}`
 					),
 					fetcherOptions,
-					options.serverOptions
+					options.serverOptions,
+					this.#sessionLifetime
 				);
 			} catch (error) {
 				return this.#handleError({
@@ -343,7 +351,8 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 				result = await fetcher<PagePreviewResponse>(
 					this.#normaliseUrl(`${this.#endpoint}/frontastic${path}`),
 					fetcherOptions,
-					options.serverOptions
+					options.serverOptions,
+					this.#sessionLifetime
 				);
 			} catch (error) {
 				return this.#handleError({
@@ -390,7 +399,8 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 				result = await fetcher<PageFolderListResponse>(
 					this.#normaliseUrl(`${this.#endpoint}/frontastic${path}`),
 					fetcherOptions,
-					options.serverOptions
+					options.serverOptions,
+					this.#sessionLifetime
 				);
 			} catch (error) {
 				return this.#handleError({

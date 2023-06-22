@@ -1,3 +1,4 @@
+import { DEFAULT_SESSION_LIFETIME } from "../constants/defaultSessionLifetime";
 import { getCookie, setCookie } from "../cookieHandling";
 import { ServerOptions } from "../cookieHandling/types";
 import { rememberMeCookie } from "../helpers/cookieManagement";
@@ -6,7 +7,8 @@ import { FetchError } from "../library/FetchError";
 export const fetcher = async <T>(
 	url: string,
 	options: RequestInit,
-	serverOptions?: ServerOptions
+	serverOptions?: ServerOptions,
+	sessionLifetime?: number
 ): Promise<T | FetchError> => {
 	const sessionCookie =
 		(getCookie("frontastic-session", serverOptions) as string) ?? "";
@@ -33,7 +35,9 @@ export const fetcher = async <T>(
 		let expiryDate;
 
 		if (rememberMe) {
-			expiryDate = new Date(Date.now() + 7776000000); // 3 months
+			expiryDate = new Date(
+				Date.now() + (sessionLifetime ?? DEFAULT_SESSION_LIFETIME)
+			);
 		}
 
 		setCookie(

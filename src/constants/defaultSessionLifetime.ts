@@ -1,0 +1,1 @@
+export const DEFAULT_SESSION_LIFETIME = 7776000000; // 3 months
