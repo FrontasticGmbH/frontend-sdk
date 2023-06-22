@@ -1,4 +1,4 @@
-import { expect, test } from "vitest";
+import { expect, test, describe } from "vitest";
 import { SDK } from "../../../src/library/SDK";
 
 describe(SDK.name, () => {
