@@ -4,7 +4,7 @@
 * Added SSR support for rememberMeCookie helpers
 * Added JSdocs for intellisense
 * Update remember me cookie helpers to use new SSR compliant cookie management tools
-* Sperated types into their own files
+* Separated types into their own files
 * Added customization option for session lifetime
 * Removed unused private methods on the EventManager
 
