@@ -1,5 +1,6 @@
 import { IncomingMessage, ServerResponse } from "http";
 import { deleteCookie, getCookie, setCookie } from "../cookieHandling";
+import { ServerOptions } from "../cookieHandling/types";
 
 const REMEMBER_ME = "__rememberMe";
 
@@ -8,37 +9,42 @@ const REMEMBER_ME = "__rememberMe";
  */
 export const rememberMeCookie = {
 	/**
-	 * Gets the remember me cookie on client-side rendered pages and components.
+	 * Gets the remember me cookie.
+	 *
+	 * @param {ServerOptions} [serverOptions] - An optional {@link ServerOptions} object containing the res and req objects for ServerResponse and IncomingMessage with cookies respectively. Required for server-side rendering session management.
 	 *
 	 * @returns {boolean} A boolean indicating whether or not the user is to be remembered.
 	 */
-	get: function (): boolean {
-		if (getCookie(REMEMBER_ME)) {
+	get: function (serverOptions?: ServerOptions): boolean {
+		if (getCookie(REMEMBER_ME, serverOptions)) {
 			return true;
 		}
 		return false;
 	},
 	/**
-	 * Sets the remember me cookie on client-side rendered pages and components.
+	 * Sets the remember me cookie.
 	 *
 	 * @param {boolean} rememberMe - The value in which to set the remember me cookie.
+	 * @param {ServerOptions} [serverOptions] - An optional {@link ServerOptions} object containing the res and req objects for ServerResponse and IncomingMessage with cookies respectively. Required for server-side rendering session management.
 	 *
 	 * @returns {void} Void.
 	 */
-	set: function (rememberMe: boolean) {
+	set: function (rememberMe: boolean, serverOptions?: ServerOptions) {
 		if (rememberMe) {
-			return setCookie(REMEMBER_ME, "1");
+			return setCookie(REMEMBER_ME, "1", serverOptions);
 		} else {
 			this.remove();
 		}
 	},
 	/**
-	 * Removes the remember me cookie on client-side rendered pages and components.
+	 * Removes the remember me cookie.
+	 *
+	 * @param {ServerOptions} [serverOptions] - An optional {@link ServerOptions} object containing the res and req objects for ServerResponse and IncomingMessage with cookies respectively. Required for server-side rendering session management.
 	 *
 	 * @returns {void} Void.
 	 */
-	remove: function () {
-		return deleteCookie(REMEMBER_ME);
+	remove: function (serverOptions?: ServerOptions) {
+		return deleteCookie(REMEMBER_ME, serverOptions);
 	},
 };
 
