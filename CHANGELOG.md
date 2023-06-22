@@ -1,4 +1,14 @@
 
+## Version 1.8.0 (2023-06-22)
+
+
+* Added SSR support for rememberMeCookie helpers
+* Added JSdocs for intellisense
+* chore(FP-4517): update remember me cookie helpers to use cookie management tools
+* Sperated types into thie own files
+* feat: add customization cookie lifetime
+* Removed unused private methods on the EventManager
+
 ## Version 1.7.7 (2023-05-31)
 
 
