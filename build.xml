@@ -1,65 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="SDK core" basedir="./" default="test">
 
-    <property name="frontastic_basedir" value="${basedir}/../../.." />
-    <property name="integration_dir" value="${frontastic_basedir}/paas/integration" />
+	<property name="frontastic_basedir" value="${basedir}/../../.." />
+	<property name="integration_dir" value="${frontastic_basedir}/paas/integration" />
 
-    <!--
+	<!--
         Include local project properties.
     -->
-    <property file="${basedir}/environment.local" />
-    <property file="${basedir}/../environment.local" />
-    <property file="${basedir}/environment" />
-    <property file="${basedir}/../environment" />
+	<property file="${basedir}/environment.local" />
+	<property file="${basedir}/../environment.local" />
+	<property file="${basedir}/environment" />
+	<property file="${basedir}/../environment" />
 
-    <!--
+	<!--
         Import main target defintions (extension points)
     -->
-    <import file="${integration_dir}/main.xml" />
+	<import file="${integration_dir}/main.xml" />
 
-    <!--
+	<!--
         Custom initialize, test and build
     -->
-    <target name="SDK core:bootstrap" extensionOf="-initialize:main~hook">
-        <tool-exists executable="yarn" />
+	<target name="SDK core:bootstrap" extensionOf="-initialize:main~hook">
+		<tool-exists executable="yarn" />
 
-        <exec executable="yarn" failonerror="true" dir="${basedir}">
-            <env key="CI" value="true" />
+		<exec executable="yarn" failonerror="true" dir="${basedir}">
+			<env key="CI" value="true" />
 
-            <arg value="--network-timeout" />
-            <arg value="1000000000" />
+			<arg value="--network-timeout" />
+			<arg value="1000000000" />
 
-            <!-- This is a workaround for ENOENT errors: https://github.com/yarnpkg/yarn/issues/2629 -->
-            <arg value="--mutex" />
-            <arg value="network" />
-            <arg value="--network-concurrency" />
-            <arg value="1" />
+			<!-- This is a workaround for ENOENT errors: https://github.com/yarnpkg/yarn/issues/2629 -->
+			<arg value="--mutex" />
+			<arg value="network" />
+			<arg value="--network-concurrency" />
+			<arg value="1" />
 
-            <arg value="install" />
-        </exec>
-    </target>
+			<arg value="install" />
+		</exec>
+	</target>
 
-    <!-- TODO: add in once tests added -->
-    <!-- <target name="SDK core:test" unless="${production}" extensionOf="-test-unit:main~hook">
-        <tool-exists executable="yarn" />
-
-        <exec executable="yarn" dir="${basedir}">
+	<target name="SDK core:test" unless="${production}" extensionOf="-test-unit:main~hook">
+		<tool-exists executable="yarn" />
+		<!--TODO: implement-->
+		<!--<exec executable="yarn" dir="${basedir}">
             <arg value="run" />
             <arg value="lint" />
-        </exec>
-        <exec executable="yarn" dir="${basedir}" failonerror="true">
-            <arg value="run" />
-            <arg value="test" />
-            <env key="CI" value="true" />
-        </exec>
-    </target> -->
+        </exec>-->
+		<exec executable="yarn" dir="${basedir}" failonerror="true">
+			<arg value="run" />
+			<arg value="test" />
+			<env key="CI" value="true" />
+		</exec>
+	</target>
 
-    <target name="SDK core:package" depends="initialize" extensionOf="-package:before~hook">
-        <tool-exists executable="yarn" />
+	<target name="SDK core:package" depends="initialize" extensionOf="-package:before~hook">
+		<tool-exists executable="yarn" />
 
-        <exec executable="yarn" dir="${basedir}" failonerror="true">
-            <arg value="run" />
-            <arg value="build" />
-        </exec>
-    </target>
+		<exec executable="yarn" dir="${basedir}" failonerror="true">
+			<arg value="run" />
+			<arg value="build" />
+		</exec>
+	</target>
 </project>
