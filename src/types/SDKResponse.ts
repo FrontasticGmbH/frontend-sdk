@@ -1,7 +1,7 @@
 import { FetchError } from "../library/FetchError";
 
 /**
- * A wrapper for returns from API requests. On error returns an error, otherwise requested data.
+ * A wrapper for API request returns. On error returns an error, otherwise requested data.
  *
  * @param {T} T - The type of data expected to be returned from a successful API call.
  */
