@@ -7,6 +7,8 @@ import { ActionError } from "./library/ActionError";
 import { PageError } from "./library/PageError";
 import { SDKResponse } from "./types/SDKResponse";
 import { ServerOptions } from "./cookieHandling/types";
+import { CookieHandler } from "./cookieHandling";
+import { CookieManager } from "./interfaces";
 
 export {
 	SDK,
@@ -19,4 +21,6 @@ export {
 	rememberMeCookie,
 	serverSession,
 	ServerOptions,
+	CookieHandler,
+	CookieManager,
 };

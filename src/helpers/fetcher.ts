@@ -1,8 +1,10 @@
 import { DEFAULT_SESSION_LIFETIME } from "../constants/defaultSessionLifetime";
-import { getCookie, setCookie } from "../cookieHandling";
+import { CookieHandler } from "../cookieHandling";
 import { ServerOptions } from "../cookieHandling/types";
 import { rememberMeCookie } from "../helpers/cookieManagement";
 import { FetchError } from "../library/FetchError";
+
+const cookieHandler = new CookieHandler();
 
 export const fetcher = async <T>(
 	url: string,
@@ -11,7 +13,10 @@ export const fetcher = async <T>(
 	sessionLifetime?: number
 ): Promise<T | FetchError> => {
 	const sessionCookie =
-		(getCookie("frontastic-session", serverOptions) as string) ?? "";
+		(cookieHandler.getCookie(
+			"frontastic-session",
+			serverOptions
+		) as string) ?? "";
 
 	const incomingHeaders: { [key: string]: any } = serverOptions?.req
 		? { ...serverOptions.req.headers }
@@ -40,7 +45,7 @@ export const fetcher = async <T>(
 			);
 		}
 
-		setCookie(
+		cookieHandler.setCookie(
 			"frontastic-session",
 			response.headers.get("Frontastic-Session")!,
 			{ expires: expiryDate, ...(serverOptions ?? {}) }
