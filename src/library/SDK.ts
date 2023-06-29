@@ -90,7 +90,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	/**
 	 * The string representing the locale formatted to be used when communicating with the backend.
 	 */
-	get formattedLocale(): string {
+	private get apiHubLocale(): string {
 		const apiFormattedLocale = this.locale.replace("-", "_");
 
 		if (this.#useCurrencyInLocale) {
@@ -229,7 +229,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 
 	#getDefaultAPIHeaders() {
 		return {
-			"Frontastic-Locale": this.formattedLocale,
+			"Frontastic-Locale": this.apiHubLocale,
 			"Frontastic-Currency": this.currency,
 			...(this.#extensionVersion
 				? {
@@ -358,7 +358,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 				headers: this.#getDefaultAPIHeaders(),
 			};
 			let result: FetchError | Awaited<PagePreviewResponse>;
-			const path = `/preview?previewId=${options.previewId}&locale=${this.formattedLocale}`;
+			const path = `/preview?previewId=${options.previewId}&locale=${this.apiHubLocale}`;
 
 			try {
 				result = await fetcher<PagePreviewResponse>(
@@ -404,7 +404,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 				headers: this.#getDefaultAPIHeaders(),
 			};
 			let result: FetchError | Awaited<PageFolderListResponse>;
-			const path = `/structure?locale=${this.formattedLocale}${
+			const path = `/structure?locale=${this.apiHubLocale}${
 				options.path ? `&path=${options.path}` : ""
 			}&depth=${options.depth}`;
 
