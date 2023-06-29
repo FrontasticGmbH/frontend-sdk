@@ -75,10 +75,23 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	}
 
 	/**
-	 * The string representing the combination of the ISO 639-1 language and ISO 3166-1 country code in the posix format to be used internally.
+	 * @deprecated The string representing the locale in the posix format to be used internally.
 	 */
 	get posixLocale(): string {
 		const apiFormattedLocale = this.locale.slice(0, 5).replace("-", "_");
+
+		if (this.#useCurrencyInLocale) {
+			return `${apiFormattedLocale}@${this.currency}`;
+		} else {
+			return apiFormattedLocale;
+		}
+	}
+
+	/**
+	 * The string representing the locale formatted to be used when communicating with the backend.
+	 */
+	get formattedLocale(): string {
+		const apiFormattedLocale = this.locale.replace("-", "_");
 
 		if (this.#useCurrencyInLocale) {
 			return `${apiFormattedLocale}@${this.currency}`;
@@ -216,7 +229,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 
 	#getDefaultAPIHeaders() {
 		return {
-			"Frontastic-Locale": this.posixLocale,
+			"Frontastic-Locale": this.formattedLocale,
 			"Frontastic-Currency": this.currency,
 			...(this.#extensionVersion
 				? {
@@ -345,7 +358,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 				headers: this.#getDefaultAPIHeaders(),
 			};
 			let result: FetchError | Awaited<PagePreviewResponse>;
-			const path = `/preview?previewId=${options.previewId}&locale=${this.posixLocale}`;
+			const path = `/preview?previewId=${options.previewId}&locale=${this.formattedLocale}`;
 
 			try {
 				result = await fetcher<PagePreviewResponse>(
@@ -391,7 +404,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 				headers: this.#getDefaultAPIHeaders(),
 			};
 			let result: FetchError | Awaited<PageFolderListResponse>;
-			const path = `/structure?locale=${this.posixLocale}${
+			const path = `/structure?locale=${this.formattedLocale}${
 				options.path ? `&path=${options.path}` : ""
 			}&depth=${options.depth}`;
 

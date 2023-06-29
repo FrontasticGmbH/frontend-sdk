@@ -3,35 +3,7 @@ import { SDK } from "../../../src/library/SDK";
 
 describe(SDK.name, () => {
 	describe("configure", () => {
-		test("accepts POSIX locales with currency", () => {
-			const sdk = new SDK();
-			sdk.configure({
-				locale: "ne_NP@NPR",
-				currency: "EUR",
-				useCurrencyInLocale: true,
-				endpoint: "url",
-			});
-
-			expect(sdk.locale).toBe("ne-NP");
-			expect(sdk.currency).toBe("EUR");
-			expect(sdk.posixLocale).toBe("ne_NP@EUR");
-		});
-
-		test("accepts POSIX locales without currency", () => {
-			const sdk = new SDK();
-			sdk.configure({
-				locale: "ne_NP",
-				currency: "NPR",
-				useCurrencyInLocale: true,
-				endpoint: "url",
-			});
-
-			expect(sdk.locale).toBe("ne-NP");
-			expect(sdk.currency).toBe("NPR");
-			expect(sdk.posixLocale).toBe("ne_NP@NPR");
-		});
-
-		test("accepts BCP-47 locales", () => {
+		test("accepts 5 digit locales split by _ or -", () => {
 			const sdk = new SDK();
 
 			sdk.configure({
@@ -40,8 +12,81 @@ describe(SDK.name, () => {
 				endpoint: "url",
 			});
 			expect(sdk.locale).toBe("ar-EG");
+			expect(sdk.formattedLocale).toBe("ar_EG");
+
+			sdk.configure({
+				locale: "ar_EG",
+				currency: "EUR",
+				endpoint: "url",
+			});
+			expect(sdk.locale).toBe("ar-EG");
+			expect(sdk.formattedLocale).toBe("ar_EG");
+		});
+
+		test("accepts 5 digit locales split by _ or - with currency", () => {
+			const sdk = new SDK();
+
+			sdk.configure({
+				locale: "ar-EG",
+				currency: "EUR",
+				endpoint: "url",
+				useCurrencyInLocale: true,
+			});
+			expect(sdk.locale).toBe("ar-EG");
+			expect(sdk.formattedLocale).toBe("ar_EG@EUR");
+
+			sdk.configure({
+				locale: "ar_EG",
+				currency: "EUR",
+				endpoint: "url",
+				useCurrencyInLocale: true,
+			});
+			expect(sdk.locale).toBe("ar-EG");
+			expect(sdk.formattedLocale).toBe("ar_EG@EUR");
+		});
+
+		test("accepts 6 digit locales split by _ or -", () => {
+			const sdk = new SDK();
+
+			sdk.configure({
+				locale: "es-419",
+				currency: "EUR",
+				endpoint: "url",
+			});
+			expect(sdk.locale).toBe("es-419");
+			expect(sdk.formattedLocale).toBe("es_419");
+
+			sdk.configure({
+				locale: "es_419",
+				currency: "EUR",
+				endpoint: "url",
+			});
+			expect(sdk.locale).toBe("es-419");
+			expect(sdk.formattedLocale).toBe("es_419");
+		});
+
+		test("accepts 6 digit locales split by _ or - with currency", () => {
+			const sdk = new SDK();
+
+			sdk.configure({
+				locale: "es-419@EUR",
+				currency: "EUR",
+				endpoint: "url",
+				useCurrencyInLocale: true,
+			});
+			expect(sdk.locale).toBe("es-419");
 			expect(sdk.currency).toBe("EUR");
-			expect(sdk.posixLocale).toBe("ar_EG");
+			expect(sdk.formattedLocale).toBe("es_419@EUR");
+
+			sdk.configure({
+				locale: "es_419@EUR",
+				currency: "EUR",
+				endpoint: "url",
+				useCurrencyInLocale: true,
+			});
+			expect(sdk.locale).toBe("es-419");
+			expect(sdk.currency).toBe("EUR");
+			expect(sdk.formattedLocale).toBe("es_419@EUR");
 		});
 	});
 });
