@@ -5,7 +5,7 @@ import {
 } from "../cookieHandling/types";
 
 /**
- * An interface containing all the cookie handling methods.
+ * An interface containing all the cookie management methods.
  */
 export interface CookieManager {
 	/**
@@ -34,16 +34,16 @@ export interface CookieManager {
 	decode(str: string): string;
 
 	/**
-	 * Processes the value given, and the return the cookie type based on that.
+	 * Processes the given value, and returns the cookie value in its proper type.
 	 *
-	 * @param {string} value - The value to be checked to determine the cookie type.
+	 * @param {string} value - The string value to be processed to its correct type.
 	 *
 	 * @returns {CookieValueTypes} The cookie processed to it's actual {@link CookieValueTypes} value.
 	 */
 	processValue(value: string): CookieValueTypes;
 
 	/**
-	 * Computes and gets the cookie from the server or the client.
+	 * Computes and gets the cookies from the server or the client.
 	 *
 	 * @param {ServerOptions} [options] - An optional {@link ServerOptions} object containing the res and req objects for ServerResponse and IncomingMessage with cookies respectively. Required for server-side rendering session management.
 	 *
@@ -52,9 +52,9 @@ export interface CookieManager {
 	getCookies(options?: ServerOptions): TmpCookiesObj;
 
 	/**
-	 * Calls the getCookies method to return the cookie.
+	 * Gets a cookie with the provided key.
 	 *
-	 * @param {string} key - Represents the key of the cookie.
+	 * @param {string} key - A string representing the key value of the cookie.
 	 * @param {ServerOptions} [options] - An optional {@link ServerOptions} object containing the res and req objects for ServerResponse and IncomingMessage with cookies respectively. Required for server-side rendering session management.
 	 *
 	 * @returns {TmpCookiesObj} A key, value pair object of type {@link CookieValueTypes} holding cookie values.
@@ -64,7 +64,7 @@ export interface CookieManager {
 	/**
 	 * Sets the cookie from the server or the client.
 	 *
-	 * @param {string} key - Represents the key of the cookie.
+	 * @param {string} key - A string representing the key in which to set the cookiee.
 	 * @param {ServerOptions} [options] - An optional {@link ServerOptions} object containing the res and req objects for ServerResponse and IncomingMessage with cookies respectively. Required for server-side rendering session management.
 	 *
 	 * @returns {void} void.
@@ -74,7 +74,7 @@ export interface CookieManager {
 	/**
 	 * Deletes the cookie.
 	 *
-	 * @param {string} key - Represents the key of the cookie.
+	 * @param {string} key - A string representing the key of the cookie.
 	 * @param {ServerOptions} [options] - An optional {@link ServerOptions} object containing the res and req objects for ServerResponse and IncomingMessage with cookies respectively. Required for server-side rendering session management.
 	 *
 	 * @returns {void} void.
@@ -84,10 +84,10 @@ export interface CookieManager {
 	/**
 	 * Checks if the cookie is present.
 	 *
-	 * @param {string} key - Represents the key of the cookie.
+	 * @param {string} key - A string representing the key of the cookie.
 	 * @param {ServerOptions} [options] - An optional {@link ServerOptions} object containing the res and req objects for ServerResponse and IncomingMessage with cookies respectively. Required for server-side rendering session management.
 	 *
-	 * @returns {boolean} A boolean indicating if the cookie is present, with the provided key.
+	 * @returns {boolean} A boolean indicating if the cookie is present.
 	 */
 	hasCookie(key: string, options?: ServerOptions): boolean;
 }
