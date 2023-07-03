@@ -19,6 +19,7 @@ import { generateQueryString } from "../helpers/queryStringHelpers";
 import { AcceptedQueryTypes } from "../types/Query";
 import { ServerOptions } from "../cookieHandling/types";
 import { DEFAULT_SESSION_LIFETIME } from "../constants/defaultSessionLifetime";
+import { CookieManager } from "../interfaces";
 
 type SDKConfig = {
 	locale: string;
@@ -27,6 +28,7 @@ type SDKConfig = {
 	useCurrencyInLocale?: boolean;
 	extensionVersion?: string;
 	sessionLifetime?: number;
+	cookieHandlingOverride?: CookieManager;
 };
 
 export class SDK<ExtensionEvents extends Events> extends EventManager<
@@ -41,6 +43,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	#extensionVersion!: string;
 	#actionQueue: Queue;
 	#sessionLifetime!: number;
+	#cookieHandlingOverride!: CookieManager;
 
 	set endpoint(url: string) {
 		url = this.#normaliseUrl(url);
@@ -144,6 +147,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	 * @param {boolean} [config.useCurrencyInLocale=false] - An optional boolean, default false. To be set to true if currency is required in config.locale, for example en-GB@EUR.
 	 * @param {string} [config.extensionVersion=""] - An optional string required for multitenancy projects, stored in the environment variable process.env.NEXT_PUBLIC_EXT_BUILD_ID to specify the extension version in which to connect.
 	 * @param {string} [config.sessionLifetime=7776000000] - An optional number of milliseconds in which to persist the session lifeTime, to override the {@link DEFAULT_SESSION_LIFETIME} of 3 months.
+	 * @param {CookieManager} [config.cookieManager] - A cookie manager interface that contains all the cookie handling methods.
 	 *
 	 * @returns {void} Void.
 	 */
@@ -156,6 +160,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 			config.sessionLifetime ?? DEFAULT_SESSION_LIFETIME;
 
 		this.#hasBeenConfigured = true;
+		this.#cookieHandlingOverride = config.cookieHandlingOverride as CookieManager;
 	}
 
 	/**
