@@ -1,13 +1,15 @@
 import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
 import { fetcher } from "../../../src/helpers/fetcher";
-import * as cookieHandling from "../../../src/cookieHandling";
+import { CookieHandler } from "../../../src/cookieHandling";
 
+const cookieHandler = new CookieHandler();
 describe("fetcher", () => {
 	let mockedTimestamp;
 
 	beforeAll(() => {
 		mockedTimestamp = 1673673600000;
 		vi.spyOn(Date, "now").mockImplementation(() => mockedTimestamp);
+		vi.spyOn(CookieHandler.prototype, "setCookie");
 	});
 
 	afterAll(() => {
@@ -21,8 +23,6 @@ describe("fetcher", () => {
 
 		cookieManagement.rememberMeCookie.get = vi.fn(() => true);
 
-		vi.spyOn(cookieHandling, "setCookie");
-
 		const sessionLifetime = 890000000;
 
 		await fetcher(
@@ -33,9 +33,9 @@ describe("fetcher", () => {
 			{},
 			sessionLifetime
 		);
-		expect(cookieHandling.setCookie).toHaveBeenCalled();
+		expect(cookieHandler.setCookie).toHaveBeenCalled();
 		const newSessionLife = new Date(Date.now() + sessionLifetime);
-		expect(cookieHandling.setCookie).toHaveBeenCalledWith(
+		expect(cookieHandler.setCookie).toHaveBeenCalledWith(
 			"frontastic-session",
 			"SESSION",
 			{
@@ -50,7 +50,6 @@ describe("fetcher", () => {
 		);
 
 		cookieManagement.rememberMeCookie.get = vi.fn(() => false);
-		vi.spyOn(cookieHandling, "setCookie");
 
 		await fetcher(
 			"https://test-xyz.frontastic.dev",
@@ -60,9 +59,9 @@ describe("fetcher", () => {
 			{},
 			890000000
 		);
-		expect(cookieHandling.setCookie).toHaveBeenCalled();
+		expect(cookieHandler.setCookie).toHaveBeenCalled();
 
-		expect(cookieHandling.setCookie).toHaveBeenCalledWith(
+		expect(cookieHandler.setCookie).toHaveBeenCalledWith(
 			"frontastic-session",
 			"SESSION",
 			{
