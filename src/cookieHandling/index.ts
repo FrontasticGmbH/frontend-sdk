@@ -1,6 +1,6 @@
 import { serialize, parse } from "cookie";
 import { ServerOptions, TmpCookiesObj, CookieValueTypes } from "./types";
-import { CookieManager } from "../interfaces";
+import { CookieManager } from "../interfaces/CookieManager";
 
 export class CookieHandler implements CookieManager {
 	isClientSide(): boolean {

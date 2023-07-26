@@ -1,7 +1,6 @@
 
 ## Version 1.8.1 (2023-06-29)
 
-
 * Added support for 6 digit locales
 
 ## Version 1.8.0 (2023-06-22)
