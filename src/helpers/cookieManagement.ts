@@ -1,9 +1,9 @@
 import { IncomingMessage, ServerResponse } from "http";
-import { CookieHandler } from "../cookieHandling";
 import { ServerOptions } from "../cookieHandling/types";
+import { diContainer } from "./injector";
+import { isSDKConfigured } from "./isSDKConfigured";
 
 const REMEMBER_ME = "__rememberMe";
-const cookieHandler = new CookieHandler();
 /**
  * An object containing helper methods for interacting with the remember me cookie.
  */
@@ -16,7 +16,8 @@ export const rememberMeCookie = {
 	 * @returns {boolean} A boolean indicating whether or not the user is to be remembered.
 	 */
 	get: function (serverOptions?: ServerOptions): boolean {
-		if (cookieHandler.getCookie(REMEMBER_ME, serverOptions)) {
+		isSDKConfigured(diContainer);
+		if (diContainer._cookieHandler.getCookie(REMEMBER_ME, serverOptions)) {
 			return true;
 		}
 		return false;
@@ -30,8 +31,13 @@ export const rememberMeCookie = {
 	 * @returns {void} Void.
 	 */
 	set: function (rememberMe: boolean, serverOptions?: ServerOptions) {
+		isSDKConfigured(diContainer);
 		if (rememberMe) {
-			return cookieHandler.setCookie(REMEMBER_ME, "1", serverOptions);
+			return diContainer._cookieHandler.setCookie(
+				REMEMBER_ME,
+				"1",
+				serverOptions
+			);
 		} else {
 			this.remove();
 		}
@@ -44,7 +50,11 @@ export const rememberMeCookie = {
 	 * @returns {void} Void.
 	 */
 	remove: function (serverOptions?: ServerOptions) {
-		return cookieHandler.deleteCookie(REMEMBER_ME, serverOptions);
+		isSDKConfigured(diContainer);
+		return diContainer._cookieHandler.deleteCookie(
+			REMEMBER_ME,
+			serverOptions
+		);
 	},
 };
 
@@ -62,7 +72,8 @@ export const serverSession = {
 		req: IncomingMessage,
 		res: ServerResponse
 	): string | undefined {
-		return cookieHandler
+		isSDKConfigured(diContainer);
+		return diContainer._cookieHandler
 			.getCookie("frontastic-session", { req, res })
 			?.toString();
 	},

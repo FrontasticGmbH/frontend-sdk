@@ -1,10 +1,9 @@
 import { DEFAULT_SESSION_LIFETIME } from "../constants/defaultSessionLifetime";
-import { CookieHandler } from "../cookieHandling";
 import { ServerOptions } from "../cookieHandling/types";
 import { rememberMeCookie } from "../helpers/cookieManagement";
 import { FetchError } from "../library/FetchError";
-
-const cookieHandler = new CookieHandler();
+import { diContainer } from "./injector";
+import { isSDKConfigured } from "./isSDKConfigured";
 
 export const fetcher = async <T>(
 	url: string,
@@ -12,12 +11,12 @@ export const fetcher = async <T>(
 	serverOptions?: ServerOptions,
 	sessionLifetime?: number
 ): Promise<T | FetchError> => {
+	isSDKConfigured(diContainer);
 	const sessionCookie =
-		(cookieHandler.getCookie(
+		(diContainer._cookieHandler.getCookie(
 			"frontastic-session",
 			serverOptions
 		) as string) ?? "";
-
 	const incomingHeaders: { [key: string]: any } = serverOptions?.req
 		? { ...serverOptions.req.headers }
 		: {};
@@ -44,8 +43,8 @@ export const fetcher = async <T>(
 				Date.now() + (sessionLifetime ?? DEFAULT_SESSION_LIFETIME)
 			);
 		}
-
-		cookieHandler.setCookie(
+		isSDKConfigured(diContainer);
+		diContainer._cookieHandler.setCookie(
 			"frontastic-session",
 			response.headers.get("Frontastic-Session")!,
 			{ expires: expiryDate, ...(serverOptions ?? {}) }

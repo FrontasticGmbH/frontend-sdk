@@ -19,7 +19,9 @@ import { generateQueryString } from "../helpers/queryStringHelpers";
 import { AcceptedQueryTypes } from "../types/Query";
 import { ServerOptions } from "../cookieHandling/types";
 import { DEFAULT_SESSION_LIFETIME } from "../constants/defaultSessionLifetime";
-import { CookieManager } from "../interfaces";
+import { CookieManager } from "../interfaces/CookieManager";
+import { diContainer } from "../helpers/injector";
+import { CookieHandler } from "../cookieHandling";
 
 type SDKConfig = {
 	locale: string;
@@ -43,7 +45,6 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	#extensionVersion!: string;
 	#actionQueue: Queue;
 	#sessionLifetime!: number;
-	#cookieHandlingOverride!: CookieManager;
 
 	set endpoint(url: string) {
 		url = this.#normaliseUrl(url);
@@ -152,6 +153,11 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	 * @returns {void} Void.
 	 */
 	configure(config: SDKConfig) {
+		diContainer.cookieHandler = new CookieHandler();
+		diContainer.hasBeenConfigured = true;
+		if (config.cookieHandlingOverride) {
+			diContainer.cookieHandler = config.cookieHandlingOverride;
+		}
 		this.endpoint = config.endpoint;
 		this.configureLocale(config);
 		this.#useCurrencyInLocale = config.useCurrencyInLocale ?? false;
@@ -160,7 +166,6 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 			config.sessionLifetime ?? DEFAULT_SESSION_LIFETIME;
 
 		this.#hasBeenConfigured = true;
-		this.#cookieHandlingOverride = config.cookieHandlingOverride as CookieManager;
 	}
 
 	/**

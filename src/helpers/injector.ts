@@ -1,12 +1,19 @@
-import { CookieManager } from "../interfaces";
+import { CookieManager } from "../interfaces/CookieManager";
 
 export class DIContainer {
+	hasBeenConfigured: boolean
+	_cookieHandler!: CookieManager;
+	constructor () {
+		this.hasBeenConfigured = false
+		this._cookieHandler = {} as unknown as CookieManager
+	}
 	get cookieHandler(): CookieManager {
-		return this.cookieHandler;
+		return this._cookieHandler;
 	}
 	set cookieHandler(cookierHandler: CookieManager) {
-		this.cookieHandler = cookierHandler;
+		this._cookieHandler = cookierHandler;
 	}
 }
 const diContainer = new DIContainer();
-export default diContainer;
+
+export { diContainer };
