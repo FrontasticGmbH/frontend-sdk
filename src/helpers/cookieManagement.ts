@@ -1,7 +1,7 @@
 import { IncomingMessage, ServerResponse } from "http";
 import { ServerOptions } from "../cookieHandling/types";
 import { diContainer } from "./injector";
-import { isSDKConfigured } from "./isSDKConfigured";
+import { isDIConfigured } from "./isDIConfigured";
 
 const REMEMBER_ME = "__rememberMe";
 /**
@@ -16,7 +16,7 @@ export const rememberMeCookie = {
 	 * @returns {boolean} A boolean indicating whether or not the user is to be remembered.
 	 */
 	get: function (serverOptions?: ServerOptions): boolean {
-		isSDKConfigured(diContainer);
+		isDIConfigured(diContainer);
 		if (diContainer._cookieHandler.getCookie(REMEMBER_ME, serverOptions)) {
 			return true;
 		}
@@ -31,7 +31,7 @@ export const rememberMeCookie = {
 	 * @returns {void} Void.
 	 */
 	set: function (rememberMe: boolean, serverOptions?: ServerOptions) {
-		isSDKConfigured(diContainer);
+		isDIConfigured(diContainer);
 		if (rememberMe) {
 			return diContainer._cookieHandler.setCookie(
 				REMEMBER_ME,
@@ -50,7 +50,7 @@ export const rememberMeCookie = {
 	 * @returns {void} Void.
 	 */
 	remove: function (serverOptions?: ServerOptions) {
-		isSDKConfigured(diContainer);
+		isDIConfigured(diContainer);
 		return diContainer._cookieHandler.deleteCookie(
 			REMEMBER_ME,
 			serverOptions
@@ -72,7 +72,7 @@ export const serverSession = {
 		req: IncomingMessage,
 		res: ServerResponse
 	): string | undefined {
-		isSDKConfigured(diContainer);
+		isDIConfigured(diContainer);
 		return diContainer._cookieHandler
 			.getCookie("frontastic-session", { req, res })
 			?.toString();

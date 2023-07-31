@@ -3,7 +3,7 @@ import { ServerOptions } from "../cookieHandling/types";
 import { rememberMeCookie } from "../helpers/cookieManagement";
 import { FetchError } from "../library/FetchError";
 import { diContainer } from "./injector";
-import { isSDKConfigured } from "./isSDKConfigured";
+import { isDIConfigured } from "./isDIConfigured";
 
 export const fetcher = async <T>(
 	url: string,
@@ -11,7 +11,7 @@ export const fetcher = async <T>(
 	serverOptions?: ServerOptions,
 	sessionLifetime?: number
 ): Promise<T | FetchError> => {
-	isSDKConfigured(diContainer);
+	isDIConfigured(diContainer);
 	const sessionCookie =
 		(diContainer._cookieHandler.getCookie(
 			"frontastic-session",
@@ -43,7 +43,6 @@ export const fetcher = async <T>(
 				Date.now() + (sessionLifetime ?? DEFAULT_SESSION_LIFETIME)
 			);
 		}
-		isSDKConfigured(diContainer);
 		diContainer._cookieHandler.setCookie(
 			"frontastic-session",
 			response.headers.get("Frontastic-Session")!,
