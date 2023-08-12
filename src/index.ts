@@ -1,5 +1,6 @@
 import { rememberMeCookie, serverSession } from "./helpers/cookieManagement";
 import { Extension } from "./library/Extension";
+import { Integration } from "./library/Integration";
 import { SDK } from "./library/SDK";
 import { Event } from "./library/Event";
 import { FetchError } from "./library/FetchError";
@@ -13,6 +14,7 @@ import { CookieManager } from "./interfaces/CookieManager";
 export {
 	SDK,
 	Extension,
+	Integration,
 	Event,
 	FetchError,
 	ActionError,
