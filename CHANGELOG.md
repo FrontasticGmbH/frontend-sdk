@@ -1,4 +1,9 @@
 
+## Version 1.8.2 (2023-08-16)
+
+
+* Deprecated Extension base class, replaced with Integration to correct terminolgy
+
 ## Version 1.8.1 (2023-06-29)
 
 * Added support for 6 digit locales
