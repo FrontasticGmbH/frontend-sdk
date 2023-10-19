@@ -1,9 +1,9 @@
 import { DEFAULT_SESSION_LIFETIME } from "../constants/defaultSessionLifetime";
-import { ServerOptions } from "../cookieHandling/types";
-import { rememberMeCookie } from "../helpers/cookieManagement";
+import { ServerOptions } from "../types/cookieHandling";
+import { rememberMeCookieAsync } from "./cookieManagement";
 import { FetchError } from "../library/FetchError";
-import { diContainer } from "./injector";
-import { isDIConfigured } from "./isDIConfigured";
+import { diContainer } from "../library/DIContainer";
+import { throwIfDINotConfigured } from "./throwIfDINotConfigured";
 
 export const fetcher = async <T>(
 	url: string,
@@ -11,12 +11,12 @@ export const fetcher = async <T>(
 	serverOptions?: ServerOptions,
 	sessionLifetime?: number
 ): Promise<T | FetchError> => {
-	isDIConfigured(diContainer);
-	const sessionCookie =
-		(diContainer._cookieHandler.getCookie(
-			"frontastic-session",
-			serverOptions
-		) as string) ?? "";
+	throwIfDINotConfigured();
+	let sessionCookie = (await diContainer().cookieHandler.getCookie(
+		"frontastic-session",
+		serverOptions
+	)) as string;
+	sessionCookie = sessionCookie ?? "";
 	const incomingHeaders: { [key: string]: any } = serverOptions?.req
 		? { ...serverOptions.req.headers }
 		: {};
@@ -35,7 +35,7 @@ export const fetcher = async <T>(
 	const response: Response = await fetch(url, options);
 
 	if (response.ok && response.headers.has("Frontastic-Session")) {
-		let rememberMe = rememberMeCookie.get();
+		let rememberMe = await rememberMeCookieAsync.get();
 		let expiryDate;
 
 		if (rememberMe) {
@@ -43,7 +43,7 @@ export const fetcher = async <T>(
 				Date.now() + (sessionLifetime ?? DEFAULT_SESSION_LIFETIME)
 			);
 		}
-		diContainer._cookieHandler.setCookie(
+		await diContainer().cookieHandler.setCookie(
 			"frontastic-session",
 			response.headers.get("Frontastic-Session")!,
 			{ expires: expiryDate, ...(serverOptions ?? {}) }

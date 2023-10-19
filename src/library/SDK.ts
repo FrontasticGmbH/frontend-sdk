@@ -17,11 +17,12 @@ import {
 } from "../types/api/page";
 import { generateQueryString } from "../helpers/queryStringHelpers";
 import { AcceptedQueryTypes } from "../types/Query";
-import { ServerOptions } from "../cookieHandling/types";
+import { ServerOptions } from "../types/cookieHandling/ServerOptions";
 import { DEFAULT_SESSION_LIFETIME } from "../constants/defaultSessionLifetime";
-import { CookieManager } from "../interfaces/CookieManager";
-import { diContainer } from "../helpers/injector";
-import { CookieHandler } from "../cookieHandling";
+import { SDK_NOT_CONFIGURED_ERROR_MESSAGE } from "../constants/sdkNotConfiguredErrorMessage";
+import { CookieManager } from "../types/cookieHandling/CookieManager";
+import { diContainer } from "./DIContainer";
+import { CookieHandler } from "./CookieHandler";
 
 type SDKConfig = {
 	locale: string;
@@ -124,10 +125,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 
 	#throwIfNotConfigured() {
 		if (!this.#hasBeenConfigured) {
-			throw new Error(
-				"The SDK has not been configured.\n" +
-					"Please call .configure before you call any other methods."
-			);
+			throw new Error(SDK_NOT_CONFIGURED_ERROR_MESSAGE);
 		}
 	}
 
@@ -153,10 +151,10 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	 * @returns {void} Void.
 	 */
 	configure(config: SDKConfig) {
-		diContainer.cookieHandler = new CookieHandler();
-		diContainer.hasBeenConfigured = true;
+		diContainer().cookieHandler = new CookieHandler();
+		diContainer().hasBeenConfigured = true;
 		if (config.cookieHandlingOverride) {
-			diContainer.cookieHandler = config.cookieHandlingOverride;
+			diContainer().cookieHandler = config.cookieHandlingOverride;
 		}
 		this.endpoint = config.endpoint;
 		this.configureLocale(config);

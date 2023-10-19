@@ -1,4 +1,4 @@
-import { ServerOptions } from "../../../cookieHandling/types";
+import { ServerOptions } from "../../cookieHandling";
 import { SDKResponse } from "../../../types/SDKResponse";
 import { AcceptedQueryTypes } from "../../Query";
 import { PageFolderListResponse } from "./PageFolderListResponse";

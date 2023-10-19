@@ -1,13 +1,12 @@
-import { IncomingMessage, ServerResponse } from "http";
-import { ServerOptions } from "../cookieHandling/types";
-import { diContainer } from "./injector";
-import { isDIConfigured } from "./isDIConfigured";
+import { ServerOptions } from "../types/cookieHandling";
+import { diContainer } from "../library/DIContainer";
+import { throwIfDINotConfigured } from "./throwIfDINotConfigured";
+import { REMEMBER_ME_COOKIE_KEY } from "../constants/rememberMeCookieKey";
 
-const REMEMBER_ME = "__rememberMe";
 /**
  * An object containing helper methods for interacting with the remember me cookie.
  */
-export const rememberMeCookie = {
+export const rememberMeCookieAsync = {
 	/**
 	 * Gets the remember me cookie.
 	 *
@@ -15,12 +14,13 @@ export const rememberMeCookie = {
 	 *
 	 * @returns {boolean} A boolean indicating whether or not the user is to be remembered.
 	 */
-	get: function (serverOptions?: ServerOptions): boolean {
-		isDIConfigured(diContainer);
-		if (diContainer._cookieHandler.getCookie(REMEMBER_ME, serverOptions)) {
-			return true;
-		}
-		return false;
+	get: async function (serverOptions?: ServerOptions): Promise<boolean> {
+		throwIfDINotConfigured();
+		const rememberMe = await diContainer().cookieHandler.getCookie(
+			REMEMBER_ME_COOKIE_KEY,
+			serverOptions
+		);
+		return !!rememberMe;
 	},
 	/**
 	 * Sets the remember me cookie.
@@ -30,16 +30,19 @@ export const rememberMeCookie = {
 	 *
 	 * @returns {void} Void.
 	 */
-	set: function (rememberMe: boolean, serverOptions?: ServerOptions) {
-		isDIConfigured(diContainer);
+	set: async function (
+		rememberMe: boolean,
+		serverOptions?: ServerOptions
+	): Promise<void> {
+		throwIfDINotConfigured();
 		if (rememberMe) {
-			return diContainer._cookieHandler.setCookie(
-				REMEMBER_ME,
+			await diContainer().cookieHandler.setCookie(
+				REMEMBER_ME_COOKIE_KEY,
 				"1",
 				serverOptions
 			);
 		} else {
-			this.remove();
+			await this.remove();
 		}
 	},
 	/**
@@ -49,32 +52,11 @@ export const rememberMeCookie = {
 	 *
 	 * @returns {void} Void.
 	 */
-	remove: function (serverOptions?: ServerOptions) {
-		isDIConfigured(diContainer);
-		return diContainer._cookieHandler.deleteCookie(
-			REMEMBER_ME,
+	remove: async function (serverOptions?: ServerOptions): Promise<void> {
+		throwIfDINotConfigured();
+		await diContainer().cookieHandler.deleteCookie(
+			REMEMBER_ME_COOKIE_KEY,
 			serverOptions
 		);
-	},
-};
-
-/**
- * @deprecated An object containing helper methods for interacting with the server session.
- */
-export const serverSession = {
-	/**
-	 * @deprecated Used to retieve the session string.
-	 *
-	 * @param {IncomingMessage} req - The incoming message created by the server.
-	 * @param {ServerResponse} res - The server response object created by the server.
-	 */
-	get: function (
-		req: IncomingMessage,
-		res: ServerResponse
-	): string | undefined {
-		isDIConfigured(diContainer);
-		return diContainer._cookieHandler
-			.getCookie("frontastic-session", { req, res })
-			?.toString();
 	},
 };

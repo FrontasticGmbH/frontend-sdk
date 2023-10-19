@@ -1,13 +1,17 @@
 import { serialize, parse } from "cookie";
-import { ServerOptions, TmpCookiesObj, CookieValueTypes } from "./types";
-import { CookieManager } from "../interfaces/CookieManager";
+import {
+	ServerOptions,
+	TmpCookiesObj,
+	CookieValueTypes,
+} from "../types/cookieHandling";
 
-export class CookieHandler implements CookieManager {
-	isClientSide(): boolean {
+// DEPRECATED, DO NOT USE. This class only exists to satisfy backwards compatability for deprecated methods in ../helpers/cookieManagementOld.ts
+export class CookieHandlerSync {
+	static isClientSide(): boolean {
 		return typeof window !== "undefined";
 	}
 
-	stringify(value: string = ""): string {
+	static stringify(value: string = ""): string {
 		try {
 			const result = JSON.stringify(value);
 			return /^[\{\[]/.test(result) ? result : value;
@@ -16,11 +20,11 @@ export class CookieHandler implements CookieManager {
 		}
 	}
 
-	decode(str: string): string {
+	static decode(str: string): string {
 		return str ? str.replace(/(%[0-9A-Z]{2})+/g, decodeURIComponent) : str;
 	}
 
-	processValue(value: string): CookieValueTypes {
+	static processValue(value: string): CookieValueTypes {
 		switch (value) {
 			case "true":
 				return true;
@@ -35,7 +39,7 @@ export class CookieHandler implements CookieManager {
 		}
 	}
 
-	getCookies(options?: ServerOptions): TmpCookiesObj {
+	static getCookies(options?: ServerOptions): TmpCookiesObj {
 		let req;
 		if (options) {
 			req = options.req;
@@ -69,7 +73,7 @@ export class CookieHandler implements CookieManager {
 		return _cookies;
 	}
 
-	hasCookie(key: string, options?: ServerOptions): boolean {
+	static hasCookie(key: string, options?: ServerOptions): boolean {
 		if (!key) {
 			return false;
 		}
@@ -78,7 +82,7 @@ export class CookieHandler implements CookieManager {
 		return cookie.hasOwnProperty(key);
 	}
 
-	setCookie(key: string, data: any, options?: ServerOptions): void {
+	static setCookie(key: string, data: any, options?: ServerOptions): void {
 		let _cookieOptions: any;
 		let _req;
 		let _res;
@@ -131,7 +135,7 @@ export class CookieHandler implements CookieManager {
 		}
 	}
 
-	getCookie(key: string, options?: ServerOptions): CookieValueTypes {
+	static getCookie(key: string, options?: ServerOptions): CookieValueTypes {
 		const _cookies = this.getCookies(options);
 		const value = _cookies[key];
 
@@ -141,7 +145,7 @@ export class CookieHandler implements CookieManager {
 		return this.processValue(this.decode(value));
 	}
 
-	deleteCookie(key: string, options?: ServerOptions): void {
+	static deleteCookie(key: string, options?: ServerOptions): void {
 		this.setCookie(key, "", { ...options, maxAge: -1 });
 	}
 }
