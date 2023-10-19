@@ -12,7 +12,7 @@ export const rememberMeCookieAsync = {
 	 *
 	 * @param {ServerOptions} [serverOptions] - An optional {@link ServerOptions} object containing the res and req objects for ServerResponse and IncomingMessage with cookies respectively. Required for server-side rendering session management.
 	 *
-	 * @returns {boolean} A boolean indicating whether or not the user is to be remembered.
+	 * @returns {Promise<boolean>} A boolean indicating whether or not the user is to be remembered.
 	 */
 	get: async function (serverOptions?: ServerOptions): Promise<boolean> {
 		throwIfDINotConfigured();
@@ -28,7 +28,7 @@ export const rememberMeCookieAsync = {
 	 * @param {boolean} rememberMe - The value in which to set the remember me cookie.
 	 * @param {ServerOptions} [serverOptions] - An optional {@link ServerOptions} object containing the res and req objects for ServerResponse and IncomingMessage with cookies respectively. Required for server-side rendering session management.
 	 *
-	 * @returns {void} Void.
+	 * @returns {Promise<void>} Void.
 	 */
 	set: async function (
 		rememberMe: boolean,
@@ -50,7 +50,7 @@ export const rememberMeCookieAsync = {
 	 *
 	 * @param {ServerOptions} [serverOptions] - An optional {@link ServerOptions} object containing the res and req objects for ServerResponse and IncomingMessage with cookies respectively. Required for server-side rendering session management.
 	 *
-	 * @returns {void} Void.
+	 * @returns {Promise<void>} Void.
 	 */
 	remove: async function (serverOptions?: ServerOptions): Promise<void> {
 		throwIfDINotConfigured();
