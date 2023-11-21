@@ -27,7 +27,7 @@ export type StandardEvents = {
 	discountCodeRedeemed: { discountCode: string; cart?: unknown };
 	discountCodeRemoved: { discountCode: string; cart?: unknown };
 	cartCheckedOut: {};
-	orderHistoryFetched: { orders: unknown[] };
+	// orderHistoryFetched: { orders: unknown[] }; // TODO replace with ordersQueried
 	accountFetched: { account: unknown };
 	userLoggedIn: { account: unknown };
 	userLoggedOut: {};
