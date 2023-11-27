@@ -15,6 +15,11 @@ class DIContainer {
 	set cookieHandler(cookierHandler: CookieManager) {
 		this._cookieHandler = cookierHandler;
 	}
+
+	configure(cookieHandler: CookieManager) {
+		this.hasBeenConfigured = true;
+		this.cookieHandler = cookieHandler;
+	}
 }
 
 class Wrapper {

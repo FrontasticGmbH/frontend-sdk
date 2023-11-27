@@ -153,11 +153,9 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	 * @returns {void} Void.
 	 */
 	configure(config: SDKConfig) {
-		diContainer().cookieHandler = new CookieHandler();
-		diContainer().hasBeenConfigured = true;
-		if (config.cookieHandlingOverride) {
-			diContainer().cookieHandler = config.cookieHandlingOverride;
-		}
+		diContainer().configure(
+			config.cookieHandlingOverride ?? new CookieHandler()
+		);
 		this.endpoint = config.endpoint;
 		this.configureLocale(config);
 		this.#useCurrencyInLocale = config.useCurrencyInLocale ?? false;
