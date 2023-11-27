@@ -20,7 +20,11 @@ class DIContainer {
 class Wrapper {
 	diContainer!: DIContainer;
 
-	getDiContainer = () => this.diContainer ?? new DIContainer();
+	constructor() {
+		this.diContainer = new DIContainer();
+	}
+
+	getDiContainer = () => this.diContainer;
 }
 
 const wrapper = new Wrapper();
