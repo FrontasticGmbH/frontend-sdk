@@ -18,8 +18,10 @@ import {
 import { generateQueryString } from "../helpers/queryStringHelpers";
 import { AcceptedQueryTypes } from "../types/Query";
 import { ServerOptions } from "../types/cookieHandling/ServerOptions";
-import { DEFAULT_SESSION_LIFETIME } from "../constants/defaultSessionLifetime";
-import { SDK_NOT_CONFIGURED_ERROR_MESSAGE } from "../constants/sdkNotConfiguredErrorMessage";
+import {
+	DEFAULT_SESSION_LIFETIME,
+	SDK_NOT_CONFIGURED_ERROR_MESSAGE,
+} from "../constants";
 import { CookieManager } from "../types/cookieHandling/CookieManager";
 import { diContainer } from "./DIContainer";
 import { CookieHandler } from "./CookieHandler";
