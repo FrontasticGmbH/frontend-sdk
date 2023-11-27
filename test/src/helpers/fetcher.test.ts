@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
 import { fetcher } from "../../../src/helpers/fetcher";
 import { diContainer } from "../../../src/library/DIContainer";
+import { SDK } from "../../../src/library/SDK";
 
 describe("fetcher", () => {
 	let mockedTimestamp;
@@ -8,6 +9,12 @@ describe("fetcher", () => {
 	beforeAll(() => {
 		mockedTimestamp = 1673673600000;
 		vi.spyOn(Date, "now").mockImplementation(() => mockedTimestamp);
+		const sdk = new SDK();
+		sdk.configure({
+			endpoint: "",
+			currency: "EUR",
+			locale: "de_DE",
+		});
 		diContainer().cookieHandler.setCookie = vi.fn();
 		diContainer().cookieHandler.getCookie = vi.fn();
 		diContainer().hasBeenConfigured = true;
