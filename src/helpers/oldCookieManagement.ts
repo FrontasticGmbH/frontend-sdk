@@ -1,6 +1,6 @@
 import { IncomingMessage, ServerResponse } from "http";
 import { ServerOptions } from "../types/cookieHandling";
-import { CookieHandlerSync } from "../library/CookieHandlerSync";
+import { CookieHandlerSync } from "../library/oldCookieHandler";
 import { REMEMBER_ME_COOKIE_KEY } from "../constants/rememberMeCookieKey";
 
 /**

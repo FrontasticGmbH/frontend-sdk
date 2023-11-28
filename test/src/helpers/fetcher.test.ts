@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
 import { fetcher } from "../../../src/helpers/fetcher";
-import { diContainer } from "../../../src/library/DIContainer";
+import { dependencyContainer } from "../../../src/library/DependencyContainer";
 import { SDK } from "../../../src/library/SDK";
 
 describe("fetcher", () => {
@@ -15,9 +15,9 @@ describe("fetcher", () => {
 			currency: "EUR",
 			locale: "de_DE",
 		});
-		diContainer().cookieHandler.setCookie = vi.fn();
-		diContainer().cookieHandler.getCookie = vi.fn();
-		diContainer().hasBeenConfigured = true;
+		dependencyContainer().cookieHandler.setCookie = vi.fn();
+		dependencyContainer().cookieHandler.getCookie = vi.fn();
+		dependencyContainer().hasBeenConfigured = true;
 	});
 
 	afterAll(() => {
@@ -43,15 +43,15 @@ describe("fetcher", () => {
 			{},
 			sessionLifetime
 		);
-		expect(diContainer().cookieHandler.setCookie).toHaveBeenCalled();
+		expect(
+			dependencyContainer().cookieHandler.setCookie
+		).toHaveBeenCalled();
 		const newSessionLife = new Date(Date.now() + sessionLifetime);
-		expect(diContainer().cookieHandler.setCookie).toHaveBeenCalledWith(
-			"frontastic-session",
-			"SESSION",
-			{
-				expires: newSessionLife,
-			}
-		);
+		expect(
+			dependencyContainer().cookieHandler.setCookie
+		).toHaveBeenCalledWith("frontastic-session", "SESSION", {
+			expires: newSessionLife,
+		});
 	});
 
 	test("fetcher should not set sessionLifetime when rememberMe is set to false", async () => {
@@ -71,14 +71,14 @@ describe("fetcher", () => {
 			{},
 			890000000
 		);
-		expect(diContainer().cookieHandler.setCookie).toHaveBeenCalled();
+		expect(
+			dependencyContainer().cookieHandler.setCookie
+		).toHaveBeenCalled();
 
-		expect(diContainer().cookieHandler.setCookie).toHaveBeenCalledWith(
-			"frontastic-session",
-			"SESSION",
-			{
-				expires: undefined,
-			}
-		);
+		expect(
+			dependencyContainer().cookieHandler.setCookie
+		).toHaveBeenCalledWith("frontastic-session", "SESSION", {
+			expires: undefined,
+		});
 	});
 });

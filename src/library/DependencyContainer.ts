@@ -1,6 +1,7 @@
+import { SDK_NOT_CONFIGURED_ERROR_MESSAGE } from "../constants";
 import { CookieManager } from "../types/cookieHandling/CookieManager";
 
-class DIContainer {
+class DependencyContainer {
 	hasBeenConfigured: boolean;
 	private _cookieHandler!: CookieManager;
 
@@ -20,19 +21,25 @@ class DIContainer {
 		this.hasBeenConfigured = true;
 		this.cookieHandler = cookieHandler;
 	}
+
+	throwIfDINotConfigured = () => {
+		if (!this.hasBeenConfigured) {
+			throw new Error(SDK_NOT_CONFIGURED_ERROR_MESSAGE);
+		}
+	};
 }
 
 class Wrapper {
-	diContainer!: DIContainer;
+	dependencyContainer!: DependencyContainer;
 
 	constructor() {
-		this.diContainer = new DIContainer();
+		this.dependencyContainer = new DependencyContainer();
 	}
 
-	getDiContainer = () => this.diContainer;
+	getDependencyContainer = () => this.dependencyContainer;
 }
 
 const wrapper = new Wrapper();
-const diContainer = wrapper.getDiContainer;
+const dependencyContainer = wrapper.getDependencyContainer;
 
-export { diContainer };
+export { dependencyContainer };

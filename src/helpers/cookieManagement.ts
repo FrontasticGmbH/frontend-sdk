@@ -1,6 +1,5 @@
 import { ServerOptions } from "../types/cookieHandling";
-import { diContainer } from "../library/DIContainer";
-import { throwIfDINotConfigured } from "./throwIfDINotConfigured";
+import { dependencyContainer } from "../library/DependencyContainer";
 import { REMEMBER_ME_COOKIE_KEY } from "../constants/rememberMeCookieKey";
 
 /**
@@ -15,8 +14,8 @@ export const rememberMeCookieAsync = {
 	 * @returns {Promise<boolean>} A boolean indicating whether or not the user is to be remembered.
 	 */
 	get: async function (serverOptions?: ServerOptions): Promise<boolean> {
-		throwIfDINotConfigured();
-		const rememberMe = await diContainer().cookieHandler.getCookie(
+		dependencyContainer().throwIfDINotConfigured();
+		const rememberMe = await dependencyContainer().cookieHandler.getCookie(
 			REMEMBER_ME_COOKIE_KEY,
 			serverOptions
 		);
@@ -34,9 +33,9 @@ export const rememberMeCookieAsync = {
 		rememberMe: boolean,
 		serverOptions?: ServerOptions
 	): Promise<void> {
-		throwIfDINotConfigured();
+		dependencyContainer().throwIfDINotConfigured();
 		if (rememberMe) {
-			await diContainer().cookieHandler.setCookie(
+			await dependencyContainer().cookieHandler.setCookie(
 				REMEMBER_ME_COOKIE_KEY,
 				"1",
 				serverOptions
@@ -53,8 +52,8 @@ export const rememberMeCookieAsync = {
 	 * @returns {Promise<void>} Void.
 	 */
 	remove: async function (serverOptions?: ServerOptions): Promise<void> {
-		throwIfDINotConfigured();
-		await diContainer().cookieHandler.deleteCookie(
+		dependencyContainer().throwIfDINotConfigured();
+		await dependencyContainer().cookieHandler.deleteCookie(
 			REMEMBER_ME_COOKIE_KEY,
 			serverOptions
 		);

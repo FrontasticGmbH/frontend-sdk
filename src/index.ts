@@ -1,4 +1,4 @@
-import { rememberMeCookie, serverSession } from "./helpers/cookieManagementOld";
+import { rememberMeCookie, serverSession } from "./helpers/oldCookieManagement";
 import { rememberMeCookieAsync } from "./helpers/cookieManagement";
 import { Extension } from "./library/Extension";
 import { Integration } from "./library/Integration";

@@ -23,7 +23,7 @@ import {
 	SDK_NOT_CONFIGURED_ERROR_MESSAGE,
 } from "../constants";
 import { CookieManager } from "../types/cookieHandling/CookieManager";
-import { diContainer } from "./DIContainer";
+import { dependencyContainer } from "./DependencyContainer";
 import { CookieHandler } from "./CookieHandler";
 
 type SDKConfig = {
@@ -153,7 +153,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	 * @returns {void} Void.
 	 */
 	configure(config: SDKConfig) {
-		diContainer().configure(
+		dependencyContainer().configure(
 			config.cookieHandlingOverride ?? new CookieHandler()
 		);
 		this.endpoint = config.endpoint;
