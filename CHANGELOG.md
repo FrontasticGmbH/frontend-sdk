@@ -1,4 +1,10 @@
 
+## Version 1.9.0 (2023-11-28)
+
+
+* Removed deprecated orderHistoryFetched event
+* Added ability to override cookie handling in SDK.configure
+
 ## Version 1.8.2 (2023-08-16)
 
 * Deprecated Extension base class, replaced with Integration to correct terminolgy
