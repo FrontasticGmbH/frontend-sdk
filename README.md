@@ -6,13 +6,13 @@
   <a href="https://github.com/FrontasticGmbH/frontend-sdk/releases"><img src="https://badgen.net/github/release/FrontasticGmbH/frontend-sdk" alt="Latest release" /></a> <a href="https://github.com/FrontasticGmbH/frontend-sdk/blob/main/LICENSE"><img src="https://badgen.net/github/FrontasticGmbH/frontend-sdk" alt="GitHub license" /></a>
 </p>
 
-The commercetools Frontend SDK is a TypeScript library that simplifies the process of creating custom components and integrations in your commercetools Frontend project. This SDK enables flexible and customizable frontend development, event handling, and support for extensions to expose commercetools Frontend API integrations.
+The commercetools Frontend SDK is a TypeScript library that simplifies the process of creating custom components and integrations in your commercetools Frontend project. This SDK enables flexible and customizable frontend development, event handling, and support for integrations to expose commercetools Frontend API extensions.
 
 ## Installation
-To install the SDK and its dependencies in your project, run:
+To install the base SDK in your project, run:
 
 ```bash
-yarn add @commercetools/frontend-sdk @commercetools/frontend-domain-types
+yarn add @commercetools/frontend-sdk
 ```
 
 ## Features
