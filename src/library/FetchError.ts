@@ -1,12 +1,11 @@
 /**
- * An error created when the internal fetcher fails.
+ * An error thrown when the internal fetcher fails.
  */
 export class FetchError extends Error {
-	[key: string]: any;
 	/**
 	 * The message associated with the error.
 	 */
-	message!: string;
+	message: string;
 
 	/**
 	 * Constructor.
@@ -19,9 +18,10 @@ export class FetchError extends Error {
 		if (typeof error === "string") {
 			this.message = error;
 		} else {
-			Object.keys(error).forEach((key) => {
-				this[key] = error[key as keyof typeof error];
-			});
+			this.cause = error.cause;
+			this.message = error.message;
+			this.name = error.name;
+			this.stack = error.stack;
 		}
 	}
 }

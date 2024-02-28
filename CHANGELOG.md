@@ -1,4 +1,9 @@
 
+## Version 1.9.2 (2024-02-28)
+
+
+* Error values are explicity set to correct loss of data
+
 ## Version 1.9.1 (2024-02-06)
 
 

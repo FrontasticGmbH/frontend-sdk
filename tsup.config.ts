@@ -7,7 +7,7 @@ export default defineConfig((options) => {
 		outDir: "lib",
 		sourcemap: true,
 		watch: dev,
-		format: dev ? undefined : ["esm", "cjs"],
+		format: dev ? "esm" : ["esm", "cjs"],
 		dts: true,
 	};
 });

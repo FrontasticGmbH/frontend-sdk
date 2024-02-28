@@ -54,7 +54,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		if (url.indexOf("http") === -1) {
 			url = `https://${url}`;
 			// Note the below doesn't support websocket connections but much more work would
-			// be rquired for this anyway
+			// be required for this anyway
 			console.warn(
 				`Protocol not supplied to endpoint, defaulting to https - ${url}`
 			);
