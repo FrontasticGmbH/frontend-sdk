@@ -3,9 +3,13 @@
  */
 export class FetchError extends Error {
 	/**
+	 * Covers any additional properties that may be added to an error.
+	 */
+	[key: string]: any;
+	/**
 	 * The message associated with the error.
 	 */
-	message: string;
+	message!: string;
 
 	/**
 	 * Constructor.
@@ -18,10 +22,9 @@ export class FetchError extends Error {
 		if (typeof error === "string") {
 			this.message = error;
 		} else {
-			this.cause = error.cause;
-			this.message = error.message;
-			this.name = error.name;
-			this.stack = error.stack;
+			Object.getOwnPropertyNames(error).forEach((key) => {
+				this[key] = error[key as keyof typeof error];
+			});
 		}
 	}
 }
