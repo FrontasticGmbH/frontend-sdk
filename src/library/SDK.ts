@@ -254,6 +254,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	 * @param {string} options.actionName - The name of the action corresponding to the location of the extension, for example "product/getProduct".
 	 * @param {unknown} [options.payload] - An optional key, value pair object payload to be serialised into the body of the request.
 	 * @param {Object.<string, number, boolean, string[], number[], boolean[]>} [options.query] - An optional key, value pair object to be serialised into the url query.
+	 * @param {boolean} [options.skipQueue] - An optional boolean, default false indicating whether or not to skip the action queue and execute fully asyncronously. May cause race conditions if used incorrectly.
 	 * @param {Object} [options.serverOptions] - An optional object containing the res and req objects for ServerResponse and IncomingMessage with cookies respectively. Required for server-side rendering session management.
 	 *
 	 * @returns {PromiseLike<Object>} An object with a boolean isError property, and either an error or data property for true and false respectively. Type of data will match generic argument supplied to method.
@@ -262,6 +263,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		actionName: string;
 		payload?: unknown;
 		query?: AcceptedQueryTypes;
+		skipQueue?: boolean;
 		serverOptions?: ServerOptions;
 	}): Promise<SDKResponse<ReturnData>> {
 		this.#throwIfNotConfigured();
@@ -274,21 +276,26 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		};
 
 		let result: FetchError | Awaited<ReturnData>;
-		try {
-			result = await this.#actionQueue.add<ReturnData | FetchError>(
-				() => {
-					return fetcher<ReturnData>(
-						this.#normaliseUrl(
-							`${this.#endpoint}/frontastic/action/${
-								options.actionName
-							}${params}`
-						),
-						fetcherOptions,
-						options.serverOptions,
-						this.#sessionLifetime
-					);
-				}
+		const action = () =>
+			fetcher<ReturnData>(
+				this.#normaliseUrl(
+					`${this.#endpoint}/frontastic/action/${
+						options.actionName
+					}${params}`
+				),
+				fetcherOptions,
+				options.serverOptions,
+				this.#sessionLifetime
 			);
+
+		try {
+			if (options.skipQueue) {
+				result = await action();
+			} else {
+				result = await this.#actionQueue.add<ReturnData | FetchError>(
+					action
+				);
+			}
 		} catch (error) {
 			return this.#handleError({
 				type: "ActionError",

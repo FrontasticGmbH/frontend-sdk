@@ -1,6 +1,11 @@
 
-## Version 1.9.3 (2024-03-04)
+## Version 1.10.0 (2024-04-09)
 
+
+* Set cookie options httpOnly and secure to true by default
+* Added the ability to skip the action queue on the SDK.callAction method
+
+## Version 1.9.3 (2024-03-04)
 
 * Improved error handling
 

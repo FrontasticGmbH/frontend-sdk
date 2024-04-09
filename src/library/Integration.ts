@@ -3,7 +3,7 @@ import { Events } from "../types/events/Events";
 
 /**
  * The abstract base class signature to extend SDK integration classes.
- * 
+ *
  * @param {Integration<CustomEvents>} CustomEvents - The generic argument defining any custom events on the integration.
  */
 abstract class Integration<CustomEvents extends Events> {

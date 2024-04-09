@@ -1,4 +1,4 @@
-import { serialize, parse } from "cookie";
+import { serialize, parse, CookieSerializeOptions } from "cookie";
 import {
 	ServerOptions,
 	TmpCookiesObj,
@@ -87,14 +87,17 @@ export class CookieHandler implements CookieManager {
 		data: any,
 		options?: ServerOptions
 	): Promise<void> {
-		let _cookieOptions: any;
+		let _cookieOptions: CookieSerializeOptions = {
+			httpOnly: true,
+			secure: true,
+		};
 		let _req;
 		let _res;
 		if (options) {
 			const { req, res, ..._options } = options;
 			_req = req;
 			_res = res;
-			_cookieOptions = _options;
+			_cookieOptions = Object.assign({}, _options, _cookieOptions);
 		}
 
 		const cookieStr = serialize(key, this.stringify(data), {
