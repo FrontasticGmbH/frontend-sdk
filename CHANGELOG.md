@@ -1,6 +1,10 @@
 
-## Version 1.10.0 (2024-04-09)
+## Version 1.10.1 (2024-04-09)
 
+
+* Removed httpOnly flag from cookie options as default
+
+## Version 1.10.0 (2024-04-09)
 
 * Set cookie options httpOnly and secure to true by default
 * Added the ability to skip the action queue on the SDK.callAction method

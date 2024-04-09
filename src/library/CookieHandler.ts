@@ -88,7 +88,6 @@ export class CookieHandler implements CookieManager {
 		options?: ServerOptions
 	): Promise<void> {
 		let _cookieOptions: CookieSerializeOptions = {
-			httpOnly: true,
 			secure: true,
 		};
 		let _req;
