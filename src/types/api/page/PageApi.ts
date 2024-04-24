@@ -5,7 +5,7 @@ import { PageFolderListResponse } from "./PageFolderListResponse";
 import { PagePreviewResponse } from "./PagePreviewResponse";
 import { PageResponse } from "./PageResponse";
 
-interface PageApi {
+type PageApi = {
 	/**
 	 * The method to get page data from the API-hub.
 	 *
@@ -48,6 +48,6 @@ interface PageApi {
 		types?: "static";
 		serverOptions?: ServerOptions;
 	}) => Promise<SDKResponse<PageFolderListResponse>>;
-}
+};
 
 export { PageApi };

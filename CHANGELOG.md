@@ -1,4 +1,9 @@
 
+## Version 1.11.1 (2024-04-24)
+
+
+* Reverted PageAPI interfaces to types due to unintended breaking change
+
 ## Version 1.11.0 (2024-04-24)
 
 
