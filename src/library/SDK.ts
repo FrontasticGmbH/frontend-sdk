@@ -193,12 +193,16 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		// this.language = language;
 	}
 
-	#triggerError(error: ActionError | PageError) {
+	#triggerError(
+		error: ActionError | PageError,
+		frontasticRequestId?: string
+	) {
 		this.trigger(
 			// @ts-ignore
 			new Event({
 				eventName: "errorCaught",
 				data: {
+					frontasticRequestId,
 					error: error,
 				},
 			})
@@ -209,16 +213,21 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		options:
 			| {
 					type: "ActionError";
+					frontasticRequestId?: string;
 					error: string | Error;
 					actionName: string;
 			  }
 			| {
 					type: "PageError";
+					frontasticRequestId?: string;
 					error: string | Error;
 					path: string;
 			  }
 	): {
 		isError: true;
+		tracing: {
+			frontasticRequestId?: string;
+		};
 		error: FetchError;
 	} {
 		let error: FetchError;
@@ -230,9 +239,16 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		this.#triggerError(
 			options.type === "ActionError"
 				? new ActionError(options.actionName, error)
-				: new PageError(options.path, error)
+				: new PageError(options.path, error),
+			options.frontasticRequestId
 		);
-		return { isError: true, error: error };
+		return {
+			isError: true,
+			tracing: {
+				frontasticRequestId: options.frontasticRequestId,
+			},
+			error: error,
+		};
 	}
 
 	#getDefaultAPIHeaders() {
@@ -275,7 +291,10 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 			headers: this.#getDefaultAPIHeaders(),
 		};
 
-		let result: FetchError | Awaited<ReturnData>;
+		let response: {
+			frontasticRequestId: string;
+			data: FetchError | ReturnData;
+		};
 		const action = () =>
 			fetcher<ReturnData>(
 				this.#normaliseUrl(
@@ -290,28 +309,36 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 
 		try {
 			if (options.skipQueue) {
-				result = await action();
+				response = await action();
 			} else {
-				result = await this.#actionQueue.add<ReturnData | FetchError>(
+				response = await this.#actionQueue.add<ReturnData | FetchError>(
 					action
 				);
 			}
 		} catch (error) {
 			return this.#handleError({
 				type: "ActionError",
+				frontasticRequestId: "",
 				error: <string | Error>error,
 				actionName: options.actionName,
 			});
 		}
-		if (result instanceof Error) {
+		if (response instanceof Error) {
 			return this.#handleError({
 				type: "ActionError",
-				error: <string | Error>result.toString(),
+				frontasticRequestId: response.frontasticRequestId,
+				error: <string | Error>response.toString(),
 				actionName: options.actionName,
 			});
 		}
 
-		return { isError: false, data: <ReturnData>result };
+		return {
+			isError: false,
+			tracing: {
+				frontasticRequestId: response.frontasticRequestId,
+			},
+			data: <ReturnData>response.data,
+		};
 	}
 
 	/**
@@ -335,9 +362,12 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 				},
 			};
 
-			let result: FetchError | Awaited<PageResponse>;
+			let response: {
+				frontasticRequestId: string;
+				data: FetchError | PageResponse;
+			};
 			try {
-				result = await fetcher<PageResponse>(
+				response = await fetcher<PageResponse>(
 					this.#normaliseUrl(
 						`${this.#endpoint}/frontastic/page${params}`
 					),
@@ -348,20 +378,28 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 			} catch (error) {
 				return this.#handleError({
 					type: "PageError",
+					frontasticRequestId: "",
 					error: <string | Error>error,
 					path: options.path,
 				});
 			}
 
-			if (result instanceof Error) {
+			if (response instanceof Error) {
 				return this.#handleError({
 					type: "PageError",
-					error: <string | Error>result.toString(),
+					frontasticRequestId: response.frontasticRequestId,
+					error: <string | Error>response.toString(),
 					path: options.path,
 				});
 			}
 
-			return { isError: false, data: <PageResponse>result };
+			return {
+				isError: false,
+				tracing: {
+					frontasticRequestId: response.frontasticRequestId,
+				},
+				data: <PageResponse>response.data,
+			};
 		},
 		getPreview: async (options: {
 			previewId: string;
@@ -372,11 +410,14 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 				method: "POST",
 				headers: this.#getDefaultAPIHeaders(),
 			};
-			let result: FetchError | Awaited<PagePreviewResponse>;
+			let response: {
+				frontasticRequestId: string;
+				data: FetchError | PagePreviewResponse;
+			};
 			const path = `/preview?previewId=${options.previewId}&locale=${this.apiHubLocale}`;
 
 			try {
-				result = await fetcher<PagePreviewResponse>(
+				response = await fetcher<PagePreviewResponse>(
 					this.#normaliseUrl(`${this.#endpoint}/frontastic${path}`),
 					fetcherOptions,
 					options.serverOptions,
@@ -385,20 +426,28 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 			} catch (error) {
 				return this.#handleError({
 					type: "PageError",
+					frontasticRequestId: "",
 					error: <string | Error>error,
 					path: path,
 				});
 			}
 
-			if (result instanceof Error) {
+			if (response instanceof Error) {
 				return this.#handleError({
 					type: "PageError",
-					error: <string | Error>result.toString(),
+					frontasticRequestId: response.frontasticRequestId,
+					error: <string | Error>response.toString(),
 					path: path,
 				});
 			}
 
-			return { isError: false, data: <PagePreviewResponse>result };
+			return {
+				isError: false,
+				tracing: {
+					frontasticRequestId: response.frontasticRequestId,
+				},
+				data: <PagePreviewResponse>response.data,
+			};
 		},
 		getPages: async (
 			options: {
@@ -418,13 +467,16 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 				method: "POST",
 				headers: this.#getDefaultAPIHeaders(),
 			};
-			let result: FetchError | Awaited<PageFolderListResponse>;
+			let response: {
+				frontasticRequestId: string;
+				data: FetchError | PageFolderListResponse;
+			};
 			const path = `/structure?locale=${this.apiHubLocale}${
 				options.path ? `&path=${options.path}` : ""
 			}&depth=${options.depth}`;
 
 			try {
-				result = await fetcher<PageFolderListResponse>(
+				response = await fetcher<PageFolderListResponse>(
 					this.#normaliseUrl(`${this.#endpoint}/frontastic${path}`),
 					fetcherOptions,
 					options.serverOptions,
@@ -433,20 +485,28 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 			} catch (error) {
 				return this.#handleError({
 					type: "PageError",
+					frontasticRequestId: "",
 					error: <string | Error>error,
 					path: path,
 				});
 			}
 
-			if (result instanceof Error) {
+			if (response instanceof Error) {
 				return this.#handleError({
 					type: "PageError",
-					error: <string | Error>result.toString(),
+					frontasticRequestId: response.frontasticRequestId,
+					error: <string | Error>response.toString(),
 					path: path,
 				});
 			}
 
-			return { isError: false, data: <PageFolderListResponse>result };
+			return {
+				isError: false,
+				tracing: {
+					frontasticRequestId: response.frontasticRequestId,
+				},
+				data: <PageFolderListResponse>response.data,
+			};
 		},
 	};
 }

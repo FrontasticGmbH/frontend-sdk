@@ -1,4 +1,12 @@
 
+## Version 1.11.0 (2024-04-24)
+
+
+* Added Frontastic-Request-Id to errorCaught event trigger
+* Added Frontastic-Request-Id header value to SDKResponse
+* Added unnecessary project files for omission on library release
+* Changed Page API types to interfaces
+
 ## Version 1.10.1 (2024-04-09)
 
 

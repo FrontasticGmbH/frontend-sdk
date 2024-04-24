@@ -9,7 +9,9 @@ export class Queue {
 	#promisePending = false;
 	#stopped = false;
 
-	add<T>(promise: () => Promise<T>): Promise<T> {
+	add<T>(
+		promise: () => Promise<{ frontasticRequestId: string; data: T }>
+	): Promise<{ frontasticRequestId: string; data: T }> {
 		return new Promise((resolve, reject) => {
 			this.#queue.push({
 				promise,

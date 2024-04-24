@@ -9,7 +9,7 @@ export const fetcher = async <T>(
 	options: RequestInit,
 	serverOptions?: ServerOptions,
 	sessionLifetime?: number
-): Promise<T | FetchError> => {
+): Promise<{ frontasticRequestId: string; data: T | FetchError }> => {
 	dependencyContainer().throwIfDINotConfigured();
 	let sessionCookie = (await dependencyContainer().cookieHandler.getCookie(
 		"frontastic-session",
@@ -32,6 +32,8 @@ export const fetcher = async <T>(
 	};
 
 	const response: Response = await fetch(url, options);
+	const frontasticRequestId =
+		response.headers.get("Frontastic-Request-Id") ?? "";
 
 	if (response.ok && response.headers.has("Frontastic-Session")) {
 		let rememberMe = await rememberMeCookieAsync.get();
@@ -50,7 +52,9 @@ export const fetcher = async <T>(
 	}
 
 	if (response.ok) {
-		return response.json();
+		return response.json().then((data) => {
+			return { frontasticRequestId, data };
+		});
 	}
 
 	let error: Error | string;
@@ -61,5 +65,5 @@ export const fetcher = async <T>(
 		error = await response.text();
 	}
 
-	return new FetchError(error);
+	return { frontasticRequestId, data: new FetchError(error) };
 };

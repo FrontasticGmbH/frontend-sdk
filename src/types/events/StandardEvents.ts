@@ -47,5 +47,8 @@ export type StandardEvents = {
 	lineItemAddedToWishlist: { lineItem: unknown };
 	lineItemRemovedFromWishlist: { lineItemId: string };
 	wishlistLineItemUpdated: { lineItem: unknown };
-	errorCaught: { error: ActionError | PageError };
+	errorCaught: {
+		frontasticRequestId?: string;
+		error: ActionError | PageError;
+	};
 };
