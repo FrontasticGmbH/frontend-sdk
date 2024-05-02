@@ -1,19 +1,21 @@
 
+## Version 1.11.2 (2024-05-02)
+
+
+* Fixed bug in error reporting affecting versions 1.11.0 and 1.11.1
+
 ## Version 1.11.1 (2024-04-24)
 
-
-* Reverted PageAPI interfaces to types due to unintended breaking change
+* Reverted PageAPI interfaces back to types due to unintended breaking change
 
 ## Version 1.11.0 (2024-04-24)
-
 
 * Added Frontastic-Request-Id to errorCaught event trigger
 * Added Frontastic-Request-Id header value to SDKResponse
 * Added unnecessary project files for omission on library release
-* Changed Page API types to interfaces
+* Changed PageAPI types to interfaces
 
 ## Version 1.10.1 (2024-04-09)
-
 
 * Removed httpOnly flag from cookie options as default
 

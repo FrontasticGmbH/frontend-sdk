@@ -323,11 +323,11 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 				actionName: options.actionName,
 			});
 		}
-		if (response instanceof Error) {
+		if (response.data instanceof Error) {
 			return this.#handleError({
 				type: "ActionError",
 				frontasticRequestId: response.frontasticRequestId,
-				error: <string | Error>response.toString(),
+				error: <string | Error>response.data.toString(),
 				actionName: options.actionName,
 			});
 		}
@@ -384,11 +384,11 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 				});
 			}
 
-			if (response instanceof Error) {
+			if (response.data instanceof Error) {
 				return this.#handleError({
 					type: "PageError",
 					frontasticRequestId: response.frontasticRequestId,
-					error: <string | Error>response.toString(),
+					error: <string | Error>response.data.toString(),
 					path: options.path,
 				});
 			}
@@ -432,11 +432,11 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 				});
 			}
 
-			if (response instanceof Error) {
+			if (response.data instanceof Error) {
 				return this.#handleError({
 					type: "PageError",
 					frontasticRequestId: response.frontasticRequestId,
-					error: <string | Error>response.toString(),
+					error: <string | Error>response.data.toString(),
 					path: path,
 				});
 			}
@@ -491,11 +491,11 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 				});
 			}
 
-			if (response instanceof Error) {
+			if (response.data instanceof Error) {
 				return this.#handleError({
 					type: "PageError",
 					frontasticRequestId: response.frontasticRequestId,
-					error: <string | Error>response.toString(),
+					error: <string | Error>response.data.toString(),
 					path: path,
 				});
 			}
