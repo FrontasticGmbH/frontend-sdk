@@ -34,6 +34,7 @@ type SDKConfig = {
 	extensionVersion?: string;
 	sessionLifetime?: number;
 	cookieHandlingOverride?: CookieManager;
+	customHeaderValue?: string;
 };
 
 export class SDK<ExtensionEvents extends Events> extends EventManager<
@@ -48,6 +49,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	#extensionVersion!: string;
 	#actionQueue: Queue;
 	#sessionLifetime!: number;
+	#customHeaderValue?: string;
 
 	set endpoint(url: string) {
 		url = this.#normaliseUrl(url);
@@ -118,6 +120,10 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		return this.#currency;
 	}
 
+	get customHeaderValue() {
+		return this.#customHeaderValue;
+	}
+
 	constructor() {
 		super();
 
@@ -148,6 +154,8 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	 * @param {boolean} [config.useCurrencyInLocale=false] - An optional boolean, default false. To be set to true if currency is required in config.locale, for example en-GB@EUR.
 	 * @param {string} [config.extensionVersion=""] - An optional string required for multitenancy projects, stored in the environment variable process.env.NEXT_PUBLIC_EXT_BUILD_ID to specify the extension version in which to connect.
 	 * @param {string} [config.sessionLifetime=7776000000] - An optional number of milliseconds in which to persist the session lifeTime, to override the {@link DEFAULT_SESSION_LIFETIME} of 3 months.
+	 *
+	 * @param {boolean} [options.customHeaderValue] - An optional string, the value to assign to a "coFE-Custom-Configuration" header value in every API call. Overriden by explicity set customHeaderValue passed in {@link callAction} and {@link PageApi} methods.
 	 * @param {CookieManager} [config.cookieHandlingOverride] - An optional cookie manager interface that contains all the cookie handling methods.
 	 *
 	 * @returns {void} Void.
@@ -162,6 +170,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		this.#extensionVersion = config.extensionVersion ?? "";
 		this.#sessionLifetime =
 			config.sessionLifetime ?? DEFAULT_SESSION_LIFETIME;
+		this.#customHeaderValue = config.customHeaderValue;
 
 		this.#hasBeenConfigured = true;
 	}
@@ -251,7 +260,11 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		};
 	}
 
-	#getDefaultAPIHeaders() {
+	#getDefaultAPIHeaders(customHeaderValue?: string) {
+		const customValue = customHeaderValue ?? this.#customHeaderValue;
+		const customHeader: {
+			"coFE-Custom-Configuration"?: string;
+		} = customValue ? { "coFE-Custom-Configuration": customValue } : {};
 		return {
 			"Frontastic-Locale": this.apiHubLocale,
 			"Frontastic-Currency": this.currency,
@@ -261,6 +274,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 							this.#extensionVersion,
 				  }
 				: {}),
+			...customHeader,
 		};
 	}
 
@@ -271,6 +285,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	 * @param {unknown} [options.payload] - An optional key, value pair object payload to be serialised into the body of the request.
 	 * @param {Object.<string, number, boolean, string[], number[], boolean[]>} [options.query] - An optional key, value pair object to be serialised into the url query.
 	 * @param {boolean} [options.skipQueue] - An optional boolean, default false indicating whether or not to skip the action queue and execute fully asyncronously. May cause race conditions if used incorrectly.
+	 * @param {boolean} [options.customHeaderValue] - An optional string, the value to assign to a "coFE-Custom-Configuration" header value. Overrides customHeaderValue passed in {@link configure}.
 	 * @param {Object} [options.serverOptions] - An optional object containing the res and req objects for ServerResponse and IncomingMessage with cookies respectively. Required for server-side rendering session management.
 	 *
 	 * @returns {PromiseLike<Object>} An object with a boolean isError property, and either an error or data property for true and false respectively. Type of data will match generic argument supplied to method.
@@ -280,6 +295,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		payload?: unknown;
 		query?: AcceptedQueryTypes;
 		skipQueue?: boolean;
+		customHeaderValue?: string;
 		serverOptions?: ServerOptions;
 	}): Promise<SDKResponse<ReturnData>> {
 		this.#throwIfNotConfigured();
@@ -288,7 +304,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		const fetcherOptions = {
 			method: "POST",
 			body: JSON.stringify(options.payload),
-			headers: this.#getDefaultAPIHeaders(),
+			headers: this.#getDefaultAPIHeaders(options.customHeaderValue),
 		};
 
 		let response: {
@@ -348,6 +364,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		getPage: async (options: {
 			path: string;
 			query?: AcceptedQueryTypes;
+			customHeaderValue?: string;
 			serverOptions?: ServerOptions;
 		}) => {
 			this.#throwIfNotConfigured();
@@ -358,7 +375,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 				method: "POST",
 				headers: {
 					"Frontastic-Path": options.path,
-					...this.#getDefaultAPIHeaders(),
+					...this.#getDefaultAPIHeaders(options.customHeaderValue),
 				},
 			};
 
@@ -403,12 +420,13 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		},
 		getPreview: async (options: {
 			previewId: string;
+			customHeaderValue?: string;
 			serverOptions?: ServerOptions;
 		}) => {
 			this.#throwIfNotConfigured();
 			const fetcherOptions = {
 				method: "POST",
-				headers: this.#getDefaultAPIHeaders(),
+				headers: this.#getDefaultAPIHeaders(options.customHeaderValue),
 			};
 			let response: {
 				frontasticRequestId: string;
@@ -454,6 +472,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 				path?: string;
 				depth?: number;
 				types?: "static";
+				customHeaderValue?: string;
 				serverOptions?: ServerOptions;
 			} = {
 				depth: 16,
@@ -465,7 +484,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 			options.types = options.types ?? "static";
 			const fetcherOptions = {
 				method: "POST",
-				headers: this.#getDefaultAPIHeaders(),
+				headers: this.#getDefaultAPIHeaders(options.customHeaderValue),
 			};
 			let response: {
 				frontasticRequestId: string;

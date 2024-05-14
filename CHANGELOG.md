@@ -1,4 +1,9 @@
 
+## Version 1.12.0 (2024-05-14)
+
+
+* Added support to add coFE-Custom-Configuration header value globally via configure, and modually on callAction and PageAPI methods
+
 ## Version 1.11.2 (2024-05-02)
 
 
