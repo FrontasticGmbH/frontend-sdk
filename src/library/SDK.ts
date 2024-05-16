@@ -15,7 +15,7 @@ import {
 	PagePreviewResponse,
 	PageResponse,
 } from "../types/api/page";
-import { generateQueryString } from "../helpers/queryStringHelpers";
+import { normaliseUrl, generateQueryString } from "../helpers/urlHelpers";
 import { AcceptedQueryTypes } from "../types/Query";
 import { ServerOptions } from "../types/cookieHandling/ServerOptions";
 import {
@@ -52,7 +52,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	#customHeaderValue?: string;
 
 	set endpoint(url: string) {
-		url = this.#normaliseUrl(url);
+		url = normaliseUrl(url);
 		if (url.indexOf("http") === -1) {
 			url = `https://${url}`;
 			// Note the below doesn't support websocket connections but much more work would
@@ -137,14 +137,6 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		}
 	}
 
-	#normaliseUrl = (url: string): string =>
-		url.split("//").reduce((previous, current) => {
-			if (current === "http:" || current === "https:") {
-				return (current += "/");
-			}
-			return `${previous}/${current}`;
-		}, "");
-
 	/**
 	 * The method that must be called prior to any other methods to configure the connection to the backend. An error is throw if not called prior.
 	 *
@@ -155,7 +147,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	 * @param {string} [config.extensionVersion=""] - An optional string required for multitenancy projects, stored in the environment variable process.env.NEXT_PUBLIC_EXT_BUILD_ID to specify the extension version in which to connect.
 	 * @param {string} [config.sessionLifetime=7776000000] - An optional number of milliseconds in which to persist the session lifeTime, to override the {@link DEFAULT_SESSION_LIFETIME} of 3 months.
 	 *
-	 * @param {boolean} [options.customHeaderValue] - An optional string, the value to assign to a "coFE-Custom-Configuration" header value in every API call. Overriden by explicity set customHeaderValue passed in {@link callAction} and {@link PageApi} methods.
+	 * @param {boolean} [options.customHeaderValue] - An optional string, the value to assign to a "coFE-Custom-Configuration" header value in every API call. Overriden on single calls by explicity set customHeaderValue passed in {@link callAction} and {@link PageApi} methods.
 	 * @param {CookieManager} [config.cookieHandlingOverride] - An optional cookie manager interface that contains all the cookie handling methods.
 	 *
 	 * @returns {void} Void.
@@ -313,7 +305,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 		};
 		const action = () =>
 			fetcher<ReturnData>(
-				this.#normaliseUrl(
+				normaliseUrl(
 					`${this.#endpoint}/frontastic/action/${
 						options.actionName
 					}${params}`
@@ -385,9 +377,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 			};
 			try {
 				response = await fetcher<PageResponse>(
-					this.#normaliseUrl(
-						`${this.#endpoint}/frontastic/page${params}`
-					),
+					normaliseUrl(`${this.#endpoint}/frontastic/page${params}`),
 					fetcherOptions,
 					options.serverOptions,
 					this.#sessionLifetime
@@ -436,7 +426,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 
 			try {
 				response = await fetcher<PagePreviewResponse>(
-					this.#normaliseUrl(`${this.#endpoint}/frontastic${path}`),
+					normaliseUrl(`${this.#endpoint}/frontastic${path}`),
 					fetcherOptions,
 					options.serverOptions,
 					this.#sessionLifetime
@@ -496,7 +486,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 
 			try {
 				response = await fetcher<PageFolderListResponse>(
-					this.#normaliseUrl(`${this.#endpoint}/frontastic${path}`),
+					normaliseUrl(`${this.#endpoint}/frontastic${path}`),
 					fetcherOptions,
 					options.serverOptions,
 					this.#sessionLifetime

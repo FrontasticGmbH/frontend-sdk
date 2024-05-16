@@ -1,11 +1,14 @@
 
-## Version 1.12.0 (2024-05-14)
+## Version 1.12.1 (2024-05-16)
 
+
+* Fixed edge case with URL normalisation where URL in query replaces domain
+
+## Version 1.12.0 (2024-05-14)
 
 * Added support to add coFE-Custom-Configuration header value globally via configure, and modually on callAction and PageAPI methods
 
 ## Version 1.11.2 (2024-05-02)
-
 
 * Fixed bug in error reporting affecting versions 1.11.0 and 1.11.1
 
