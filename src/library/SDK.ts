@@ -277,7 +277,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	 * @param {unknown} [options.payload] - An optional key, value pair object payload to be serialised into the body of the request.
 	 * @param {Object.<string, number, boolean, string[], number[], boolean[]>} [options.query] - An optional key, value pair object to be serialised into the url query.
 	 * @param {boolean} [options.skipQueue] - An optional boolean, default false indicating whether or not to skip the action queue and execute fully asyncronously. May cause race conditions if used incorrectly.
-	 * @param {boolean} [options.customHeaderValue] - An optional string, the value to assign to a "coFE-Custom-Configuration" header value. Overrides customHeaderValue passed in {@link configure}.
+	 * @param {string} [options.customHeaderValue] - An optional string, the value to assign to a "coFE-Custom-Configuration" header value. Overrides customHeaderValue passed in {@link configure}.
 	 * @param {Object} [options.serverOptions] - An optional object containing the res and req objects for ServerResponse and IncomingMessage with cookies respectively. Required for server-side rendering session management.
 	 *
 	 * @returns {PromiseLike<Object>} An object with a boolean isError property, and either an error or data property for true and false respectively. Type of data will match generic argument supplied to method.

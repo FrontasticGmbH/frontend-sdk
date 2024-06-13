@@ -34,8 +34,15 @@ const normaliseUrl = function (url: string): string {
 const generateQueryString = function (query: AcceptedQueryTypes): string {
 	const params = new URLSearchParams();
 	Object.keys(query).forEach((key) => {
-		if (query[key] !== undefined) {
-			params.set(key, query[key].toString());
+		let value = query[key];
+		if (value !== undefined) {
+			if (Array.isArray(value)) {
+				value.forEach((currentValue) => {
+					params.append(key, currentValue.toString());
+				});
+			} else {
+				params.set(key, query[key].toString());
+			}
 		}
 	});
 	return `?${params.toString()}`;
