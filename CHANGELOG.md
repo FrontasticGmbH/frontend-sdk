@@ -1,9 +1,14 @@
 
+## Version 1.12.3 (2024-06-17)
+
+
+* Updated query serialisation to support square bracket syntax
+
 ## Version 1.12.2 (2024-06-13)
 
 
-* fix: fixed array serialisation into query
-* fix: Fixed jsdocs customerHeaderValue type
+* Fixed array serialisation into query
+* Fixed jsdocs customerHeaderValue type
 
 ## Version 1.12.1 (2024-05-16)
 

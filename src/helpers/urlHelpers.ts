@@ -32,11 +32,15 @@ const normaliseUrl = function (url: string): string {
 };
 
 const generateQueryString = function (query: AcceptedQueryTypes): string {
+	let queryString = "";
+	let arrayParams: string[] = [];
 	const params = new URLSearchParams();
+
 	Object.keys(query).forEach((key) => {
 		let value = query[key];
 		if (value !== undefined) {
 			if (Array.isArray(value)) {
+				arrayParams.push(key);
 				value.forEach((currentValue) => {
 					params.append(key, currentValue.toString());
 				});
@@ -45,7 +49,17 @@ const generateQueryString = function (query: AcceptedQueryTypes): string {
 			}
 		}
 	});
-	return `?${params.toString()}`;
+
+	queryString = params.toString();
+
+	arrayParams.forEach((arrayParam) => {
+		queryString = queryString.replaceAll(
+			`${arrayParam}=`,
+			`${arrayParam}[]=`
+		);
+	});
+
+	return queryString ? `?${queryString}` : "";
 };
 
 export { normaliseUrl, generateQueryString };
