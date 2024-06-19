@@ -1,7 +1,14 @@
 type BasicTypes = string | number | boolean;
 
+type AcceptedQueryValueTypes =
+	| BasicTypes
+	| AcceptedQueryValueTypes[]
+	| {
+			[key: string]: AcceptedQueryValueTypes;
+	  };
+
 type AcceptedQueryTypes = {
-	[key: string]: BasicTypes | Array<BasicTypes>;
+	[key: string]: AcceptedQueryValueTypes;
 };
 
-export { AcceptedQueryTypes };
+export { AcceptedQueryValueTypes, AcceptedQueryTypes };

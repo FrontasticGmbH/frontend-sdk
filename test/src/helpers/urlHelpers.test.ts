@@ -3,6 +3,7 @@ import {
 	generateQueryString,
 	normaliseUrl,
 } from "../../../src/helpers/urlHelpers";
+import { AcceptedQueryTypes } from "../../../src/types/Query";
 
 describe("urlHelpers", () => {
 	describe("normaliseUrl", () => {
@@ -52,14 +53,58 @@ describe("urlHelpers", () => {
 	});
 
 	describe("generateQueryString", () => {
+		test("ignores function values into query without error", () => {
+			const query = {
+				myFunc: () => {},
+			};
+			const expectedQueryString = "";
+			//@ts-expect-error
+			const queryString = generateQueryString(query);
+
+			expect(queryString).toBe(expectedQueryString);
+		});
+
+		test("serialises null values into query without error", () => {
+			const query = {
+				val: null,
+			};
+			const expectedQueryString = "?val=null";
+			//@ts-expect-error
+			const queryString = generateQueryString(query);
+
+			expect(queryString).toBe(expectedQueryString);
+		});
+
+		test("serialises undefined values into query without error", () => {
+			const query = {
+				val: undefined,
+			};
+			const expectedQueryString = "?val=undefined";
+			//@ts-expect-error
+			const queryString = generateQueryString(query);
+
+			expect(queryString).toBe(expectedQueryString);
+		});
+
 		test("serialises string types into query correctly", () => {
 			const query = {
-				val1: "test, [1]",
-				val2: "|\\,./<>?;'#:@~[]{}-=_+¬`!\"£$%^&*()_+",
+				val1: "test",
+				val2: "abcdefghijklmnopqrstuvwxyz",
 			};
 			const expectedQueryString =
-				"?val1=test%2C+%5B1%5D&val2=%7C%5C%2C.%2F%3C%3E%3F%3B%27%23%3A%40%7E%5B%5D%7B%7D" +
-				"-%3D_%2B%C2%AC%60%21%22%C2%A3%24%25%5E%26*%28%29_%2B";
+				"?val1=test&val2=abcdefghijklmnopqrstuvwxyz";
+			const queryString = generateQueryString(query);
+
+			expect(queryString).toBe(expectedQueryString);
+		});
+
+		test("serialises special characters into query correctly", () => {
+			const query = {
+				spec: " |\\,./<>?;'#:@~[]{}-=_+¬`!\"£$%^&*()_+",
+			};
+			const expectedQueryString =
+				"?spec=%20%7C%5C%2C.%2F%3C%3E%3F%3B%27%23%3A%40~%5B%5D%7B%7D-%3D_" +
+				"%2B%C2%AC%60%21%22%C2%A3%24%25%5E%26%2A%28%29_%2B";
 			const queryString = generateQueryString(query);
 
 			expect(queryString).toBe(expectedQueryString);
@@ -87,7 +132,20 @@ describe("urlHelpers", () => {
 			expect(queryString).toBe(expectedQueryString);
 		});
 
-		test("serialises array types into query correctly", () => {
+		test("serialises basic objects into query correctly", () => {
+			const query = {
+				object1: { str: "string", num: 3, bool: true },
+				object2: { str2: "string2", num: 40, bool2: false },
+			};
+			const expectedQueryString =
+				"?object1[str]=string&object1[num]=3&object1[bool]=true&" +
+				"object2[str2]=string2&object2[num]=40&object2[bool2]=false";
+			const queryString = generateQueryString(query);
+
+			expect(queryString).toBe(expectedQueryString);
+		});
+
+		test("serialises basic array types into query correctly", () => {
 			const query = {
 				stringArray: ["string 1", "string 2, with comma", "string 3"],
 				singleStringArray: ["string 1"],
@@ -96,10 +154,157 @@ describe("urlHelpers", () => {
 				boolArray: [true, true, false, true],
 			};
 			const expectedQueryString =
-				"?stringArray[]=string+1&stringArray[]=string+2%2C+with+comma&stringArray[]" +
-				"=string+3&singleStringArray[]=string+1&singleStringArrayWithComma[]=str%2Ci" +
-				"ng&numberArray[]=43504&numberArray[]=345&boolArray[]=true&boolArray[]=true&" +
-				"boolArray[]=false&boolArray[]=true";
+				"?stringArray[0]=string%201&stringArray[1]=string%202%2C%20with%" +
+				"20comma&stringArray[2]=string%203&singleStringArray[0]=string%201" +
+				"&singleStringArrayWithComma[0]=str%2Cing&numberArray[0]=43504&" +
+				"numberArray[1]=345&boolArray[0]=true&boolArray[1]=true&boolArray[2]" +
+				"=false&boolArray[3]=true";
+			const queryString = generateQueryString(query);
+
+			expect(queryString).toBe(expectedQueryString);
+		});
+
+		test("serialises object array types into query correctly", () => {
+			const query: AcceptedQueryTypes = {
+				boolObjArray1: [
+					{ obj1Bool1: true, obj1Bool2: false },
+					{ obj2Bool1: true },
+					{ obj3Bool1: true },
+				],
+				numObjArray1: [
+					{ obj1Num1: 345, obj1Num2: 4.543 },
+					{ obj2Num1: 123 },
+					{ obj3Num1: 564 },
+				],
+				stringObjArray1: [
+					{
+						obj1String1: "Obj 1 String 1",
+						obj1String2: "Obj 1 String2",
+					},
+					{ obj2String1: "Obj 2 String 1" },
+					{ obj3String1: "Obj 3 String 1" },
+				],
+				mixedObjArray1: [
+					{ obj1String1: "Obj 1 String 1", obj1Num1: 123 },
+					{ obj2String1: "Obj 2 String 1" },
+					{ obj3String1: "Obj 3 String 1", obj3Bool1: true },
+				],
+			};
+			const expectedQueryString =
+				"?boolObjArray1[0][obj1Bool1]=true&boolObjArray1[0][obj1Bool2]=false" +
+				"&boolObjArray1[1][obj2Bool1]=true&boolObjArray1[2][obj3Bool1]=true" +
+				"&numObjArray1[0][obj1Num1]=345&numObjArray1[0][obj1Num2]=4.543" +
+				"&numObjArray1[1][obj2Num1]=123&numObjArray1[2][obj3Num1]=564&" +
+				"stringObjArray1[0][obj1String1]=Obj%201%20String%201&stringObjArray1" +
+				"[0][obj1String2]=Obj%201%20String2&stringObjArray1[1][obj2String1]=" +
+				"Obj%202%20String%201&stringObjArray1[2][obj3String1]=Obj%203%20String" +
+				"%201&mixedObjArray1[0][obj1String1]=Obj%201%20String%201&mixedObjArray1" +
+				"[0][obj1Num1]=123&mixedObjArray1[1][obj2String1]=Obj%202%20String%201&" +
+				"mixedObjArray1[2][obj3String1]=Obj%203%20String%201&mixedObjArray1[2]" +
+				"[obj3Bool1]=true";
+
+			const queryString = generateQueryString(query);
+
+			expect(queryString).toBe(expectedQueryString);
+		});
+
+		test("serialises complex nested array types into query correctly", () => {
+			const query: AcceptedQueryTypes = {
+				nestedArray: [
+					{
+						nestedArrObj: {
+							nestedArrObjStr: "Obj 3 String 1",
+							nestedArrObjArr: [
+								"string 1",
+								"string 2, with comma",
+								"string 3",
+							],
+							nestedArrObjObj: {
+								nestedArrObjObjArr: ["str,ing"],
+								nestedArrObjObjArr2: [
+									[
+										{
+											nestedArrObjObjArr2ArrArrObj:
+												"string",
+										},
+									],
+									[
+										{
+											nestedArrObjObjArr2ArrArrObj:
+												"string",
+										},
+									],
+								],
+							},
+						},
+					},
+					{
+						nestedArrObjBool: true,
+					},
+				],
+			};
+			const expectedQueryString =
+				"?nestedArray[0][nestedArrObj][nestedArrObjStr]" +
+				"=Obj%203%20String%201&nestedArray[0][nestedArrObj][nestedArrObjArr][0]=string" +
+				"%201&nestedArray[0][nestedArrObj][nestedArrObjArr][1]=string%202%2C%20with%20" +
+				"comma&nestedArray[0][nestedArrObj][nestedArrObjArr][2]=string%203&nestedArray[0]" +
+				"[nestedArrObj][nestedArrObjObj][nestedArrObjObjArr][0]=str%2Cing&nestedArray[0]" +
+				"[nestedArrObj][nestedArrObjObj][nestedArrObjObjArr2][0][0][nestedArrObjObjArr2ArrArrObj]" +
+				"=string&nestedArray[0][nestedArrObj][nestedArrObjObj][nestedArrObjObjArr2][1][0]" +
+				"[nestedArrObjObjArr2ArrArrObj]=string&nestedArray[1][nestedArrObjBool]=true";
+
+			const queryString = generateQueryString(query);
+
+			expect(queryString).toBe(expectedQueryString);
+		});
+
+		test("serialises complex nested object types into query correctly", () => {
+			const query: AcceptedQueryTypes = {
+				nestedObject: {
+					nestedObjObj1: {
+						nestedObjObjObj1: {
+							nestedObjObjObjStr: "Obj 3 String 1",
+							nestedObjObjObjArr: [
+								"string 1",
+								"string 2, with comma",
+								"string 3",
+							],
+							nestedObjObjObj2: {
+								nestedObjObjObjArr: ["str,ing"],
+								nestedObjObjObjArr2: [
+									[
+										{
+											nestedArrObjObjArr2ArrArrObj:
+												"string",
+										},
+									],
+									[
+										{
+											nestedArrObjObjArr2ArrArrObj:
+												"string",
+										},
+									],
+								],
+							},
+						},
+					},
+					nestedObjObj2: {
+						nestedArrObjBool: true,
+					},
+				},
+			};
+			const expectedQueryString =
+				"?nestedObject[nestedObjObj1][nestedObjObjObj1][nestedObjObjObjStr]=Obj%203%20" +
+				"String%201&nestedObject[nestedObjObj1][nestedObjObjObj1][nestedObjObjObjArr][0]" +
+				"=string%201&nestedObject[nestedObjObj1][nestedObjObjObj1][nestedObjObjObjArr][1]" +
+				"=string%202%2C%20with%20comma&nestedObject[nestedObjObj1][nestedObjObjObj1]" +
+				"[nestedObjObjObjArr][2]=string%203&nestedObject[nestedObjObj1][nestedObjObjObj1]" +
+				"[nestedObjObjObj2][nestedObjObjObjArr][0]=str%2Cing&nestedObject[nestedObjObj1]" +
+				"[nestedObjObjObj1][nestedObjObjObj2][nestedObjObjObjArr2][0][0][nestedArrObjObjA" +
+				"rr2ArrArrObj]=string&nestedObject[nestedObjObj1][nestedObjObjObj1][nestedObjObjObj2]" +
+				"[nestedObjObjObjArr2][1][0][nestedArrObjObjArr2ArrArrObj]=string&nestedObject" +
+				"[nestedObjObj2][nestedArrObjBool]=true";
+
 			const queryString = generateQueryString(query);
 
 			expect(queryString).toBe(expectedQueryString);

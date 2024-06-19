@@ -1,4 +1,9 @@
 
+## Version 1.13.0 (2024-06-19)
+
+
+* Added compatability for all JSON serialisable types in query
+
 ## Version 1.12.3 (2024-06-17)
 
 

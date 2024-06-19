@@ -1,4 +1,5 @@
-import { AcceptedQueryTypes } from "../types/Query";
+import qs from "qs";
+import { AcceptedQueryTypes, AcceptedQueryValueTypes } from "../types/Query";
 
 const normaliseUrl = function (url: string): string {
 	let protocolSplit = url.split("//");
@@ -31,35 +32,53 @@ const normaliseUrl = function (url: string): string {
 	return normalisedUrl + query;
 };
 
+const nullOrUndefinedToString = (value: undefined | null): string => {
+	switch (value) {
+		case undefined:
+			return "undefined";
+		case null:
+			return "null";
+		default:
+			return "";
+	}
+};
+
+const toQueryObject = function (
+	key: string,
+	value: AcceptedQueryValueTypes
+): AcceptedQueryTypes {
+	let obj: any = {};
+	obj[key] = value;
+	return obj;
+};
+
+const toQueryString = function (obj: AcceptedQueryTypes): string {
+	return qs.stringify(obj, {
+		arrayFormat: "indices",
+		encodeValuesOnly: true,
+		format: "RFC3986",
+	});
+};
+
 const generateQueryString = function (query: AcceptedQueryTypes): string {
-	let queryString = "";
-	let arrayParams: string[] = [];
-	const params = new URLSearchParams();
+	let queryString = "?";
 
 	Object.keys(query).forEach((key) => {
 		let value = query[key];
-		if (value !== undefined) {
-			if (Array.isArray(value)) {
-				arrayParams.push(key);
-				value.forEach((currentValue) => {
-					params.append(key, currentValue.toString());
-				});
-			} else {
-				params.set(key, query[key].toString());
+		if (value === null || value === undefined) {
+			queryString += `${toQueryString(
+				toQueryObject(key, nullOrUndefinedToString(value))
+			)}&`;
+		} else {
+			if (typeof value !== "function") {
+				queryString += `${toQueryString(toQueryObject(key, value))}&`;
 			}
 		}
 	});
+	// removes trailing &, or ? if empty query
+	queryString = queryString.substring(0, queryString.length - 1);
 
-	queryString = params.toString();
-
-	arrayParams.forEach((arrayParam) => {
-		queryString = queryString.replaceAll(
-			`${arrayParam}=`,
-			`${arrayParam}[]=`
-		);
-	});
-
-	return queryString ? `?${queryString}` : "";
+	return queryString;
 };
 
 export { normaliseUrl, generateQueryString };
