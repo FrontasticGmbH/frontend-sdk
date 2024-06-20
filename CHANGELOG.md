@@ -1,4 +1,9 @@
 
+## Version 1.13.1 (2024-06-20)
+
+
+* Erronously passed undefined values are no longer serialised into the query
+
 ## Version 1.13.0 (2024-06-19)
 
 

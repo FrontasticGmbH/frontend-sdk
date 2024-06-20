@@ -32,17 +32,6 @@ const normaliseUrl = function (url: string): string {
 	return normalisedUrl + query;
 };
 
-const nullOrUndefinedToString = (value: undefined | null): string => {
-	switch (value) {
-		case undefined:
-			return "undefined";
-		case null:
-			return "null";
-		default:
-			return "";
-	}
-};
-
 const toQueryObject = function (
 	key: string,
 	value: AcceptedQueryValueTypes
@@ -65,12 +54,10 @@ const generateQueryString = function (query: AcceptedQueryTypes): string {
 
 	Object.keys(query).forEach((key) => {
 		let value = query[key];
-		if (value === null || value === undefined) {
-			queryString += `${toQueryString(
-				toQueryObject(key, nullOrUndefinedToString(value))
-			)}&`;
-		} else {
-			if (typeof value !== "function") {
+		if (value !== undefined && typeof value !== "function") {
+			if (value === null) {
+				queryString += `${key}=null&`;
+			} else {
 				queryString += `${toQueryString(toQueryObject(key, value))}&`;
 			}
 		}

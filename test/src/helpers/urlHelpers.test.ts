@@ -53,9 +53,20 @@ describe("urlHelpers", () => {
 	});
 
 	describe("generateQueryString", () => {
-		test("ignores function values into query without error", () => {
+		test("ignores function values passed to query without error or serialising", () => {
 			const query = {
 				myFunc: () => {},
+			};
+			const expectedQueryString = "";
+			//@ts-expect-error
+			const queryString = generateQueryString(query);
+
+			expect(queryString).toBe(expectedQueryString);
+		});
+
+		test("ignores undefined values passed to query without error or serialising", () => {
+			const query = {
+				val: undefined,
 			};
 			const expectedQueryString = "";
 			//@ts-expect-error
@@ -69,17 +80,6 @@ describe("urlHelpers", () => {
 				val: null,
 			};
 			const expectedQueryString = "?val=null";
-			//@ts-expect-error
-			const queryString = generateQueryString(query);
-
-			expect(queryString).toBe(expectedQueryString);
-		});
-
-		test("serialises undefined values into query without error", () => {
-			const query = {
-				val: undefined,
-			};
-			const expectedQueryString = "?val=undefined";
 			//@ts-expect-error
 			const queryString = generateQueryString(query);
 
