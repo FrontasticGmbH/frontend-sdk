@@ -1,4 +1,9 @@
 
+## Version 1.13.2 (2024-08-29)
+
+
+* Changed internal locale handling to use string instead of Intl.Locale 
+
 ## Version 1.13.1 (2024-06-20)
 
 

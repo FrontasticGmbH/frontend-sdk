@@ -43,7 +43,7 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	#hasBeenConfigured;
 
 	#endpoint!: string;
-	#locale!: Intl.Locale;
+	#locale!: string;
 	#currency!: Currency;
 	#useCurrencyInLocale!: boolean;
 	#extensionVersion!: string;
@@ -73,14 +73,14 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	}
 
 	set locale(locale: string) {
-		this.#locale = new Intl.Locale(locale);
+		this.#locale = locale;
 	}
 
 	/**
 	 * The string representing the combination of the ISO 639-1 language and ISO 3166-1 country code, to be set within the {@link configure} method.
 	 */
 	get locale(): Intl.BCP47LanguageTag {
-		return this.#locale.baseName;
+		return this.#locale;
 	}
 
 	/**
