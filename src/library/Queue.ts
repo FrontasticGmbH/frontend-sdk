@@ -1,3 +1,5 @@
+import { FetcherResponse } from "../helpers/fetcher";
+
 type QueueItem<T> = {
 	promise: () => Promise<unknown>;
 	resolve: (value: T) => void;
@@ -5,54 +7,53 @@ type QueueItem<T> = {
 };
 
 export class Queue {
-	#queue: QueueItem<any>[] = [];
-	#promisePending = false;
-	#stopped = false;
+	private queue: QueueItem<any>[] = [];
+	private promisePending = false;
+	private stopped = false;
 
 	add<T>(
-		promise: () => Promise<{ frontasticRequestId: string; data: T }>
-	): Promise<{ frontasticRequestId: string; data: T }> {
+		promise: () => Promise<FetcherResponse<T>>
+	): Promise<FetcherResponse<T>> {
 		return new Promise((resolve, reject) => {
-			this.#queue.push({
+			this.queue.push({
 				promise,
 				resolve,
 				reject,
 			});
-			this.#handle();
+			this.handle();
 		});
 	}
 
 	stop() {
-		this.#stopped = true;
+		this.stopped = true;
 	}
 
 	restart() {
-		this.#stopped = false;
-		this.#handle();
+		this.stopped = false;
+		this.handle();
 	}
 
-	#handle(): void {
-		if (this.#promisePending || this.#stopped) {
+	private handle(): void {
+		if (this.promisePending || this.stopped) {
 			return;
 		}
-		const item = this.#queue.shift();
+		const item = this.queue.shift();
 		if (!item) {
 			return;
 		}
 		try {
-			this.#promisePending = true;
-			// TODO: check anonamous functions don't mess up stack trace too much
+			this.promisePending = true;
 			item.promise()
-				.then((value) => this.#resolve(() => item.resolve(value)))
-				.catch((err) => this.#resolve(() => item.reject(err)));
+				.then((value) => this.resolve(() => item.resolve(value)))
+				.catch((err) => this.resolve(() => item.reject(err)));
 		} catch (err) {
-			this.#resolve(() => item.reject(err));
+			this.resolve(() => item.reject(err));
 		}
 	}
 
-	#resolve(callback: () => void): void {
-		this.#promisePending = false;
+	private resolve(callback: () => void): void {
+		this.promisePending = false;
 		callback();
-		this.#handle();
+		this.handle();
 	}
 }

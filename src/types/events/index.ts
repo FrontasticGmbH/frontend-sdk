@@ -1,4 +1,4 @@
 import { Events } from "./Events";
-import { StandardEvents } from "./StandardEvents";
+import { BaseEvents } from "./BaseEvents";
 
-export { Events, StandardEvents };
+export { Events, BaseEvents };

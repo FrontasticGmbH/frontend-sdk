@@ -1,7 +1,7 @@
 import { PageResponse } from "./PageResponse";
 
-type PagePreviewResponse = PageResponse & {
+interface PagePreviewResponse extends PageResponse {
 	previewId: string;
-};
+}
 
 export { PagePreviewResponse };
