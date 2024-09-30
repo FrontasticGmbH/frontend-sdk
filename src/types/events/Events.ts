@@ -1,8 +1,8 @@
 /**
- * The type describing the general structure of generic event parameters.
+ * The type describing the general structure of generic events parameters.
  */
-export interface Events {
+export type Events = {
 	[key: string]: {
 		[key: string]: unknown;
 	};
-}
+};

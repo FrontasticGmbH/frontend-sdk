@@ -14,30 +14,22 @@ describe("fetcher", () => {
 			endpoint: "",
 			currency: "EUR",
 			locale: "de_DE",
-			extensionVersion: "",
 		});
-
-		dependencyContainer().configure({
-			// @ts-expect-error
-			cookieHandler: {},
-			// @ts-expect-error
-			redactHandler: {},
-		});
-
-		dependencyContainer().cookieHandler().setCookie = vi.fn();
-		dependencyContainer().cookieHandler().getCookie = vi.fn();
+		dependencyContainer().cookieHandler.setCookie = vi.fn();
+		dependencyContainer().cookieHandler.getCookie = vi.fn();
+		dependencyContainer().hasBeenConfigured = true;
 	});
 
 	afterAll(() => {
 		vi.resetAllMocks();
 	});
 
-	test("should set sessionLifetime when rememberMe is set to true with given param[sessionLifetime]", async () => {
+	test("fetcher should set sessionLifetime when rememberMe is set to true with given param[sessionLifetime]", async () => {
 		const cookieManagement = await import(
 			"../../../src/helpers/cookieManagement"
 		);
 
-		cookieManagement.rememberMeCookie.get = vi.fn(() =>
+		cookieManagement.rememberMeCookieAsync.get = vi.fn(() =>
 			Promise.resolve(true)
 		);
 
@@ -52,22 +44,22 @@ describe("fetcher", () => {
 			sessionLifetime
 		);
 		expect(
-			dependencyContainer().cookieHandler().setCookie
+			dependencyContainer().cookieHandler.setCookie
 		).toHaveBeenCalled();
 		const newSessionLife = new Date(Date.now() + sessionLifetime);
 		expect(
-			dependencyContainer().cookieHandler().setCookie
+			dependencyContainer().cookieHandler.setCookie
 		).toHaveBeenCalledWith("frontastic-session", "SESSION", {
 			expires: newSessionLife,
 		});
 	});
 
-	test("should not set sessionLifetime when rememberMe is set to false", async () => {
+	test("fetcher should not set sessionLifetime when rememberMe is set to false", async () => {
 		const cookieManagement = await import(
 			"../../../src/helpers/cookieManagement"
 		);
 
-		cookieManagement.rememberMeCookie.get = vi.fn(() =>
+		cookieManagement.rememberMeCookieAsync.get = vi.fn(() =>
 			Promise.resolve(false)
 		);
 
@@ -80,11 +72,11 @@ describe("fetcher", () => {
 			890000000
 		);
 		expect(
-			dependencyContainer().cookieHandler().setCookie
+			dependencyContainer().cookieHandler.setCookie
 		).toHaveBeenCalled();
 
 		expect(
-			dependencyContainer().cookieHandler().setCookie
+			dependencyContainer().cookieHandler.setCookie
 		).toHaveBeenCalledWith("frontastic-session", "SESSION", {
 			expires: undefined,
 		});
