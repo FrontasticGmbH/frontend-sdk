@@ -5,7 +5,7 @@ import { REMEMBER_ME_COOKIE_KEY } from "../constants/rememberMeCookieKey";
 /**
  * An object containing helper methods for interacting with the remember me cookie.
  */
-export const rememberMeCookieAsync = {
+export const rememberMeCookie = {
 	/**
 	 * Gets the remember me cookie.
 	 *
@@ -15,10 +15,9 @@ export const rememberMeCookieAsync = {
 	 */
 	get: async function (serverOptions?: ServerOptions): Promise<boolean> {
 		dependencyContainer().throwIfDINotConfigured();
-		const rememberMe = await dependencyContainer().cookieHandler.getCookie(
-			REMEMBER_ME_COOKIE_KEY,
-			serverOptions
-		);
+		const rememberMe = await dependencyContainer()
+			.cookieHandler()
+			.getCookie(REMEMBER_ME_COOKIE_KEY, serverOptions);
 		return !!rememberMe;
 	},
 	/**
@@ -35,11 +34,9 @@ export const rememberMeCookieAsync = {
 	): Promise<void> {
 		dependencyContainer().throwIfDINotConfigured();
 		if (rememberMe) {
-			await dependencyContainer().cookieHandler.setCookie(
-				REMEMBER_ME_COOKIE_KEY,
-				"1",
-				serverOptions
-			);
+			await dependencyContainer()
+				.cookieHandler()
+				.setCookie(REMEMBER_ME_COOKIE_KEY, "1", serverOptions);
 		} else {
 			await this.remove();
 		}
@@ -53,9 +50,8 @@ export const rememberMeCookieAsync = {
 	 */
 	remove: async function (serverOptions?: ServerOptions): Promise<void> {
 		dependencyContainer().throwIfDINotConfigured();
-		await dependencyContainer().cookieHandler.deleteCookie(
-			REMEMBER_ME_COOKIE_KEY,
-			serverOptions
-		);
+		await dependencyContainer()
+			.cookieHandler()
+			.deleteCookie(REMEMBER_ME_COOKIE_KEY, serverOptions);
 	},
 };

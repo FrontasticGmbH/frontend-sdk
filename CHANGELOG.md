@@ -1,4 +1,19 @@
 
+## Version 6.0.2-alpha.0 (2024-10-02)
+
+
+* Exported page API types from index, change queueAction param in callAction to parallel
+
+## Version 6.0.1-alpha.0 (2024-09-26)
+
+
+- Updated version
+
+## Version 6.0.0-alpha.0 (2024-09-26)
+
+
+- Alpha 2.0.0 release
+
 ## Version 1.13.2 (2024-08-29)
 
 

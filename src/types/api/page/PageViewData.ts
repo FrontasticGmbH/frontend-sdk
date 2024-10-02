@@ -1,4 +1,4 @@
-type PageViewData = {
+interface PageViewData {
 	dataSources: {
 		[id: string]: {
 			total: number;
@@ -8,6 +8,6 @@ type PageViewData = {
 			query: unknown;
 		};
 	};
-};
+}
 
 export { PageViewData };

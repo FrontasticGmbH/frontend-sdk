@@ -16,9 +16,6 @@ export class Event<
 	 * The data associated with the event, will match the value of the specific event and be the parameter supplied to the event handler.
 	 */
 	public data: EventData;
-	public isDefaultPrevented: boolean;
-	public isCancelled: boolean;
-	public isPropagationStopped: boolean;
 
 	/**
 	 * Contructor.
@@ -29,21 +26,5 @@ export class Event<
 	constructor(options: { eventName: EventName; data: EventData }) {
 		this.eventName = options.eventName;
 		this.data = options.data;
-
-		this.isCancelled = false;
-		this.isDefaultPrevented = false;
-		this.isPropagationStopped = false;
-	}
-
-	public preventDefault(): void {
-		this.isDefaultPrevented = true;
-	}
-
-	public cancel(): void {
-		this.isCancelled = true;
-	}
-
-	public stopPropagation(): void {
-		this.isPropagationStopped = true;
 	}
 }

@@ -1,7 +1,7 @@
 import { PageFolder } from "@frontastic/extension-types";
 
-type PageFolderListResponse = {
+interface PageFolderListResponse {
 	pageFolderStructure: Omit<PageFolder, "isDynamic">[];
-};
+}
 
 export { PageFolderListResponse };
