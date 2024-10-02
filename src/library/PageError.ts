@@ -5,11 +5,19 @@ import { FetchError } from "./FetchError";
  */
 export class PageError extends FetchError {
 	/**
+	 * The path requested during the failed page API call.
+	 */
+	path: string;
+
+	/**
 	 * Constructor.
 	 *
-	 * @param {string | Error} options.error - The error returned from the internal fetcher.
+	 * @param {string} path - The path requested during the failed page API call.
+	 * @param {FetchError} error - The error returned from the internal fetcher.
 	 */
-	constructor(options: { error: string | Error }) {
-		super(options);
+	constructor(path: string, error: FetchError) {
+		super(error);
+
+		this.path = path;
 	}
 }

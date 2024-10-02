@@ -26,7 +26,7 @@ export interface CookieManager {
 	/**
 	 * Sets the cookie from the server or the client.
 	 *
-	 * @param {string} key - A string representing the key in which to set the cookie.
+	 * @param {string} key - A string representing the key in which to set the cookiee.
 	 * @param {ServerOptions} [options] - An optional {@link ServerOptions} object containing the res and req objects for ServerResponse and IncomingMessage with cookies respectively. Required for server-side rendering session management.
 	 *
 	 * @returns {void} void.

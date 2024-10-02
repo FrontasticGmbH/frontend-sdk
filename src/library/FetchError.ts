@@ -14,12 +14,11 @@ export class FetchError extends Error {
 	/**
 	 * Constructor.
 	 *
-	 * @param {string | Error} options.error - The error message or object detected.
+	 * @param {string | Error} error - The error message or object detected.
 	 */
-	constructor(options: { error: string | Error }) {
+	constructor(error: string | Error) {
 		super();
 
-		const error = options.error;
 		if (typeof error === "string") {
 			this.message = error;
 		} else {

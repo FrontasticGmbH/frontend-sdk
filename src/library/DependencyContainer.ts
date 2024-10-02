@@ -1,39 +1,29 @@
 import { SDK_NOT_CONFIGURED_ERROR_MESSAGE } from "../constants";
 import { CookieManager } from "../types/cookieHandling/CookieManager";
-import { RedactionManager } from "../types/redactionHandling";
 
 class DependencyContainer {
-	private _hasBeenConfigured: boolean;
+	hasBeenConfigured: boolean;
 	private _cookieHandler!: CookieManager;
-	private _redactHandler!: RedactionManager;
 
 	constructor() {
-		this._hasBeenConfigured = false;
+		this.hasBeenConfigured = false;
 	}
 
-	hasBeenConfigured(): boolean {
-		return this._hasBeenConfigured;
-	}
-
-	cookieHandler(): CookieManager {
+	get cookieHandler(): CookieManager {
 		return this._cookieHandler;
 	}
 
-	redactHandler(): RedactionManager {
-		return this._redactHandler;
+	set cookieHandler(cookierHandler: CookieManager) {
+		this._cookieHandler = cookierHandler;
 	}
 
-	configure(config: {
-		cookieHandler: CookieManager;
-		redactHandler: RedactionManager;
-	}) {
-		this._hasBeenConfigured = true;
-		this._cookieHandler = config.cookieHandler;
-		this._redactHandler = config.redactHandler;
+	configure(cookieHandler: CookieManager) {
+		this.hasBeenConfigured = true;
+		this.cookieHandler = cookieHandler;
 	}
 
 	throwIfDINotConfigured = () => {
-		if (!this._hasBeenConfigured) {
+		if (!this.hasBeenConfigured) {
 			throw new Error(SDK_NOT_CONFIGURED_ERROR_MESSAGE);
 		}
 	};

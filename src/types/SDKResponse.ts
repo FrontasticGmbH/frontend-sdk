@@ -1,4 +1,4 @@
-import { FetchError } from "../../library/FetchError";
+import { FetchError } from "../library/FetchError";
 
 /**
  * A wrapper for API request returns. On error returns an error, otherwise requested data.
@@ -15,10 +15,6 @@ export type SDKResponse<T> =
 			 * An object with properties to help identify requests in logging.
 			 */
 			tracing: {
-				/**
-				 * An ID attached to the request on the frontend, to match with fetch called and successful fetch events.
-				 */
-				frontendRequestId: string;
 				/**
 				 * The request ID used to identify requests in logs and for distributed tracing.
 				 */
@@ -38,10 +34,6 @@ export type SDKResponse<T> =
 			 * An object with properties to help identify requests in logging.
 			 */
 			tracing: {
-				/**
-				 * An ID attached to the request on the frontend, to match with fetch called and error caught events.
-				 */
-				frontendRequestId: string;
 				/**
 				 * The request ID used to identify requests in logs and for distributed tracing. Only provided when the request reaches the extension runner.
 				 */

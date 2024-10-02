@@ -1,7 +1,6 @@
 import { expect, test, describe } from "vitest";
 import {
 	generateQueryString,
-	isValidUrl,
 	normaliseUrl,
 } from "../../../src/helpers/urlHelpers";
 import { AcceptedQueryTypes } from "../../../src/types/Query";
@@ -309,34 +308,6 @@ describe("urlHelpers", () => {
 			const queryString = generateQueryString(query);
 
 			expect(queryString).toBe(expectedQueryString);
-		});
-	});
-
-	describe("isValidUrl", () => {
-		test("returns true as expected on various types of URLs", () => {
-			const url = "https://myWebsite.org?params=12";
-			const url2 = "http://myWebsite.com?params=someString";
-			const url3 = "ws://myWebsite.com";
-			const url4 = "ftp://myftp.com";
-
-			expect(isValidUrl(url)).toBeTruthy();
-			expect(isValidUrl(url2)).toBeTruthy();
-			expect(isValidUrl(url3)).toBeTruthy();
-			expect(isValidUrl(url4)).toBeTruthy();
-		});
-
-		test("returns false as expected on various types of non-URLs", () => {
-			const string = "myWebsite.org";
-			const string2 = "webbymcwebface?param=true";
-			const string3 = "12345678";
-			const string4 = "2d5690456.456456/456";
-			const string5 = "ertert-434333";
-
-			expect(isValidUrl(string)).toBeFalsy();
-			expect(isValidUrl(string2)).toBeFalsy();
-			expect(isValidUrl(string3)).toBeFalsy();
-			expect(isValidUrl(string4)).toBeFalsy();
-			expect(isValidUrl(string5)).toBeFalsy();
 		});
 	});
 });

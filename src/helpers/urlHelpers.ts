@@ -68,14 +68,4 @@ const generateQueryString = function (query: AcceptedQueryTypes): string {
 	return queryString;
 };
 
-const isValidUrl = function (urlLike: string): boolean {
-	let url: URL;
-	try {
-		url = new URL(urlLike);
-	} catch (_) {
-		return false;
-	}
-	return true;
-};
-
-export { normaliseUrl, generateQueryString, isValidUrl };
+export { normaliseUrl, generateQueryString };

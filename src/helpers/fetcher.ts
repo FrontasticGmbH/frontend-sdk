@@ -1,22 +1,20 @@
 import { DEFAULT_SESSION_LIFETIME } from "../constants/defaultSessionLifetime";
 import { ServerOptions } from "../types/cookieHandling";
-import { rememberMeCookie } from "./cookieManagement";
+import { rememberMeCookieAsync } from "./cookieManagement";
+import { FetchError } from "../library/FetchError";
 import { dependencyContainer } from "../library/DependencyContainer";
 
-type FetcherResponse<T> =
-	| { isError: false; frontasticRequestId: string; data: T }
-	| { isError: true; frontasticRequestId: string; error: string | Error };
-
-const fetcher = async <T>(
+export const fetcher = async <T>(
 	url: string,
 	options: RequestInit,
 	serverOptions?: ServerOptions,
 	sessionLifetime?: number
-): Promise<FetcherResponse<T>> => {
+): Promise<{ frontasticRequestId: string; data: T | FetchError }> => {
 	dependencyContainer().throwIfDINotConfigured();
-	let sessionCookie = (await dependencyContainer()
-		.cookieHandler()
-		.getCookie("frontastic-session", serverOptions)) as string;
+	let sessionCookie = (await dependencyContainer().cookieHandler.getCookie(
+		"frontastic-session",
+		serverOptions
+	)) as string;
 	sessionCookie = sessionCookie ?? "";
 	const incomingHeaders: { [key: string]: any } = serverOptions?.req
 		? { ...serverOptions.req.headers }
@@ -38,7 +36,7 @@ const fetcher = async <T>(
 		response.headers.get("Frontastic-Request-Id") ?? "";
 
 	if (response.ok && response.headers.has("Frontastic-Session")) {
-		let rememberMe = await rememberMeCookie.get();
+		let rememberMe = await rememberMeCookieAsync.get();
 		let expiryDate;
 
 		if (rememberMe) {
@@ -46,33 +44,26 @@ const fetcher = async <T>(
 				Date.now() + (sessionLifetime ?? DEFAULT_SESSION_LIFETIME)
 			);
 		}
-		await dependencyContainer()
-			.cookieHandler()
-			.setCookie(
-				"frontastic-session",
-				response.headers.get("Frontastic-Session")!,
-				{ expires: expiryDate, ...(serverOptions ?? {}) }
-			);
+		await dependencyContainer().cookieHandler.setCookie(
+			"frontastic-session",
+			response.headers.get("Frontastic-Session")!,
+			{ expires: expiryDate, ...(serverOptions ?? {}) }
+		);
+	}
+
+	if (response.ok) {
+		return response.json().then((data) => {
+			return { frontasticRequestId, data };
+		});
 	}
 
 	let error: Error | string;
 
-	if (response.ok) {
-		try {
-			let data = await response.json();
-			return { frontasticRequestId, data, isError: false };
-		} catch (err) {
-			error = err as Error;
-		}
-	} else {
-		try {
-			error = await response.clone().json();
-		} catch (e) {
-			error = await response.text();
-		}
+	try {
+		error = await response.clone().json();
+	} catch (e) {
+		error = await response.text();
 	}
 
-	return { frontasticRequestId, error, isError: true };
+	return { frontasticRequestId, data: new FetchError(error) };
 };
-
-export { fetcher, FetcherResponse };
