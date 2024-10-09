@@ -1,5 +1,6 @@
 import { fetch, Headers } from "cross-fetch";
 import { beforeAll, vi } from "vitest";
+import { mockDataResponse } from "./setupConsts";
 
 global.fetch = fetch;
 
@@ -20,12 +21,7 @@ beforeAll(() => {
 					status: 200,
 					statusText: "OK",
 					headers,
-					body: {
-						id: 1,
-						title: "Item title",
-						description: "Item description",
-						price: 100.0,
-					},
+					body: mockDataResponse,
 					json(): Promise<any> {
 						return new Promise((resolve, reject) => {
 							resolve({ ...this.body, ...this.headers });

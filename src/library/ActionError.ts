@@ -5,19 +5,11 @@ import { FetchError } from "./FetchError";
  */
 export class ActionError extends FetchError {
 	/**
-	 * The name of the failed action.
-	 */
-	actionName: string;
-
-	/**
 	 * Constructor.
 	 *
-	 * @param {string} actionName - The name of the failed action.
-	 * @param {FetchError} error - The error returned from the internal fetcher.
+	 * @param {string | Error} options.error - The error returned from the internal fetcher.
 	 */
-	constructor(actionName: string, error: FetchError) {
-		super(error);
-
-		this.actionName = actionName;
+	constructor(options: { error: string | Error }) {
+		super(options);
 	}
 }

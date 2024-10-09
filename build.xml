@@ -17,15 +17,27 @@
     -->
 	<import file="${integration_dir}/main.xml" />
 
+	<target name="commercetools extension:setup-node" extensionOf="-initialize:before~hook">
+		<exec executable="n">
+			<env key="N_PREFIX" value="/opt/n-for-ci" />
+			<arg value="18" />
+		</exec>
+	</target>
+
 	<!--
         Custom initialize, test and build
     -->
 	<target name="SDK core:bootstrap" extensionOf="-initialize:main~hook">
 		<tool-exists executable="yarn" />
 
-		<exec executable="yarn" failonerror="true" dir="${basedir}">
+		<exec executable="n" failonerror="true" dir="${basedir}">
+			<env key="N_PREFIX" value="/opt/n-for-ci" />
 			<env key="CI" value="true" />
 
+			<arg value="run" />
+			<arg value="18" />
+
+			<arg value="/usr/bin/yarn" />
 			<arg value="--network-timeout" />
 			<arg value="1000000000" />
 
@@ -41,22 +53,44 @@
 
 	<target name="SDK core:test" unless="${production}" extensionOf="-test-unit:main~hook">
 		<tool-exists executable="yarn" />
-		<!--TODO: implement-->
-		<!--<exec executable="yarn" dir="${basedir}">
+		<!--TODO:
+		implement-->
+		<!--<exec
+		executable="n" dir="${basedir}">
+            <env key="N_PREFIX" value="/opt/n-for-ci" />
+            <env key="CI" value="true" />
+
+            <arg value="run" />
+            <arg value="18" />
+
+            <arg value="/usr/bin/yarn" />
             <arg value="run" />
             <arg value="lint" />
         </exec>-->
-		<exec executable="yarn" dir="${basedir}" failonerror="true">
+		<exec executable="n" dir="${basedir}" failonerror="true">
+			<env key="N_PREFIX" value="/opt/n-for-ci" />
+			<env key="CI" value="true" />
+
+			<arg value="run" />
+			<arg value="18" />
+
+			<arg value="/usr/bin/yarn" />
 			<arg value="run" />
 			<arg value="test" />
-			<env key="CI" value="true" />
 		</exec>
 	</target>
 
 	<target name="SDK core:package" depends="initialize" extensionOf="-package:before~hook">
 		<tool-exists executable="yarn" />
 
-		<exec executable="yarn" dir="${basedir}" failonerror="true">
+		<exec executable="n" dir="${basedir}" failonerror="true">
+			<env key="N_PREFIX" value="/opt/n-for-ci" />
+			<env key="CI" value="true" />
+
+			<arg value="run" />
+			<arg value="18" />
+
+			<arg value="/usr/bin/yarn" />
 			<arg value="run" />
 			<arg value="build" />
 		</exec>

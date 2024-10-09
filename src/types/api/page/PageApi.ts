@@ -1,12 +1,12 @@
 import { ServerOptions } from "../../cookieHandling";
-import { SDKResponse } from "../../SDKResponse";
+import { SDKResponse } from "../../sdk";
 import { AcceptedQueryTypes } from "../../Query";
 import { PageFolderListResponse } from "./PageFolderListResponse";
 import { PagePreviewResponse } from "./PagePreviewResponse";
 import { PageResponse } from "./PageResponse";
-import { SDK } from "../../../library/SDK";
+import { RedirectResponse } from "./RedirectResponse";
 
-type PageApi = {
+interface PageApi {
 	/**
 	 * The method to get page data from the API-hub.
 	 *
@@ -15,14 +15,14 @@ type PageApi = {
 	 * @param {string} [options.customHeaderValue] - An optional string, the value to assign to a "coFE-Custom-Configuration" header value. Overrides customHeaderValue passed in {@link SDK.configure}.
 	 * @param {Object} [options.serverOptions] - An optional object containing the res and req objects for ServerResponse and IncomingMessage with cookies respectively.  Required for server-side rendering session management.
 	 *
-	 * @returns {PromiseLike<PageResponse>} An object with a boolean isError property, and either an error or data property for true and false respectively. Data contains Page, PageFolder and PageView data.
+	 * @returns {PromiseLike<PageResponse | RedirectResponse>} An object with a boolean isError property, and either an error or data property for true and false respectively. Data contains Page, PageFolder and PageView data or a RedirectResponse.
 	 */
 	getPage: (options: {
 		path: string;
 		query?: AcceptedQueryTypes;
 		customHeaderValue?: string;
 		serverOptions?: ServerOptions;
-	}) => Promise<SDKResponse<PageResponse>>;
+	}) => Promise<SDKResponse<PageResponse | RedirectResponse>>;
 	/**
 	 * The method to get page preview data from the API-hub.
 	 *
@@ -55,6 +55,6 @@ type PageApi = {
 		customHeaderValue?: string;
 		serverOptions?: ServerOptions;
 	}) => Promise<SDKResponse<PageFolderListResponse>>;
-};
+}
 
 export { PageApi };

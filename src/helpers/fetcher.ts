@@ -1,20 +1,22 @@
 import { DEFAULT_SESSION_LIFETIME } from "../constants/defaultSessionLifetime";
 import { ServerOptions } from "../types/cookieHandling";
-import { rememberMeCookieAsync } from "./cookieManagement";
-import { FetchError } from "../library/FetchError";
+import { rememberMeCookie } from "./cookieManagement";
 import { dependencyContainer } from "../library/DependencyContainer";
 
-export const fetcher = async <T>(
+type FetcherResponse<T> =
+	| { isError: false; frontasticRequestId: string; data: T }
+	| { isError: true; frontasticRequestId: string; error: string | Error };
+
+const fetcher = async <T>(
 	url: string,
 	options: RequestInit,
 	serverOptions?: ServerOptions,
 	sessionLifetime?: number
-): Promise<{ frontasticRequestId: string; data: T | FetchError }> => {
+): Promise<FetcherResponse<T>> => {
 	dependencyContainer().throwIfDINotConfigured();
-	let sessionCookie = (await dependencyContainer().cookieHandler.getCookie(
-		"frontastic-session",
-		serverOptions
-	)) as string;
+	let sessionCookie = (await dependencyContainer()
+		.cookieHandler()
+		.getCookie("frontastic-session", serverOptions)) as string;
 	sessionCookie = sessionCookie ?? "";
 	const incomingHeaders: { [key: string]: any } = serverOptions?.req
 		? { ...serverOptions.req.headers }
@@ -36,7 +38,7 @@ export const fetcher = async <T>(
 		response.headers.get("Frontastic-Request-Id") ?? "";
 
 	if (response.ok && response.headers.has("Frontastic-Session")) {
-		let rememberMe = await rememberMeCookieAsync.get();
+		let rememberMe = await rememberMeCookie.get();
 		let expiryDate;
 
 		if (rememberMe) {
@@ -44,26 +46,33 @@ export const fetcher = async <T>(
 				Date.now() + (sessionLifetime ?? DEFAULT_SESSION_LIFETIME)
 			);
 		}
-		await dependencyContainer().cookieHandler.setCookie(
-			"frontastic-session",
-			response.headers.get("Frontastic-Session")!,
-			{ expires: expiryDate, ...(serverOptions ?? {}) }
-		);
-	}
-
-	if (response.ok) {
-		return response.json().then((data) => {
-			return { frontasticRequestId, data };
-		});
+		await dependencyContainer()
+			.cookieHandler()
+			.setCookie(
+				"frontastic-session",
+				response.headers.get("Frontastic-Session")!,
+				{ expires: expiryDate, ...(serverOptions ?? {}) }
+			);
 	}
 
 	let error: Error | string;
 
-	try {
-		error = await response.clone().json();
-	} catch (e) {
-		error = await response.text();
+	if (response.ok) {
+		try {
+			let data = await response.json();
+			return { frontasticRequestId, data, isError: false };
+		} catch (err) {
+			error = err as Error;
+		}
+	} else {
+		try {
+			error = await response.clone().json();
+		} catch (e) {
+			error = await response.text();
+		}
 	}
 
-	return { frontasticRequestId, data: new FetchError(error) };
+	return { frontasticRequestId, error, isError: true };
 };
+
+export { fetcher, FetcherResponse };
