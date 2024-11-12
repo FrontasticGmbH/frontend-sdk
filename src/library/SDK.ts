@@ -188,33 +188,33 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	}
 
 	private handleApiCall(options: HandleApiCallOptions) {
+		// TODO: this more efficiently
+		let clonedOptions = JSON.parse(JSON.stringify(options));
 		[
-			options.type === "pageAPI" ? "pageApiMethodCalled" : "actionCalled",
+			clonedOptions.type === "pageAPI"
+				? "pageApiMethodCalled"
+				: "actionCalled",
 			"fetchCalled",
 		].forEach((eventName) => {
 			const type =
-				eventName === "fetchCalled" ? { type: options.type } : {};
+				eventName === "fetchCalled" ? { type: clonedOptions.type } : {};
 			this.trigger(
 				// @ts-ignore
 				new Event({
 					eventName,
 					data: Object.assign(
-						options.type === "pageAPI"
-							? { method: options.method }
-							: { actionName: options.actionName },
+						clonedOptions.type === "pageAPI"
+							? { method: clonedOptions.method }
+							: { actionName: clonedOptions.actionName },
 						{
 							...type,
 							parameters: dependencyContainer()
 								.redactHandler()
-								.redact(
-									JSON.parse(
-										JSON.stringify(options.parameters)
-									)
-								),
+								.redact(clonedOptions.parameters),
 							url: dependencyContainer()
 								.redactHandler()
-								.redactUrl(options.url),
-							tracing: options.tracing,
+								.redactUrl(clonedOptions.url),
+							tracing: clonedOptions.tracing,
 						}
 					),
 				})
@@ -223,42 +223,38 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	}
 
 	private handleSuccesfulCall(options: HandleSuccessfulFetchOptions) {
+		// TODO: this more efficiently
+		let clonedOptions = JSON.parse(JSON.stringify(options));
 		[
-			options.type === "pageAPI"
+			clonedOptions.type === "pageAPI"
 				? "pageApiFetchSuccessful"
 				: "actionFetchSuccessful",
 			"fetchSuccessful",
 		].forEach((eventName) => {
 			const type =
-				eventName === "fetchSuccessful" ? { type: options.type } : {};
+				eventName === "fetchSuccessful"
+					? { type: clonedOptions.type }
+					: {};
 			this.trigger(
 				// @ts-ignore
 				new Event({
 					eventName,
 					data: Object.assign(
-						options.type === "pageAPI"
-							? { method: options.method }
-							: { actionName: options.actionName },
+						clonedOptions.type === "pageAPI"
+							? { method: clonedOptions.method }
+							: { actionName: clonedOptions.actionName },
 						{
 							...type,
 							parameters: dependencyContainer()
 								.redactHandler()
-								.redact(
-									JSON.parse(
-										JSON.stringify(options.parameters)
-									)
-								),
+								.redact(clonedOptions.parameters),
 							url: dependencyContainer()
 								.redactHandler()
-								.redactUrl(options.url),
+								.redactUrl(clonedOptions.url),
 							dataResponse: dependencyContainer()
 								.redactHandler()
-								.redact(
-									JSON.parse(
-										JSON.stringify(options.dataResponse)
-									)
-								),
-							tracing: options.tracing,
+								.redact(clonedOptions.dataResponse),
+							tracing: clonedOptions.tracing,
 						}
 					),
 				})

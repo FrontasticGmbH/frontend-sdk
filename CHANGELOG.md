@@ -1,4 +1,9 @@
 
+## Version 6.1.3-alpha.0 (2024-11-12)
+
+
+* Stopped redaction handling changing reponse returned
+
 ## Version 6.1.2-alpha.0 (2024-11-12)
 
 
