@@ -1,4 +1,9 @@
 
+## Version 2.0.0 (2024-11-12)
+
+
+- Released version 2 of the frontend SDK. More information in our release note: https://docs.commercetools.com/frontend-development/releases/2024-11-12-breaking-changes-introduced-version-200-of-the-commercetools-frontend-sdk.
+
 ## Version 6.1.3-alpha.0 (2024-11-12)
 
 
