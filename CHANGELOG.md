@@ -1,4 +1,9 @@
 
+## Version 6.1.1-alpha.0 (2024-11-12)
+
+
+* Fixed issue where redaction handling was redacting returned data
+
 ## Version 6.1.0-alpha.0 (2024-10-09)
 
 
