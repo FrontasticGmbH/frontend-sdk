@@ -1,4 +1,4 @@
-import { expect, test, describe, vi, beforeAll, afterAll } from "vitest";
+import { expect, test, describe, vi, beforeAll, afterAll, beforeEach } from "vitest";
 import {
 	defaultJsonRedactionText,
 	defaultUrlRedactionText,
@@ -304,11 +304,194 @@ describe(SDK.name, () => {
 					},
 				});
 
+				// Register an event handler to trigger redaction (redaction only runs when events are triggered)
+				sdk.on("actionCalled", () => {});
+
 				await sdk.callAction({ actionName: "" });
 
 				expect(redactOverriden).toBe(true);
 				expect(redactUrlOverriden).toBe(true);
 			});
+
+			test("does not mutate the original dataResponse when event handlers are registered", async () => {
+				const sdk = new SDK();
+				const originalToken = "5a4f5e7a-2d45-4599-8fd0-7c729279ff7c";
+
+				// Create a mock response with a token that would normally be redacted
+				const mockResponse = {
+					token: originalToken,
+					password: "secret123",
+					data: {
+						nested: {
+							token: originalToken,
+						},
+					},
+				};
+
+				// Store the original values to compare later
+				const originalMockResponse = JSON.parse(JSON.stringify(mockResponse));
+
+				sdk.configure({
+					endpoint: "https://example.com",
+					// @ts-expect-error
+					currency: "",
+					locale: "",
+					extensionVersion: "",
+				});
+
+				// Register event handlers (this triggers redaction)
+				let eventDataResponse: any;
+				sdk.on("fetchSuccessful", (event) => {
+					// @ts-expect-error
+					eventDataResponse = event.data.dataResponse;
+				});
+
+				// Mock fetch to return our response
+				const originalFetch = global.fetch;
+				global.fetch = vi.fn().mockResolvedValue({
+					ok: true,
+					status: 200,
+					statusText: "OK",
+					headers: new Map([
+						["Content-Type", "application/json"],
+						["Frontastic-Session", "SESSION"],
+					]),
+					json: () => Promise.resolve(mockResponse),
+				});
+
+				try {
+					const result = await sdk.callAction({ actionName: "test/action" });
+
+					// The event data should have redacted values
+					expect(eventDataResponse.token).toBe(defaultJsonRedactionText);
+					expect(eventDataResponse.password).toBe(defaultJsonRedactionText);
+
+					// CRITICAL: The original mockResponse should NOT be mutated
+					// This was the bug - redaction was mutating the original response
+					expect(mockResponse.token).toBe(originalToken);
+					expect(mockResponse.password).toBe("secret123");
+					expect(mockResponse.data.nested.token).toBe(originalToken);
+
+					// Verify the entire original object is unchanged
+					expect(mockResponse).toEqual(originalMockResponse);
+				} finally {
+					global.fetch = originalFetch;
+				}
+			});
+		});
+	});
+
+	describe("invalidateSession", () => {
+		test("throws error if SDK is not configured", async () => {
+			const sdk = new SDK();
+
+			await expect(sdk.invalidateSession()).rejects.toThrow();
+		});
+
+		test("completes successfully when configured", async () => {
+			const sdk = new SDK();
+
+			sdk.configure({
+				endpoint: "https://example.com",
+				// @ts-expect-error
+				currency: "",
+				locale: "",
+				extensionVersion: "",
+			});
+
+			// Should not throw
+			await expect(sdk.invalidateSession()).resolves.not.toThrow();
+		});
+
+		test("can skip waiting for pending requests", async () => {
+			const sdk = new SDK();
+
+			sdk.configure({
+				endpoint: "https://example.com",
+				// @ts-expect-error
+				currency: "",
+				locale: "",
+				extensionVersion: "",
+			});
+
+			const start = Date.now();
+			await sdk.invalidateSession({ waitForPending: false });
+			const elapsed = Date.now() - start;
+
+			// Should complete almost immediately
+			expect(elapsed).toBeLessThan(100);
+		});
+
+		test("respects timeout option", async () => {
+			const sdk = new SDK();
+
+			sdk.configure({
+				endpoint: "https://example.com",
+				// @ts-expect-error
+				currency: "",
+				locale: "",
+				extensionVersion: "",
+			});
+
+			const start = Date.now();
+			await sdk.invalidateSession({ timeoutMs: 50 });
+			const elapsed = Date.now() - start;
+
+			// Should complete within reasonable time of timeout
+			expect(elapsed).toBeLessThan(200);
+		});
+	});
+
+	describe("hasEventHandlers", () => {
+		test("returns false when no handlers registered", () => {
+			const sdk = new SDK();
+
+			sdk.configure({
+				endpoint: "https://example.com",
+				// @ts-expect-error
+				currency: "",
+				locale: "",
+				extensionVersion: "",
+			});
+
+			expect(sdk.hasEventHandlers("fetchCalled")).toBe(false);
+			expect(sdk.hasEventHandlers("actionCalled")).toBe(false);
+		});
+
+		test("returns true when handler is registered", () => {
+			const sdk = new SDK();
+
+			sdk.configure({
+				endpoint: "https://example.com",
+				// @ts-expect-error
+				currency: "",
+				locale: "",
+				extensionVersion: "",
+			});
+
+			sdk.on("fetchCalled", () => {});
+
+			expect(sdk.hasEventHandlers("fetchCalled")).toBe(true);
+			expect(sdk.hasEventHandlers("actionCalled")).toBe(false);
+		});
+
+		test("returns false after handler is removed", () => {
+			const sdk = new SDK();
+
+			sdk.configure({
+				endpoint: "https://example.com",
+				// @ts-expect-error
+				currency: "",
+				locale: "",
+				extensionVersion: "",
+			});
+
+			const handler = () => {};
+			sdk.on("fetchCalled", handler);
+			expect(sdk.hasEventHandlers("fetchCalled")).toBe(true);
+
+			sdk.off("fetchCalled", handler);
+			expect(sdk.hasEventHandlers("fetchCalled")).toBe(false);
 		});
 	});
 });

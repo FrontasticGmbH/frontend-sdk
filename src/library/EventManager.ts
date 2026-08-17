@@ -66,4 +66,18 @@ export class EventManager<Events> {
 			handler(event);
 		}
 	}
+
+	/**
+	 * Checks if there are any handlers registered for a specific event.
+	 * Useful for performance optimization - skip event data preparation if no handlers exist.
+	 *
+	 * @param {EventName} eventName - The name of the event to check.
+	 * @returns {boolean} True if handlers are registered, false otherwise.
+	 */
+	public hasEventHandlers<EventName extends keyof Events>(
+		eventName: EventName & string
+	): boolean {
+		const handlers = this.eventHandlers[eventName];
+		return handlers !== undefined && handlers.length > 0;
+	}
 }

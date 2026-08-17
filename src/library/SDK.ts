@@ -1,4 +1,5 @@
 import { fetcher, FetcherResponse } from "../helpers/fetcher";
+import { rememberMeCookie } from "../helpers/cookieManagement";
 import { Queue } from "./Queue";
 import { Event } from "./Event";
 import { EventManager } from "./EventManager";
@@ -165,6 +166,68 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	}
 
 	/**
+	 * Invalidates the current session by deleting session cookies and stopping the action queue.
+	 * Use this method during logout to prevent "zombie sessions" where stale session cookies persist.
+	 *
+	 * This method:
+	 * 1. Stops the action queue to prevent new requests from being queued
+	 * 2. Optionally waits for pending requests to complete
+	 * 3. Deletes the `frontastic-session` cookie
+	 * 4. Removes the `__rememberMe` cookie
+	 *
+	 * @param {Object} [options] - Optional configuration.
+	 * @param {ServerOptions} [options.serverOptions] - Server request/response objects for SSR.
+	 * @param {boolean} [options.waitForPending=true] - Whether to wait for pending requests to complete.
+	 * @param {number} [options.timeoutMs=5000] - Maximum time to wait for pending requests (ms).
+	 *
+	 * @returns {Promise<void>} Resolves when session is invalidated.
+	 *
+	 * @example
+	 * // Client-side logout
+	 * await sdk.invalidateSession();
+	 *
+	 * @example
+	 * // Server-side logout
+	 * await sdk.invalidateSession({ serverOptions: { req, res } });
+	 *
+	 * @example
+	 * // Immediate invalidation without waiting for pending requests
+	 * await sdk.invalidateSession({ waitForPending: false });
+	 */
+	async invalidateSession(options?: {
+		serverOptions?: ServerOptions;
+		waitForPending?: boolean;
+		timeoutMs?: number;
+	}): Promise<void> {
+		this.throwIfNotConfigured();
+
+		const {
+			serverOptions,
+			waitForPending = true,
+			timeoutMs = 5000,
+		} = options ?? {};
+
+		// Stop the action queue to prevent new requests
+		this._actionQueue.stop();
+
+		// Wait for pending requests to complete (with timeout)
+		if (waitForPending) {
+			await this._actionQueue.flush(timeoutMs);
+		}
+
+		// Delete session cookies
+		await Promise.all([
+			dependencyContainer()
+				.cookieHandler()
+				.deleteCookie("frontastic-session", serverOptions),
+			rememberMeCookie.remove(serverOptions),
+		]);
+
+		// Restart the queue for potential re-login
+		this._actionQueue.restart();
+	}
+
+	/**
 	 * The method called to standardise the locale and currency inputs.
 	 *
 	 * @param {string} config.locale - A string representing the combination of the ISO 639-1 language and ISO 3166-1 country code. For example en-GB or en_GB.
@@ -188,116 +251,157 @@ export class SDK<ExtensionEvents extends Events> extends EventManager<
 	}
 
 	private handleApiCall(options: HandleApiCallOptions) {
-		// TODO: this more efficiently
-		let clonedOptions = JSON.parse(JSON.stringify(options));
-		[
-			clonedOptions.type === "pageAPI"
-				? "pageApiMethodCalled"
-				: "actionCalled",
-			"fetchCalled",
-		].forEach((eventName) => {
-			const type =
-				eventName === "fetchCalled" ? { type: clonedOptions.type } : {};
+		const specificEventName =
+			options.type === "pageAPI" ? "pageApiMethodCalled" : "actionCalled";
+
+		// Performance: skip if no handlers registered
+		if (
+			!this.hasEventHandlers(specificEventName) &&
+			!this.hasEventHandlers("fetchCalled")
+		) {
+			return;
+		}
+
+		// Only clone the data that will be mutated by redaction
+		const redactHandler = dependencyContainer().redactHandler();
+		const redactedParameters = redactHandler.redact(
+			options.parameters ? { ...options.parameters } : {}
+		);
+		const redactedUrl = redactHandler.redactUrl(options.url);
+
+		const baseEventData = {
+			...(options.type === "pageAPI"
+				? { method: options.method }
+				: { actionName: options.actionName }),
+			parameters: redactedParameters,
+			url: redactedUrl,
+			tracing: options.tracing,
+		};
+
+		if (this.hasEventHandlers(specificEventName)) {
 			this.trigger(
 				// @ts-ignore
 				new Event({
-					eventName,
-					data: Object.assign(
-						clonedOptions.type === "pageAPI"
-							? { method: clonedOptions.method }
-							: { actionName: clonedOptions.actionName },
-						{
-							...type,
-							parameters: dependencyContainer()
-								.redactHandler()
-								.redact(clonedOptions.parameters),
-							url: dependencyContainer()
-								.redactHandler()
-								.redactUrl(clonedOptions.url),
-							tracing: clonedOptions.tracing,
-						}
-					),
+					eventName: specificEventName,
+					data: baseEventData,
 				})
 			);
-		});
+		}
+
+		if (this.hasEventHandlers("fetchCalled")) {
+			this.trigger(
+				// @ts-ignore
+				new Event({
+					eventName: "fetchCalled",
+					data: { ...baseEventData, type: options.type },
+				})
+			);
+		}
 	}
 
 	private handleSuccesfulCall(options: HandleSuccessfulFetchOptions) {
-		// TODO: this more efficiently
-		let clonedOptions = JSON.parse(JSON.stringify(options));
-		[
-			clonedOptions.type === "pageAPI"
+		const specificEventName =
+			options.type === "pageAPI"
 				? "pageApiFetchSuccessful"
-				: "actionFetchSuccessful",
-			"fetchSuccessful",
-		].forEach((eventName) => {
-			const type =
-				eventName === "fetchSuccessful"
-					? { type: clonedOptions.type }
-					: {};
+				: "actionFetchSuccessful";
+
+		// Performance: skip if no handlers registered
+		if (
+			!this.hasEventHandlers(specificEventName) &&
+			!this.hasEventHandlers("fetchSuccessful")
+		) {
+			return;
+		}
+
+		// Only clone/redact data that needs it - avoid deep cloning large response payloads
+		const redactHandler = dependencyContainer().redactHandler();
+		const redactedParameters = redactHandler.redact(
+			options.parameters ? { ...options.parameters } : {}
+		);
+		const redactedUrl = redactHandler.redactUrl(options.url);
+		// Deep clone dataResponse before redaction since redact() mutates its input
+		const redactedDataResponse = redactHandler.redact(
+			options.dataResponse ? JSON.parse(JSON.stringify(options.dataResponse)) : {}
+		);
+
+		const baseEventData = {
+			...(options.type === "pageAPI"
+				? { method: options.method }
+				: { actionName: options.actionName }),
+			parameters: redactedParameters,
+			url: redactedUrl,
+			dataResponse: redactedDataResponse,
+			tracing: options.tracing,
+		};
+
+		if (this.hasEventHandlers(specificEventName)) {
 			this.trigger(
 				// @ts-ignore
 				new Event({
-					eventName,
-					data: Object.assign(
-						clonedOptions.type === "pageAPI"
-							? { method: clonedOptions.method }
-							: { actionName: clonedOptions.actionName },
-						{
-							...type,
-							parameters: dependencyContainer()
-								.redactHandler()
-								.redact(clonedOptions.parameters),
-							url: dependencyContainer()
-								.redactHandler()
-								.redactUrl(clonedOptions.url),
-							dataResponse: dependencyContainer()
-								.redactHandler()
-								.redact(clonedOptions.dataResponse),
-							tracing: clonedOptions.tracing,
-						}
-					),
+					eventName: specificEventName,
+					data: baseEventData,
 				})
 			);
-		});
+		}
+
+		if (this.hasEventHandlers("fetchSuccessful")) {
+			this.trigger(
+				// @ts-ignore
+				new Event({
+					eventName: "fetchSuccessful",
+					data: { ...baseEventData, type: options.type },
+				})
+			);
+		}
 	}
 
 	private handleError<T>(options: HandleErrorCaughtOptions): SDKResponse<T> {
-		[
+		const specificEventName =
 			options.type === "action"
 				? "actionErrorCaught"
-				: "pageApiErrorCaught",
-			"errorCaught",
-		].forEach((eventName) => {
-			const type =
-				eventName === "errorCaught" ? { type: options.type } : {};
-			this.trigger(
-				// @ts-ignore
-				new Event({
-					eventName,
-					data: Object.assign(
-						options.type === "action"
-							? { actionName: options.actionName }
-							: { method: options.method },
-						{
-							...type,
-							parameters: dependencyContainer()
-								.redactHandler()
-								.redact(
-									JSON.parse(
-										JSON.stringify(options.parameters)
-									)
-								),
-							url: dependencyContainer()
-								.redactHandler()
-								.redactUrl(options.url),
-							tracing: options.tracing,
-							error: options.error,
-						}
-					),
-				})
+				: "pageApiErrorCaught";
+
+		// Performance: only process events if handlers exist
+		const hasSpecificHandler = this.hasEventHandlers(specificEventName);
+		const hasGenericHandler = this.hasEventHandlers("errorCaught");
+
+		if (hasSpecificHandler || hasGenericHandler) {
+			const redactHandler = dependencyContainer().redactHandler();
+			const redactedParameters = redactHandler.redact(
+				options.parameters ? { ...options.parameters } : {}
 			);
-		});
+			const redactedUrl = redactHandler.redactUrl(options.url);
+
+			const baseEventData = {
+				...(options.type === "action"
+					? { actionName: options.actionName }
+					: { method: options.method }),
+				parameters: redactedParameters,
+				url: redactedUrl,
+				tracing: options.tracing,
+				error: options.error,
+			};
+
+			if (hasSpecificHandler) {
+				this.trigger(
+					// @ts-ignore
+					new Event({
+						eventName: specificEventName,
+						data: baseEventData,
+					})
+				);
+			}
+
+			if (hasGenericHandler) {
+				this.trigger(
+					// @ts-ignore
+					new Event({
+						eventName: "errorCaught",
+						data: { ...baseEventData, type: options.type },
+					})
+				);
+			}
+		}
 
 		return {
 			isError: true,
